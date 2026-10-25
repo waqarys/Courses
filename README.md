@@ -8,7 +8,7 @@ Silent pictures, speaker notes, and example programs for a first Python course. 
 
 | Path | What it is |
 |---|---|
-| `slides/slides.html` | Full-screen deck, lessons 00–26. Open in Chrome. |
+| `slides/slides.html` | Full-screen deck. 27 lessons, 163 slides, each one written into the file. Open in Chrome. |
 | `notes/RECORDING-NOTES.md` | What to say, what to type, and the deliberate mistake. |
 | `code/` | One program per lesson. Safe to run, except the game, which waits for a guess. |
 | `videos/01-install-windows.mp4` | Silent Windows install pictures. |
@@ -40,7 +40,7 @@ Each slide stays up for 28 seconds. If you need longer, pause the media source. 
 4. Stop after the **Your turn** slide.
 5. You do not need a second take for the slides. Trim only if you paused too long.
 
-Lessons 04 onward have no video yet. For those, window-capture `slides/slides.html` (press F for fullscreen, L for the lesson list) and switch to Thonny when the mint label says Switch. Same microphone.
+Lessons 04 onward have no video yet. Open `slides/slides.html` in Chrome. There are 163 slides in that file; only one is on screen. Press the right arrow, or click the right edge. Press **L** for the lesson list, **F** for fullscreen. Window-capture that window. Switch to Thonny when the mint label says Switch. Same microphone. If a slide is tall, the page shrinks it so the last line stays on screen.
 
 Chromebook students never install Python. Lesson 03 sends them to Google Colab.
 
