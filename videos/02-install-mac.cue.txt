@@ -1,0 +1,9 @@
+# 02-install-mac.mp4
+# Each picture holds for 28 seconds. Pause in OBS if you need longer.
+
+00:00  Install Python on a Mac
+00:28  Download
+00:56  If the Mac says no
+01:24  First line
+01:52  Optional check
+02:20  Your turn

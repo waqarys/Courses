@@ -1,0 +1,10 @@
+# 03-install-chromebook.mp4
+# Each picture holds for 28 seconds. Pause in OBS if you need longer.
+
+00:00  Python on a Chromebook
+00:28  Leave Linux off
+00:56  Open Colab
+01:24  Run a cell
+01:52  Save
+02:20  If Colab is blocked
+02:48  Your turn

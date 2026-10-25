@@ -1,0 +1,10 @@
+# 01-install-windows.mp4
+# Each picture holds for 28 seconds. Pause in OBS if you need longer.
+
+00:00  Install Python on Windows
+00:28  Download Python 3
+00:56  The tick people miss
+01:24  Prove it
+01:52  Install Thonny
+02:20  Switch
+02:48  Your turn
