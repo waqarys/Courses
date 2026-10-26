@@ -11,16 +11,16 @@ Silent pictures, speaker notes, and example programs for a first Python course. 
 | `slides/slides.html` | Kid deck. 27 lessons, 163 slides. Each lesson has a picture. Code sits in a file card you type in Thonny. |
 | `notes/RECORDING-NOTES.md` | What to say, what to type, and the deliberate mistake. |
 | `code/` | One program per lesson. Safe to run, except the game, which waits for a guess. |
-| `videos/01-install-windows.mp4` | Silent Windows install pictures. |
+| `videos/01-install-windows.mp4` | Silent Windows lesson, 3 min 34 sec. New slides, the live Python and Thonny download pages, `python --version`, and Hello World in Thonny. |
 | `videos/02-install-mac.mp4` | Silent Mac install pictures. |
 | `videos/03-install-chromebook.mp4` | Silent Chromebook pictures. Colab in the browser. No Linux. |
-| `videos/*.cue.txt` | When each picture changes, so you know where you are. |
+| `videos/01-install-windows-VOICE.md` | Read this aloud for the Windows video. The pictures change on these times. |
 
 ## Yes, you only add the voice
 
 Each install video is a 1080p picture track plus a silent audio track. OBS plays the picture. Your microphone is the voiceover. They do not fight each other, because the video has nothing to say.
 
-Each slide stays up for 28 seconds. If you need longer, pause the media source. If you finish early, pause and cut the gap later, or just go on.
+The Mac and Chromebook videos hold each slide for 28 seconds. The Windows video does not. It is cut to `videos/01-install-windows-VOICE.md`. Record that script, then put the voice on the silent video at 0:00 in CapCut. If a sentence runs past a cut, freeze that frame until you finish it.
 
 ### OBS, once
 
