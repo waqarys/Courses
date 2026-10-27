@@ -1,4 +1,4 @@
-# 00 | How to record
+# 00 | Teacher: how to record | 00
 ## Open this deck in Chrome
 @ OBS setup
 - File, Open, slides.html
@@ -34,172 +34,12 @@
 - Talk 8 to 12 minutes
 - End on Your turn
 - Do not show the textbook PDF
+- Kids start at 01. Setup is A, B, and C
 
-# 01 | Install Python on Windows
-## Install Python on Windows
-@ Lesson 01 · home laptop
-- Chromebooks skip to lesson 03
-- About 8 minutes
-- Two installs: Python, then Thonny
-
-## Download Python 3
-- python.org/downloads
-- Big Download button
-- Python 3, not Python 2
-- Run the installer
-
-## The tick people miss
-- Tick Add python.exe to PATH
-- Then Install Now
-- Click Yes if Windows asks
-- Disable path length limit if you see it
-
-## Prove it
-- Start, type cmd, Enter
-- python --version
-- You want Python 3.something
-- Not recognized? Install again and tick PATH
-
-## Install Thonny
-- thonny.org
-- Windows installer
-- Next, Next, Install
-- Open Thonny. The type is already big.
-
-## Switch
-@ Switch to Thonny
-```
-print("Hello from Windows")
-```
-
-## Your turn
-- Run that line
-- Save as hello_windows.py
-- Screenshot the version and the Hello line
-- Next: a Mac
-
-# 02 | Install Python on a Mac
-## Install Python on a Mac
-@ Lesson 02 · home Mac
-- Do not use the old hidden system Python
-- Thonny brings Python 3 with it
-- Chromebooks stay on lesson 03
-
-## Download
-- thonny.org
-- macOS download
-- Open the pkg
-- Continue, then Install
-
-## If the Mac says no
-- Right-click the installer
-- Open, then Open again
-- Or Privacy and Security
-- Then Open Anyway
-
-## First line
-@ Switch to Thonny
-```
-print("Hello from Mac")
-```
-
-## Optional check
-- Open Terminal only if you want to
-- python3 --version
-- Thonny does not need this
-
-## Your turn
-- Green Run
-- Save as hello_mac.py
-- School Mac blocked? Use lesson 03
-- Next: Chromebook
-
-# 03 | Python on a Chromebook
-## Python on a Chromebook
-@ Lesson 03 · this is the class path
-- No install
-- Chrome is enough
-- About 10 minutes
-
-## Leave Linux off
-- Schools often block Linux
-- Do not install Thonny here
-- Stay in the browser
-- Same Python language
-
-## Open Colab
-- colab.research.google.com
-- Sign in
-- File, New notebook
-- School account blocked? Use a family Gmail
-
-## Run a cell
-@ Switch to Chrome
-```
-print("Hello, Chromebook")
-```
-- Shift+Enter
-- The answer sits under the cell
-
-## Save
-- File, Save a copy in Drive
-- Name the notebook
-- Later cells see a name only if you ran the earlier cell
-
-## If Colab is blocked
-- trinket.io, then Python
-- or replit.com, Python, Run
-- Pick one
-- Use it all term
-
-## Your turn
-- Hello is on the screen
-- The notebook is saved
-- Next: what Python is
-
-# 04 | What is Python?
-## What is Python?
-@ Lesson 04
-- A language you type
-- The computer follows the lines
-- Short lines, on purpose
-
-## A little history, then we move
-- Guido van Rossum
-- Released in 1991
-- We care that a beginner can read it
-
-## People use it for
-- Games
-- Websites
-- Science
-- AI
-- You start with calculators and tiny games
-
-## Three words
-- IDE: the app you type in
-- Environment: Python plus that app
-- Code: the lines
-
-## Two windows
-- Home laptop: Thonny
-- Chromebook: Colab
-- Same language
-
-## AI can hint
-- A hint is not tested
-- You run the line
-- A crash means the hint was wrong
-- You are the tester
-
-## Your turn
-- Tell someone one place Python is used
-- Your own words
-- Next: Hello, World
-
-# 05 | Hello, World
+# 01 | Hello, World | 05
 ## Hello, World
-@ Lesson 05 · first program
+@ Lesson 01 · start here
+- Python is not open? Stop. Use the last videos, then come back.
 - One line
 - print sends words to the screen
 - Quotes hold the words
@@ -238,11 +78,51 @@ print("I am learning Python.")
 ## Your turn
 - Change line 2 to your first name
 - Run it
+- Next: what Python is
+
+# 02 | What is Python? | 04
+## What is Python?
+@ Lesson 02
+- A language you type
+- The computer follows the lines
+- Short lines, on purpose
+
+## A little history, then we move
+- Guido van Rossum
+- Released in 1991
+- We care that a beginner can read it
+
+## People use it for
+- Games
+- Websites
+- Science
+- AI
+- You start with calculators and tiny games
+
+## Three words
+- IDE: the app you type in
+- Environment: Python plus that app
+- Code: the lines
+
+## Two windows
+- Home laptop: Thonny
+- Chromebook: Colab
+- Same language
+
+## AI can hint
+- A hint is not tested
+- You run the line
+- A crash means the hint was wrong
+- You are the tester
+
+## Your turn
+- Tell someone one place Python is used
+- Your own words
 - Next: labeled boxes
 
-# 06 | Variables
+# 03 | Variables | 06
 ## Variables are labeled boxes
-@ Lesson 06
+@ Lesson 03
 - A name stuck on a box
 - The box holds a value
 - You can change what is inside
@@ -292,9 +172,9 @@ player-score = 50
 - Set it to 2 and print again
 - Next: good names
 
-# 07 | Good names
+# 04 | Good names | 07
 ## Names that make sense
-@ Lesson 07
+@ Lesson 04
 - Letters, digits, underscore
 - Cannot start with a digit
 - No spaces
@@ -352,9 +232,9 @@ count_lives = 3
 - Flour-Amount becomes flour_amount
 - IsVegetarian becomes is_vegetarian
 
-# 08 | Strings and input
+# 05 | Strings and input | 08
 ## Text is a string
-@ Lesson 08
+@ Lesson 05
 - One letter, many letters, or empty
 - Quotes: "Alex" or 'Alex'
 - An apostrophe needs double quotes
@@ -395,9 +275,9 @@ print("Hello, " name)
 - Print I like, then their answer
 - Next: numbers
 
-# 09 | Numbers
+# 06 | Numbers | 09
 ## int and float
-@ Lesson 09
+@ Lesson 06
 - int: whole numbers. 3, 0, -1
 - float: a decimal. 7.5
 - 3.0 is a float
@@ -456,9 +336,9 @@ print(int("ten"))
 - Print the sum
 - Next: time
 
-# 10 | Time as a number
+# 07 | Time as a number | 10
 ## A giant stopwatch
-@ Lesson 10
+@ Lesson 07
 - A timestamp counts seconds
 - Start line: 1 January 1970, UTC
 - ctime turns that into words
@@ -487,9 +367,9 @@ print(years)
 - Print it
 - Next: True and False
 
-# 11 | True and False
+# 08 | True and False | 11
 ## Only two values
-@ Lesson 11
+@ Lesson 08
 - True
 - False
 - Capital T and F
@@ -542,9 +422,9 @@ print(lives > 0)
 ```
 - Next: maths
 
-# 12 | Maths
+# 09 | Maths | 12
 ## The signs
-@ Lesson 12
+@ Lesson 09
 - + - * /
 - // integer division
 - % remainder
@@ -601,9 +481,9 @@ print("2" + 3)
 - 20 stars
 - Next: comments
 
-# 13 | Comments
+# 10 | Comments | 13
 ## Notes Python skips
-@ Lesson 13
+@ Lesson 10
 - # one line
 - A comment must earn its place
 - Relevant
@@ -638,9 +518,9 @@ def player_login():
 - Above a score line
 - Next: pancakes
 
-# 14 | Pancake calculator
+# 11 | Pancake calculator | 14
 ## Scale a recipe
-@ Lesson 14 · first project
+@ Lesson 11 · first project
 - Recipe serves 4
 - Cook asks for 6
 - Constants shout
@@ -681,9 +561,9 @@ desired_servings = int(input("How many servings? "))
 - Print it under the recipe
 - Next: a 5-question check-in
 
-# 15 | Wellbeing check-in
+# 12 | Wellbeing check-in | 15
 ## A habit check-in
-@ Lesson 15
+@ Lesson 12
 - Not a medical test
 - Five scores, 1 to 5
 - Add them
@@ -721,9 +601,9 @@ print(name + " score:", round(score, 1), "/ 5")
 - if is lesson 22 if you want to wait
 - Next: lists
 
-# 16 | Lists
+# 13 | Lists | 16
 ## One variable, many boxes
-@ Lesson 16
+@ Lesson 13
 - A row of lockers
 - First locker is index 0
 - Last index is length minus 1
@@ -763,9 +643,9 @@ print(scores[5])
 - Print the last
 - Next: change the list
 
-# 17 | List methods and for
+# 14 | List methods and for | 17
 ## Four moves
-@ Lesson 17
+@ Lesson 14
 - append: add at the end
 - insert(place, item)
 - remove(value): first match
@@ -799,9 +679,9 @@ for item in inventory:
 - Print what is left
 - Next: slices and grids
 
-# 18 | Slices and grids
+# 15 | Slices and grids | 18
 ## Negative index
-@ Lesson 18
+@ Lesson 15
 - -1 is the last box
 - -2 is the one before that
 
@@ -839,9 +719,9 @@ print(matrix)
 - matrix[1][2]
 - Next: dictionaries
 
-# 19 | Dictionaries
+# 16 | Dictionaries | 19
 ## Labels, not positions
-@ Lesson 19
+@ Lesson 16
 - Curly braces
 - "key": value
 - Commas between pairs
@@ -878,9 +758,9 @@ print(student)
 - Print the name
 - Next: records, tuples, sets
 
-# 20 | Records, tuples, sets
+# 17 | Records, tuples, sets | 20
 ## A record is a form
-@ Lesson 20
+@ Lesson 17
 - Fields can be different types
 - dataclass is one clean way
 
@@ -937,9 +817,9 @@ print("Total", total)
 - Run it again
 - Next: sequence
 
-# 21 | Sequence
+# 18 | Sequence | 21
 ## Three kinds of flow
-@ Lesson 21
+@ Lesson 18
 - Sequence: straight ahead
 - Selection: a choice
 - Iteration: again
@@ -977,9 +857,9 @@ print("Score starts at", score)
 - Three lines is enough
 - Next: if
 
-# 22 | if, else, elif
+# 19 | if, else, elif | 22
 ## if
-@ Lesson 22
+@ Lesson 19
 - Colon at the end
 - Indent the lines that depend on it
 - They run only when the test is True
@@ -1042,9 +922,9 @@ if can_unlock:
 - Else: Finish homework first
 - Next: a question inside a question
 
-# 23 | Nested if and match
+# 20 | Nested if and match | 23
 ## A second question
-@ Lesson 23
+@ Lesson 20
 - Ask it only if the first answer was yes
 - Indent again
 
@@ -1093,9 +973,9 @@ match player_action:
 - Run it
 - Next: while
 
-# 24 | while
+# 21 | while | 24
 ## Again, while this is true
-@ Lesson 24
+@ Lesson 21
 - Test before each lap
 - Something inside must change
 - Or it never ends
@@ -1161,9 +1041,9 @@ print("Game over")
 - Use while
 - Next: for
 
-# 25 | for
+# 22 | for | 25
 ## A known number of laps
-@ Lesson 25
+@ Lesson 22
 - for: you know the collection, or the count
 - while: you are waiting for something
 
@@ -1218,9 +1098,9 @@ print("Go")
 - Print 1. wake up using enumerate
 - Next: the game
 
-# 26 | Guess the Number
+# 23 | Guess the Number | 26
 ## The capstone
-@ Lesson 26 · about 15 minutes
+@ Lesson 23 · about 15 minutes
 - Secret number, 1 to 100
 - Seven tries
 - Too high, too low, or not a number
@@ -1284,3 +1164,125 @@ if not won:
 - Or the range to 1–20
 - You now have the toolbox
 - The course stops here
+# A | Only if Python will not open on Windows | 01
+## Install Python on Windows
+@ Setup · only if Python will not open
+- For a Windows laptop at home
+- Already in Thonny or Colab? Go back to Hello
+- Two installs: Python, then Thonny
+
+## Download Python 3
+- python.org/downloads
+- Big Download button
+- Python 3, not Python 2
+- Run the installer
+
+## The tick people miss
+- Tick Add python.exe to PATH
+- Then Install Now
+- Click Yes if Windows asks
+- Disable path length limit if you see it
+
+## Prove it
+- Start, type cmd, Enter
+- python --version
+- You want Python 3.something
+- Not recognized? Install again and tick PATH
+
+## Install Thonny
+- thonny.org
+- Windows installer
+- Next, Next, Install
+- Open Thonny. The type is already big.
+
+## Switch
+@ Switch to Thonny
+```
+print("Hello from Windows")
+```
+
+## Your turn
+- Run that line
+- Save as hello_windows.py
+- Screenshot the version and the Hello line
+- Next: back to Hello, unless the computer is a Mac
+
+# B | Only if Python will not open on a Mac | 02
+## Install Python on a Mac
+@ Setup · only if Python will not open
+- For a Mac at home
+- Already in Thonny or Colab? Go back to Hello
+- Do not use the old hidden system Python
+
+## Download
+- thonny.org
+- macOS download
+- Open the pkg
+- Continue, then Install
+
+## If the Mac says no
+- Right-click the installer
+- Open, then Open again
+- Or Privacy and Security
+- Then Open Anyway
+
+## First line
+@ Switch to Thonny
+```
+print("Hello from Mac")
+```
+
+## Optional check
+- Open Terminal only if you want to
+- python3 --version
+- Thonny does not need this
+
+## Your turn
+- Green Run
+- Save as hello_mac.py
+- School Mac blocked? Use the Chromebook setup
+- Next: back to Hello, unless you are on a Chromebook
+
+# C | Chromebook, no install | 03
+## Python on a Chromebook
+@ Setup · class path, no install
+- Only if you are on a Chromebook
+- Already in Colab? Go back to Hello
+- No install. Chrome is enough
+
+## Leave Linux off
+- Schools often block Linux
+- Do not install Thonny here
+- Stay in the browser
+- Same Python language
+
+## Open Colab
+- colab.research.google.com
+- Sign in
+- File, New notebook
+- School account blocked? Use a family Gmail
+
+## Run a cell
+@ Switch to Chrome
+```
+print("Hello, Chromebook")
+```
+- Shift+Enter
+- The answer sits under the cell
+
+## Save
+- File, Save a copy in Drive
+- Name the notebook
+- Later cells see a name only if you ran the earlier cell
+
+## If Colab is blocked
+- trinket.io, then Python
+- or replit.com, Python, Run
+- Pick one
+- Use it all term
+
+## Your turn
+- Hello is on the screen
+- The notebook is saved
+- Next: back to Hello
+

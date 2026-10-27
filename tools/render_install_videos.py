@@ -94,8 +94,11 @@ def parse_lessons(text: str) -> list[dict]:
             continue
         if line.startswith("# "):
             flush_lesson()
-            num, _, title = line[2:].partition("|")
-            lesson = {"id": num.strip(), "title": title.strip(), "slides": []}
+            bits = [part.strip() for part in line[2:].split("|")]
+            num = bits[0]
+            title = bits[1] if len(bits) > 1 else ""
+            art = bits[2] if len(bits) > 2 else num
+            lesson = {"id": num, "title": title, "art": art, "slides": []}
             slide = None
         elif line.startswith("## "):
             flush_slide()
@@ -198,9 +201,9 @@ def encode(frames: list[Path], mp4: Path, cue: Path, slides: list[dict]) -> None
 
 def main() -> None:
     wanted = {"01", "02", "03"}
-    lessons = [ls for ls in parse_lessons(SLIDES.read_text(encoding="utf-8")) if ls["id"] in wanted]
+    lessons = [ls for ls in parse_lessons(SLIDES.read_text(encoding="utf-8")) if ls.get("art", ls["id"]) in wanted]
     if len(lessons) != 3:
-        raise SystemExit(f"expected lessons 01-03, got {[ls['id'] for ls in lessons]}")
+        raise SystemExit(f"expected setup art 01-03, got {[(ls['id'], ls.get('art')) for ls in lessons]}")
     OUT.mkdir(parents=True, exist_ok=True)
     FRAMES.mkdir(parents=True, exist_ok=True)
     names = {
@@ -211,11 +214,12 @@ def main() -> None:
     for lesson in lessons:
         frames = []
         total = len(lesson["slides"])
+        art = lesson.get("art", lesson["id"])
         for i, slide in enumerate(lesson["slides"], start=1):
-            frame = FRAMES / f"{lesson['id']}-{i:02d}.png"
+            frame = FRAMES / f"{art}-{i:02d}.png"
             render_slide(slide, lesson, i, total, frame)
             frames.append(frame)
-        mp4 = OUT / names[lesson["id"]]
+        mp4 = OUT / names[art]
         encode(frames, mp4, OUT / f"{mp4.stem}.cue.txt", lesson["slides"])
         print(mp4.name, mp4.stat().st_size)
 

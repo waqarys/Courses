@@ -39,103 +39,46 @@ Thonny on your laptop (the thing students see you use)
 
 ## Playlist (record in this order)
 
+Record 01 first. A child who already has Thonny or Colab never watches A, B, or C. Those three sit at the end. You reorder the YouTube playlist yourself. Do not rename the video files.
+
 | # | Video | Book |
 |---|---|---|
-| 01 | Install Python on Windows | setup |
-| 02 | Install Python on a Mac | setup |
-| 03 | Python on a Chromebook | setup |
-| 04 | What is Python? | 1.1–1.3 |
-| 05 | Hello, World | 1.4, 1.8, 1.9 |
-| 06 | Variables are labeled boxes | 2.1.1–2.1.2 |
-| 07 | Names that make sense | 2.1.3–2.1.8 |
-| 08 | Strings and input | 2.2.1 |
-| 09 | Numbers, and the input trap | 2.2.2 |
-| 10 | Time as a number | 2.2.3 |
-| 11 | True, False, and comparisons | 2.2.4–2.2.5 |
-| 12 | Maths Python understands | 2.3 |
-| 13 | Comments that help | 2.4 |
-| 14 | Project: pancake calculator | 2.7 |
-| 15 | Project: wellbeing check-in | 2.8 |
-| 16 | Lists, not 30 variables | 3.1–3.1.7 |
-| 17 | Add, remove, loop a list | 3.1.8–3.1.9 |
-| 18 | Slices and grids | 3.1.10–3.1.11 |
-| 19 | Dictionaries | 3.2 |
-| 20 | Records, tuples, sets | 3.3–3.6 |
-| 21 | One line after another | 4.1 |
-| 22 | if, else, elif | 4.2–4.2.5 |
-| 23 | Decisions inside decisions | 4.2.6, 4.3 |
-| 24 | while: again until… | 4.4.1 |
-| 25 | for: a known number of times | 4.4.2–4.4.4 |
-| 26 | Capstone: Guess the Number | 4.5 |
+| 01 | Hello, World | 1.4, 1.8, 1.9 |
+| 02 | What is Python? | 1.1–1.3 |
+| 03 | Variables are labeled boxes | 2.1.1–2.1.2 |
+| 04 | Names that make sense | 2.1.3–2.1.8 |
+| 05 | Strings and input | 2.2.1 |
+| 06 | Numbers, and the input trap | 2.2.2 |
+| 07 | Time as a number | 2.2.3 |
+| 08 | True, False, and comparisons | 2.2.4–2.2.5 |
+| 09 | Maths Python understands | 2.3 |
+| 10 | Comments that help | 2.4 |
+| 11 | Project: pancake calculator | 2.7 |
+| 12 | Project: wellbeing check-in | 2.8 |
+| 13 | Lists, not 30 variables | 3.1–3.1.7 |
+| 14 | Add, remove, loop a list | 3.1.8–3.1.9 |
+| 15 | Slices and grids | 3.1.10–3.1.11 |
+| 16 | Dictionaries | 3.2 |
+| 17 | Records, tuples, sets | 3.3–3.6 |
+| 18 | One line after another | 4.1 |
+| 19 | if, else, elif | 4.2–4.2.5 |
+| 20 | Decisions inside decisions | 4.2.6, 4.3 |
+| 21 | while: again until… | 4.4.1 |
+| 22 | for: a known number of times | 4.4.2–4.4.4 |
+| 23 | Capstone: Guess the Number | 4.5 |
+| A | Only if Python will not open on Windows | setup |
+| B | Only if Python will not open on a Mac | setup |
+| C | Chromebook, no install | setup |
 
 ---
 
-## 01 — Install Python on Windows
-
-Length: 8 min. File later: none. Scene: Slides the whole time, then 60 seconds of Thonny at the end.
-
-SAY, slide by slide
-
-1. Title. “This is for a Windows laptop at home. School Chromebooks skip to video 3.”
-2. You need a browser and ten quiet minutes. You will install two things: Python, and Thonny, the big-text editor we use on camera.
-3. Go to https://www.python.org/downloads/. Click the yellow Download Python button. You want Python 3, not 2.
-4. Run the installer. On the first screen, tick **Add python.exe to PATH**. Then **Install Now**. If Windows asks for permission, click Yes.
-5. When it says Setup was successful, click **Disable path length limit** if you see it, then Close.
-6. Click Start, type `cmd`, open Command Prompt. Type `python --version` and press Enter. You should see Python 3.something. If you see “not recognized”, the PATH tick was missed. Uninstall, run the installer again, tick the box.
-7. Go to https://thonny.org. Download the Windows installer. Next, Next, Install. Open Thonny. Font is already large.
-8. SWITCH to Code. In Thonny type `print("Hello from Windows")` and press the green Run. Save as `hello_windows.py` on the Desktop when it asks.
-9. Your turn: install it, run that one line, screenshot the version and the Hello line.
-
-Deliberate mistake, on camera: type `print("Hello from Windows)` with the closing quote missing. Read the red text in plain words: “Python reached the end of the line still inside the quote.” Add the quote. Run again.
-
-## 02 — Install Python on a Mac
-
-Length: 8 min. Slides, then Thonny.
-
-1. Title. “Mac at home. Chromebooks, stay on video 3.”
-2. Do not use the old Python that some Macs hide in the system. We install our own.
-3. Easiest path: https://thonny.org → macOS download. Open the `.pkg`. Continue, Install. If macOS says it cannot be opened, right-click the installer → Open → Open.
-4. Open Thonny from Applications. If Gatekeeper complains, System Settings → Privacy & Security → Open Anyway.
-5. Check the language: in Thonny, Tools → Manage packages is optional. Bottom-right or the shell shows Python 3.
-6. Terminal check, only if you want it: open Terminal, type `python3 --version`. Thonny does not need this to run.
-7. SWITCH. Type `print("Hello from Mac")`. Green Run. Save as `hello_mac.py`.
-8. Same missing-quote mistake as Windows. Fix it.
-9. Your turn: Hello line runs. If the school Mac blocks installs, use the Chromebook browser path in the next video. It also works on a Mac.
-
-## 03 — Python on a Chromebook
-
-Length: 10 min. This is the path students actually use. Record it in Chrome, not Thonny. Scene: Slides, then a browser window (name the scene `Browser`).
-
-1. Title. “No install. A Chromebook already has a browser. That is enough.”
-2. School laptops often block Linux and app installs. We will not turn Linux on.
-3. Open Chrome. Go to https://colab.research.google.com. Sign in. If the school Google account is blocked, try a family Gmail, or go to the fallback on the next slide.
-4. File → New notebook. Click the empty cell. Type `print("Hello, Chromebook")`. Press Shift+Enter. The answer appears under the cell.
-5. A cell is one page. The next cell can see variables only if you ran the earlier cell. File → Save a copy in Drive.
-6. Numbers come out of `input()` as text. We meet that properly in video 9. Today, only Hello.
-7. Fallback if Colab is blocked: https://trinket.io → Python. Or https://replit.com → Python repl → Run. Pick one and use it all term.
-8. Your turn: Hello runs, notebook has a name, it is saved.
-
-Do not teach Crostini unless a teacher has already turned Linux on for the class.
-
-## 04 — What is Python?
-
-Book 1.1–1.6. Length: 8 min. Slides only. No install talk.
-
-1. Title. Python is a language you type so the computer can follow you.
-2. Made by Guido van Rossum, released in 1991. We care about one thing: the lines are short and readable.
-3. People use it for games, websites, science, and AI. You will use it for tiny games and calculators first.
-4. Three words: IDE (the app you type in), environment (Python plus that app), code (the lines).
-5. On this course, home laptops use Thonny. Chromebooks use Colab. Same language. Different window.
-6. AI can suggest a line. You still run it. If it crashes, the AI was wrong. You are the tester.
-7. Your turn: tell someone one place Python is used, in your own words. Next: Hello, World.
-
-## 05 — Hello, World
+## 01 — Hello, World
 
 Book 1.4, 1.8, 1.9. Length: 9 min. File: `hello_world.py`.
 
 Slides
 
-1. Title. First program. One line.
+1. Title. First program. One line. If Python is not open, stop and use the last videos, then come back.
 2. `print` sends words to the screen. The words sit inside quotes. The line starts with `#` if it is a note, not code.
 3. Smoke test: like turning a car on, not driving it across the city. Does it start? Does it print exactly `Hello, World!`?
 4. SWITCH. Type:
@@ -154,11 +97,23 @@ print("Hello, World!")
 print("I am learning Python.")
 ```
 
-Say: each line finishes before the next one starts. That is sequence. We name it properly in video 21.
+Say: each line finishes before the next one starts. That is sequence. We name it properly in video 18.
 7. The wellbeing game is where this course ends up: a small check-in a student can run. We will not build it today. We need variables first.
-8. Your turn: change the second print to your first name. Run it. Next: variables.
+8. Your turn: change the second print to your first name. Run it. Next: what Python is.
 
-## 06 — Variables are labeled boxes
+## 02 — What is Python?
+
+Book 1.1–1.6. Length: 8 min. Slides only. No install talk.
+
+1. Title. Python is a language you type so the computer can follow you.
+2. Made by Guido van Rossum, released in 1991. We care about one thing: the lines are short and readable.
+3. People use it for games, websites, science, and AI. You will use it for tiny games and calculators first.
+4. Three words: IDE (the app you type in), environment (Python plus that app), code (the lines).
+5. On this course, home laptops use Thonny. Chromebooks use Colab. Same language. Different window.
+6. AI can suggest a line. You still run it. If it crashes, the AI was wrong. You are the tester.
+7. Your turn: tell someone one place Python is used, in your own words. Next: labeled boxes.
+
+## 03 — Variables are labeled boxes
 
 Book 2.1.1–2.1.2. Length: 10 min. File: `variables.py`.
 
@@ -190,7 +145,7 @@ Say: Python will let you change `PI`. Do not.
 6. Mistake: `player-score = 50`. The hyphen is minus, not a name. Use `player_score`.
 7. Your turn: make `lives = 3`, print it, then set it to 2 and print again. Next: good names.
 
-## 07 — Names that make sense
+## 04 — Names that make sense
 
 Book 2.1.3–2.1.8. Length: 10 min. File: `names.py`.
 
@@ -220,7 +175,7 @@ count_lives = 3
 8. Quick quiz, answers after a pause: `int_user_number` is Hungarian. `CalculateArea` is PascalCase. `MAX_LIMIT` is a constant. `tempVal` is camelCase.
 9. Your turn: rewrite `Eggs Count`, `sugarSpoons`, `Flour-Amount`, `IsVegetarian` as `eggs_count`, `sugar_spoons`, `flour_amount`, `is_vegetarian`. Next: text.
 
-## 08 — Strings and input
+## 05 — Strings and input
 
 Book 2.2.1. Length: 11 min. File: `strings_input.py`.
 
@@ -251,7 +206,7 @@ Click into the shell and type a name, then an age. Point at `<class 'str'>`. “
 7. Mistake: `print("Hello, " name)` without a comma. Add the comma.
 8. Your turn: ask for a favourite game and print `I like` plus their answer. Next: numbers.
 
-## 09 — Numbers, and the input trap
+## 06 — Numbers, and the input trap
 
 Book 2.2.2. Length: 12 min. File: `numbers.py`.
 
@@ -307,7 +262,7 @@ print(age + 1)
 6. Mistake: `int("ten")`. Read the error: the word ten is not a number. Type `10` instead.
 7. Your turn: ask for two whole numbers, add them, print the sum. Next: time.
 
-## 10 — Time as a number
+## 07 — Time as a number
 
 Book 2.2.3. Length: 8 min. File: `time_stamp.py`. Keep it light.
 
@@ -333,7 +288,7 @@ print(years_since_1970)
 4. Check: this year minus 1970 should be close to that number. A fraction is fine. It is not January 1st anymore.
 5. Your turn: print how many seconds are in one day (`24 * 60 * 60`). Next: True and False.
 
-## 11 — True, False, and comparisons
+## 08 — True, False, and comparisons
 
 Book 2.2.4–2.2.5. Length: 12 min. File: `booleans.py`.
 
@@ -373,7 +328,7 @@ print(not is_game_over)
 7. Mistake: `if score = 80` comes later; today just show `score = 80` versus `score == 80` side by side on the slide, and type only the comparison.
 8. Your turn: `lives = 3`, print whether `lives > 0`. Next: maths.
 
-## 12 — Maths Python understands
+## 09 — Maths Python understands
 
 Book 2.3. Length: 11 min. File: `maths.py`.
 
@@ -409,7 +364,7 @@ Mistake: `print("2" + 3)`. Say: text plus a number is refused. `print(int("2") +
 7. `round(2.5)` is 2, not 3. Python sends a .5 to the even number. Mention it. Do not dwell. For school-style “.5 goes up”, add 0.5 and then chop, only if someone asks: `int(2.5 + 0.5)`.
 8. Your turn: header of 20 stars, your name, footer of 20 stars. Next: comments.
 
-## 13 — Comments that help
+## 10 — Comments that help
 
 Book 2.4. Length: 8 min. File: `comments.py`.
 
@@ -438,7 +393,7 @@ def player_login():
 5. Mistake to discuss, not a crash: `# This line uses a variable` above `score = 50`. That comment adds nothing. Delete it.
 6. Your turn: put one useful comment above a score line. Next: pancakes.
 
-## 14 — Project: pancake calculator
+## 11 — Project: pancake calculator
 
 Book 2.7. Length: 12 min. File: `pancake_recipe.py`. This is the first project they can finish.
 
@@ -492,7 +447,7 @@ print("*" * 20)
 
 6. Your turn: change the price, or add a topping string and print it. Next: a 5-question check-in.
 
-## 15 — Project: wellbeing check-in
+## 12 — Project: wellbeing check-in
 
 Book 2.8. Length: 12 min. File: `wellbeing.py`.
 
@@ -529,9 +484,9 @@ print("Feel positive:", "*" * feel_positive)
 ```
 
 5. Mistake: forget `int(...)` around one input, then add them. Show the crash: you cannot add text. Wrap `int`.
-6. Your turn: add a sentence. If `score >= 4`, print `Strong day`. Else print `Be kind to yourself today`. If `if` is new, peek at video 22, or leave it for later. Next: lists.
+6. Your turn: add a sentence. If `score >= 4`, print `Strong day`. Else print `Be kind to yourself today`. If `if` is new, peek at video 19, or leave it for later. Next: lists.
 
-## 16 — Lists, not 30 variables
+## 13 — Lists, not 30 variables
 
 Book 3.1–3.1.7. Length: 11 min. File: `lists.py`.
 
@@ -552,7 +507,7 @@ print(scores)
 5. Mistake: `print(scores[5])`. There is no box 5. Boxes are 0, 1, 2, 3, 4. Read `IndexError` as “that locker number does not exist.”
 6. Your turn: a list of 4 favourite foods. Print the first and the last. Next: change the list.
 
-## 17 — Add, remove, loop a list
+## 14 — Add, remove, loop a list
 
 Book 3.1.8–3.1.9. Length: 12 min. File: `inventory.py`.
 
@@ -571,7 +526,7 @@ print("Count:", len(inventory))
 ```
 
 Walk the list after each line if you can. Append, then insert, then remove, then pop.
-3. A `for` loop visits every item. We go deeper in video 25. Today, just visit.
+3. A `for` loop visits every item. We go deeper in video 22. Today, just visit.
 
 ```python
 for item in inventory:
@@ -581,7 +536,7 @@ for item in inventory:
 `range(4)` is 0, 1, 2, 3. Prefer `for item in inventory` when you do not need the index.
 4. Your turn: start with three school items, append one, pop one, print what is left. Next: slices.
 
-## 18 — Slices and grids
+## 15 — Slices and grids
 
 Book 3.1.10–3.1.11. Length: 10 min. File: `grids.py`.
 
@@ -613,7 +568,7 @@ print(matrix)
 4. Add a row with `append`. Delete a row with `del matrix[0]`.
 5. Your turn: print the 6. It is row 1, column 2: `matrix[1][2]` before you change anything. Next: dictionaries.
 
-## 19 — Dictionaries
+## 16 — Dictionaries
 
 Book 3.2. Length: 10 min. File: `dictionary.py`.
 
@@ -642,7 +597,7 @@ print(student)
 4. Keys are unique. Values can repeat. A missing key crashes: `student["hobby"]`. Say: ask with a key you know exists.
 5. Your turn: a dictionary for one game character with `name`, `level`, and `health`. Print the name. Next: three smaller types.
 
-## 20 — Records, tuples, sets
+## 17 — Records, tuples, sets
 
 Book 3.3–3.6. Length: 12 min. File: `records.py`. Three ideas, one video. Do not rush the set.
 
@@ -700,7 +655,7 @@ print("Total:", total)
 
 5. Your turn: add one task and run it again. Next: sequence.
 
-## 21 — One line after another
+## 18 — One line after another
 
 Book 4.1. Length: 8 min. File: `sequence.py`.
 
@@ -719,7 +674,7 @@ print("Score starts at", score)
 5. Point at the order. If you print `score` before `score = 0`, it crashes. Do that mistake. Move the line back.
 6. Your turn: three lines that ask a colour and print it back. Next: choices.
 
-## 22 — if, else, elif
+## 19 — if, else, elif
 
 Book 4.2–4.2.5. Length: 14 min. File: `choices.py`. Long on purpose. Cut the truth-table repeat if you run over.
 
@@ -780,7 +735,7 @@ else:
 6. Mistake: `else player_stamina > 0:` — else must not have a condition. And `Else` with a capital is wrong.
 7. Your turn: homework_done = True. If it is True, print `Movie time`. Else print `Finish homework first`. Next: nested choices.
 
-## 23 — Decisions inside decisions
+## 20 — Decisions inside decisions
 
 Book 4.2.6 and 4.3. Length: 12 min. File: `nested.py`.
 
@@ -825,7 +780,7 @@ match player_action:
 4. Say when to pick which: many ranges of one number → `if` / `elif`. One exact word, many arms → `match`. Deep “if this, then if that” is fine for two levels. Past that, `match` or a flatter `elif` is kinder.
 5. Your turn: set `player_action` to `"RUN"` and run. Next: while.
 
-## 24 — while: again until…
+## 21 — while: again until…
 
 Book 4.4.1. Length: 12 min. File: `while_loop.py`.
 
@@ -881,7 +836,7 @@ print("Game over")
 `randint(10, 20)` is a random whole number from 10 to 20, including both ends.
 7. Your turn: print 3, 2, 1, Go with a while loop. Next: for.
 
-## 25 — for: a known number of times
+## 22 — for: a known number of times
 
 Book 4.4.2–4.4.4. Length: 12 min. File: `for_loop.py`.
 
@@ -929,7 +884,7 @@ for challenge in challenges:
 8. Countdown with `for`, because we know the laps: `for n in range(10, 0, -1): print(n)`. Then `print("Go")`.
 9. Your turn: a list of three tasks, printed as `1. wake up` using `enumerate`. Next: the game.
 
-## 26 — Capstone: Guess the Number
+## 23 — Capstone: Guess the Number
 
 Book 4.5. Length: 15 min. File: `guess_the_number.py`. This is the episode people remember. Type it in pieces. Run after each piece.
 
@@ -1028,13 +983,60 @@ Use this cleaner version on camera. It is the one to publish.
 5. Play it once, fast, with a real guess. Then show one bad input: `ten`.
 6. Chromebook: paste the same file into one Colab cell and run it. Input boxes appear under the cell.
 7. Your turn: change the limit to 5, or the range to 1–20. Next: you have the whole toolbox. Build a bigger check-in or a bigger game if you want. The course stops here.
+## A — Only if Python will not open on Windows
+
+Length: 8 min. File later: none. Scene: Slides the whole time, then 60 seconds of Thonny at the end.
+
+SAY, slide by slide
+
+1. Title. “Only if Python will not open on a Windows laptop. If Thonny or Colab is already open, go back to Hello.”
+2. You need a browser and ten quiet minutes. You will install two things: Python, and Thonny, the big-text editor we use on camera.
+3. Go to https://www.python.org/downloads/. Click the yellow Download Python button. You want Python 3, not 2.
+4. Run the installer. On the first screen, tick **Add python.exe to PATH**. Then **Install Now**. If Windows asks for permission, click Yes.
+5. When it says Setup was successful, click **Disable path length limit** if you see it, then Close.
+6. Click Start, type `cmd`, open Command Prompt. Type `python --version` and press Enter. You should see Python 3.something. If you see “not recognized”, the PATH tick was missed. Uninstall, run the installer again, tick the box.
+7. Go to https://thonny.org. Download the Windows installer. Next, Next, Install. Open Thonny. Font is already large.
+8. SWITCH to Code. In Thonny type `print("Hello from Windows")` and press the green Run. Save as `hello_windows.py` on the Desktop when it asks.
+9. Your turn: install it, run that one line, screenshot the version and the Hello line.
+
+Deliberate mistake, on camera: type `print("Hello from Windows)` with the closing quote missing. Read the red text in plain words: “Python reached the end of the line still inside the quote.” Add the quote. Run again.
+
+## B — Only if Python will not open on a Mac
+
+Length: 8 min. Slides, then Thonny.
+
+1. Title. “Only if Python will not open on a Mac. If Thonny or Colab is already open, go back to Hello.”
+2. Do not use the old Python that some Macs hide in the system. We install our own.
+3. Easiest path: https://thonny.org → macOS download. Open the `.pkg`. Continue, Install. If macOS says it cannot be opened, right-click the installer → Open → Open.
+4. Open Thonny from Applications. If Gatekeeper complains, System Settings → Privacy & Security → Open Anyway.
+5. Check the language: in Thonny, Tools → Manage packages is optional. Bottom-right or the shell shows Python 3.
+6. Terminal check, only if you want it: open Terminal, type `python3 --version`. Thonny does not need this to run.
+7. SWITCH. Type `print("Hello from Mac")`. Green Run. Save as `hello_mac.py`.
+8. Same missing-quote mistake as Windows. Fix it.
+9. Your turn: Hello line runs. If the school Mac blocks installs, use the Chromebook setup at the end. It also works on a Mac. Otherwise go back to Hello.
+
+## C — Chromebook, no install
+
+Length: 10 min. This is the path students actually use. Record it in Chrome, not Thonny. Scene: Slides, then a browser window (name the scene `Browser`).
+
+1. Title. “Only if you are on a Chromebook and Colab is not open yet. No install. A browser is enough. Everyone else, go back to Hello.”
+2. School laptops often block Linux and app installs. We will not turn Linux on.
+3. Open Chrome. Go to https://colab.research.google.com. Sign in. If the school Google account is blocked, try a family Gmail, or go to the fallback on the next slide.
+4. File → New notebook. Click the empty cell. Type `print("Hello, Chromebook")`. Press Shift+Enter. The answer appears under the cell.
+5. A cell is one page. The next cell can see variables only if you ran the earlier cell. File → Save a copy in Drive.
+6. Numbers come out of `input()` as text. We meet that properly in video 06. Today, only Hello.
+7. Fallback if Colab is blocked: https://trinket.io → Python. Or https://replit.com → Python repl → Run. Pick one and use it all term.
+8. Your turn: Hello runs, notebook has a name, it is saved.
+
+Do not teach Crostini unless a teacher has already turned Linux on for the class.
+
 
 ## After you stop recording
 
 - Trim only the “umm” and the flooded infinite loop, in CapCut, if you want. The Canva slides are already the edit.
 - Captions: CapCut auto-captions, then fix `print`, `elif`, `float`, `Thonny`, `Colab`.
-- Title the upload exactly as the table: `Python for Kids 05: Hello, World`.
-- Description: two sentences from the title slide, the Your turn task, and “Chromebook: use Google Colab. Windows or Mac at home: use Thonny.”
+- Title the upload exactly as the table. Example: `Python for Kids 01: Hello, World`. Put A, B, and C last in YouTube. Example: `Python for Kids A: Only if Python will not open on Windows`.
+- Description: two sentences from the title slide, and the Your turn task. On video 01 only, add one line: Python not open yet? The last three videos are Windows, Mac, and Chromebook.
 - Do not upload the textbook PDF.
 
 ## Code you must run before you trust a take

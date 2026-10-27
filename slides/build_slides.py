@@ -111,8 +111,11 @@ for raw in src.splitlines():
         continue
     if line.startswith("# "):
         flush_lesson()
-        num, _, title = line[2:].partition("|")
-        lesson = {"id": num.strip(), "title": title.strip(), "slides": []}
+        bits = [part.strip() for part in line[2:].split("|")]
+        num = bits[0]
+        title = bits[1] if len(bits) > 1 else ""
+        art = bits[2] if len(bits) > 2 else num
+        lesson = {"id": num, "title": title, "art": art, "slides": []}
         slide = None
         code = None
     elif line.startswith("## "):
@@ -131,26 +134,27 @@ for les in lessons:
         sl.pop("_in_code", None)
         sl.setdefault("code", "")
     opener = les["slides"][0]
-    if not opener["code"] and les["id"] in TEASERS:
-        opener["code"] = TEASERS[les["id"]]
+    art = les.get("art", les["id"])
+    if not opener["code"] and art in TEASERS:
+        opener["code"] = TEASERS[art]
         opener["teaser"] = True
 
 
-def file_hint(lesson_id, slide):
+def file_hint(art, slide):
     blob = f"{slide['title']} {slide['kicker']}".lower()
     if "mistake" in blob:
         return "Wrong on purpose. Type it, run it, then fix it."
-    if lesson_id == "03":
+    if art == "03":
         return "Type this in the Colab cell"
-    if lesson_id == "00":
+    if art == "00":
         return "Teacher notes"
     return "Type this in Thonny, then press Run"
 
 
-def code_block(lesson_id, slide):
+def code_block(art, slide):
     if not slide.get("code"):
         return ""
-    name = FILES.get(lesson_id, "notes.py")
+    name = FILES.get(art, "notes.py")
     lines = "".join(
         f"<span>{html.escape(line) if line else ' '}</span>"
         for line in slide["code"].split("\n")
@@ -159,16 +163,16 @@ def code_block(lesson_id, slide):
         '<div class="file">'
         '<div class="filebar"><span class="dots"><i></i><i></i><i></i></span>'
         f'<span class="fname">{html.escape(name)}</span>'
-        f'<span class="hint">{html.escape(file_hint(lesson_id, slide))}</span></div>'
+        f'<span class="hint">{html.escape(file_hint(art, slide))}</span></div>'
         f"<pre><code>{lines}</code></pre></div>"
     )
 
 
-def image_uri(lesson_id):
-    path = ROOT / "img" / f"{lesson_id}.jpg"
+def image_uri(art):
+    path = ROOT / "img" / f"{art}.jpg"
     if not path.exists():
         return ""
-    return f"img/{lesson_id}.jpg"
+    return f"img/{art}.jpg"
 
 
 parts = []
@@ -176,14 +180,15 @@ n = 0
 total = sum(len(les["slides"]) for les in lessons)
 code_slides = 0
 for les in lessons:
-    uri = image_uri(les["id"])
+    uri = image_uri(les.get("art", les["id"]))
     alt = html.escape(les["title"])
     picture = f'<img class="art" alt="{alt}" src="{uri}" />' if uri else ""
     for sl in les["slides"]:
-        kicker = html.escape(sl["kicker"] or f"Lesson {les['id']}")
+        default = "Setup" if les["id"] in {"A", "B", "C"} else f"Lesson {les['id']}"
+        kicker = html.escape(sl["kicker"] or default)
         title = html.escape(sl["title"])
         points = "\n".join(f"        <li>{html.escape(p)}</li>" for p in sl["points"])
-        block = code_block(les["id"], sl)
+        block = code_block(les.get("art", les["id"]), sl)
         if block:
             code_slides += 1
         active = " active" if n == 0 else ""

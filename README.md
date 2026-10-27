@@ -4,16 +4,18 @@ Branch: `python-introduction-to-kids`
 
 Silent pictures, speaker notes, and example programs for a first Python course. You add the voice in OBS. Nothing in the videos is narrated.
 
+Children start at Hello, World. Install videos stay in the repo, but they are last, and only if Python will not open. Reorder that way in YouTube Studio. The files keep their old names.
+
 ## What is here
 
 | Path | What it is |
 |---|---|
-| `slides/slides.html` | Kid deck. 27 lessons, 163 slides. Each lesson has a picture. Code sits in a file card you type in Thonny. |
+| `slides/slides.html` | Kid deck. Teacher notes, then lessons 01–23, then setup A, B, and C. Each lesson has a picture. Code sits in a file card you type in Thonny. |
 | `notes/RECORDING-NOTES.md` | What to say, what to type, and the deliberate mistake. |
 | `code/` | One program per lesson. Safe to run, except the game, which waits for a guess. |
-| `videos/01-install-windows.mp4` | Silent Windows lesson, 3 min 34 sec. New slides, the live Python and Thonny download pages, `python --version`, and Hello World in Thonny. |
-| `videos/02-install-mac.mp4` | Silent Mac install pictures. |
-| `videos/03-install-chromebook.mp4` | Silent Chromebook pictures. Colab in the browser. No Linux. |
+| `videos/01-install-windows.mp4` | Silent Windows setup, 3 min 34 sec. Last in the playlist, not first. |
+| `videos/02-install-mac.mp4` | Silent Mac setup. Last in the playlist. |
+| `videos/03-install-chromebook.mp4` | Silent Chromebook pictures. Colab in the browser. No Linux. Last in the playlist. |
 | `videos/01-install-windows-VOICE.md` | Read this aloud for the Windows video. The pictures change on these times. |
 
 ## Yes, you only add the voice
@@ -40,9 +42,9 @@ The Mac and Chromebook videos hold each slide for 28 seconds. The Windows video 
 4. Stop after the **Your turn** slide.
 5. You do not need a second take for the slides. Trim only if you paused too long.
 
-Lessons 04 onward have no video yet. Open the `slides` folder and double-click `slides.html` in Chrome. Keep the `img` folder beside it or the pictures disappear. There are 163 slides. Press the right arrow, or click the right edge. Press **L** for the lesson list, **F** for fullscreen. The code card is the file you type in Thonny. Window-capture that Chrome window. Switch to Thonny when the card says to type it. If a slide is tall, the page shrinks it so the last line stays on screen.
+Lessons 01 through 23 have no video yet. Open the `slides` folder and double-click `slides.html` in Chrome. Keep the `img` folder beside it or the pictures disappear. Press the right arrow, or click the right edge. Press **L** for the lesson list, **F** for fullscreen. Lesson 01 is Hello, World. Setup A, B, and C are at the bottom of that list. The code card is the file you type in Thonny. Window-capture that Chrome window. Switch to Thonny when the card says to type it. If a slide is tall, the page shrinks it so the last line stays on screen.
 
-Chromebook students never install Python. Lesson 03 sends them to Google Colab.
+Chromebook students never install Python. Setup C, at the end, sends them to Google Colab. A child who already has Thonny or Colab skips A, B, and C.
 
 ## Run an example
 
