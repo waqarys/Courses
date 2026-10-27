@@ -1,0 +1,481 @@
+{
+    "name": "Python-for-Kids",
+    "current_scene": "Teach",
+    "current_program_scene": "Teach",
+    "scene_order": [
+        {
+            "name": "Teach"
+        },
+        {
+            "name": "Slides"
+        }
+    ],
+    "sources": [
+        {
+            "name": "Teach",
+            "uuid": "de9c8025-fe85-4899-b17a-9e27703d42da",
+            "id": "scene",
+            "versioned_id": "scene",
+            "settings": {
+                "custom_size": false,
+                "id_counter": 3,
+                "items": [
+                    {
+                        "name": "Screen placeholder",
+                        "source_uuid": "278498ba-bd1d-4bce-8f26-6f0c1e24570e",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 1,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Snake",
+                        "source_uuid": "2ef6ac26-e768-49ba-8651-3eff799ee48c",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1614.8,
+                            "y": 452.0
+                        },
+                        "scale": {
+                            "x": 0.35,
+                            "y": 0.35
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 2,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Camera",
+                        "source_uuid": "b91b0357-ea60-469f-af4d-8812f02d8819",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1560.0,
+                            "y": 720.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 1,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 320.0,
+                            "y": 320.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 3,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
+            },
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {
+                "OBSBasic.SelectScene": [
+                    {
+                        "key": "OBS_KEY_F2"
+                    }
+                ],
+                "libobs.show_scene_item.1": [],
+                "libobs.hide_scene_item.1": [],
+                "libobs.show_scene_item.2": [],
+                "libobs.hide_scene_item.2": [],
+                "libobs.show_scene_item.3": [],
+                "libobs.hide_scene_item.3": []
+            },
+            "private_settings": {}
+        },
+        {
+            "name": "Slides",
+            "uuid": "5b982bbc-e3bf-4830-a979-13dba4909e61",
+            "id": "scene",
+            "versioned_id": "scene",
+            "settings": {
+                "custom_size": false,
+                "id_counter": 3,
+                "items": [
+                    {
+                        "name": "Slides placeholder",
+                        "source_uuid": "6006b17f-bc1c-4897-99a0-e5c1bab93aae",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 1,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Snake",
+                        "source_uuid": "2ef6ac26-e768-49ba-8651-3eff799ee48c",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1614.8,
+                            "y": 452.0
+                        },
+                        "scale": {
+                            "x": 0.35,
+                            "y": 0.35
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 2,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "Camera",
+                        "source_uuid": "b91b0357-ea60-469f-af4d-8812f02d8819",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1560.0,
+                            "y": 720.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 1,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 320.0,
+                            "y": 320.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 3,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
+            },
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {
+                "OBSBasic.SelectScene": [
+                    {
+                        "key": "OBS_KEY_F1"
+                    }
+                ],
+                "libobs.show_scene_item.1": [],
+                "libobs.hide_scene_item.1": [],
+                "libobs.show_scene_item.2": [],
+                "libobs.hide_scene_item.2": [],
+                "libobs.show_scene_item.3": [],
+                "libobs.hide_scene_item.3": []
+            },
+            "private_settings": {}
+        },
+        {
+            "name": "Screen placeholder",
+            "uuid": "278498ba-bd1d-4bce-8f26-6f0c1e24570e",
+            "id": "color_source",
+            "versioned_id": "color_source_v3",
+            "settings": {
+                "color": 4281540363,
+                "width": 1920,
+                "height": 1080
+            },
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {},
+            "private_settings": {}
+        },
+        {
+            "name": "Slides placeholder",
+            "uuid": "6006b17f-bc1c-4897-99a0-e5c1bab93aae",
+            "id": "color_source",
+            "versioned_id": "color_source_v3",
+            "settings": {
+                "color": 4281540363,
+                "width": 1920,
+                "height": 1080
+            },
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {},
+            "private_settings": {}
+        },
+        {
+            "name": "Snake",
+            "uuid": "2ef6ac26-e768-49ba-8651-3eff799ee48c",
+            "id": "image_source",
+            "versioned_id": "image_source",
+            "settings": {
+                "file": "C:/PythonForKidsStudio/obs/snake.png",
+                "unload": false,
+                "linear_alpha": false
+            },
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {},
+            "private_settings": {}
+        },
+        {
+            "name": "Camera",
+            "uuid": "b91b0357-ea60-469f-af4d-8812f02d8819",
+            "id": "dshow_input",
+            "versioned_id": "dshow_input",
+            "settings": {},
+            "enabled": true,
+            "flags": 0,
+            "mixers": 0,
+            "sync": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "muted": false,
+            "monitoring_type": 0,
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "prev_ver": 0,
+            "hotkeys": {},
+            "private_settings": {},
+            "filters": [
+                {
+                    "name": "Square",
+                    "uuid": "63017af3-332d-440f-a783-e30b7b30763f",
+                    "id": "crop_filter",
+                    "versioned_id": "crop_filter",
+                    "settings": {
+                        "relative": true,
+                        "left": 0,
+                        "top": 0,
+                        "right": 0,
+                        "bottom": 0
+                    },
+                    "enabled": true,
+                    "flags": 0,
+                    "mixers": 0,
+                    "sync": 0,
+                    "volume": 1.0,
+                    "balance": 0.5,
+                    "muted": false,
+                    "hotkeys": {},
+                    "private_settings": {},
+                    "prev_ver": 0,
+                    "deinterlace_mode": 0,
+                    "deinterlace_field_order": 0,
+                    "monitoring_type": 0
+                },
+                {
+                    "name": "Circle mask",
+                    "uuid": "5623a06f-66bb-43ba-8303-82aca17e055c",
+                    "id": "mask_filter",
+                    "versioned_id": "mask_filter_v2",
+                    "settings": {
+                        "type": "mask_alpha_filter.effect",
+                        "image_path": "C:/PythonForKidsStudio/obs/circle-mask-alpha.png",
+                        "stretch": true,
+                        "opacity": 1.0,
+                        "color": 16777215
+                    },
+                    "enabled": true,
+                    "flags": 0,
+                    "mixers": 0,
+                    "sync": 0,
+                    "volume": 1.0,
+                    "balance": 0.5,
+                    "muted": false,
+                    "hotkeys": {},
+                    "private_settings": {},
+                    "prev_ver": 0,
+                    "deinterlace_mode": 0,
+                    "deinterlace_field_order": 0,
+                    "monitoring_type": 0
+                }
+            ]
+        }
+    ],
+    "groups": [],
+    "current_transition": "Cut",
+    "transition_duration": 300,
+    "transitions": [],
+    "quick_transitions": [],
+    "saved_projectors": [],
+    "preview_locked": false,
+    "scaling_enabled": false,
+    "scaling_level": 0,
+    "scaling_off_x": 0.0,
+    "scaling_off_y": 0.0,
+    "modules": {}
+}

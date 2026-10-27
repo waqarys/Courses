@@ -1,0 +1,76 @@
+An avatar may speak only the 8 second open and the last line, "your turn."
+The typing stays a real Thonny capture.
+The avatar must not teach the code.
+
+PYTHON FOR KIDS STUDIO PACK - IMPORT
+====================================
+
+What is in this pack
+- obs/Python-for-Kids.json     OBS scene collection for OBS Studio on Windows (scenes: Teach, Slides)
+- obs/snake.png                the mint snake (transparent PNG)
+- obs/circle-mask-alpha.png    the circle mask for the camera (the only mask)
+- capcut/snake.png             the same snake, identical file
+- capcut/00-hello-open-demo.mp4  the 8 second cartoon open
+- IMPORT.txt                   this file
+
+The cartoon classroom is not an OBS scene. It is only the 8 second open in capcut/00-hello-open-demo.mp4.
+
+
+OBS (Windows)
+-------------
+1. Unzip so the folder is exactly C:\PythonForKidsStudio
+   (so this file is C:\PythonForKidsStudio\IMPORT.txt and the mask is C:\PythonForKidsStudio\obs\circle-mask-alpha.png).
+   The collection points at C:/PythonForKidsStudio/obs/snake.png and C:/PythonForKidsStudio/obs/circle-mask-alpha.png. Any other folder and the snake and the mask go missing.
+
+2. Install OBS Studio if it is not installed (obsproject.com). Do not install a plugin. Everything here is built into OBS.
+
+3. Settings, Video: Base (Canvas) Resolution 1920x1080, Output (Scaled) Resolution 1920x1080, Common FPS Values 30.
+   The scene collection cannot set the canvas by itself, so do this before you import.
+
+4. Scene Collection, Import. Click the ... button, choose C:\PythonForKidsStudio\obs\Python-for-Kids.json, tick it, Import.
+   Then Scene Collection menu, pick "Python-for-Kids". You get two scenes, Teach first, then Slides.
+
+5. Camera: in the Sources list, right-click "Camera", Properties, pick your webcam under Device. OK.
+   Confirm the picture is a circle in the bottom-right corner.
+   If it is a square or a white box, the mask type is wrong. Fix the filter, do not add a second mask:
+   right-click Camera, Filters, click "Circle mask", set Type to "Alpha Mask (Alpha Channel)",
+   Path C:/PythonForKidsStudio/obs/circle-mask-alpha.png, Stretch Image ticked.
+   About the square: the pack cannot know your camera resolution, so the Camera scene item has
+   bounds 320x320 with bounds type "Stretch to bounds" (Edit Transform, Ctrl+E). That always gives a
+   320x320 square, bottom-right. The "Square" filter (Crop/Pad) runs first and is left at 0 so nothing is cut.
+   If your face looks squeezed sideways, open Filters, "Square", and crop the sides so the feed is square
+   before it is masked: Left and Right = (camera width - camera height) / 2.
+   1280x720 camera: Left 280, Right 280. 1920x1080 camera: Left 420, Right 420. Keep Square above Circle mask.
+
+6. Teach scene: click Teach. Sources +, Window Capture, name it "Thonny", pick the Thonny window
+   (your own window title, the pack does not bind one). Drag it to the bottom of the list, under "Snake".
+   Click the eye next to "Screen placeholder" to hide it.
+
+7. Slides scene: click Slides. Sources +, Window Capture, pick the Chrome window showing slides/slides.html.
+   Drag it to the bottom of the list. Hide "Slides placeholder".
+
+8. F1 = switch to Slides. F2 = switch to Teach. These are already set in the collection
+   (check Settings, Hotkeys, Slides / Teach "Switch to scene"; set F1 and F2 there if they are empty).
+   The snake and the circle are the same sources in both scenes at the same place, so they must not jump.
+
+9. Record the lesson in Teach. Switch to Slides only for the one-line beats.
+   Do not record the cartoon open inside OBS. It is already in capcut/00-hello-open-demo.mp4.
+
+Audio: the mic is yours. Use your own microphone in Settings, Audio, Mic/Auxiliary Audio.
+The pack adds no desktop-audio capture and the Camera source sends no audio.
+Headphones on. Settings, Audio, Desktop Audio: Disabled. Then the recording does not echo.
+
+
+CAPCUT
+------
+This is the whole CapCut project. There is no file to import. Build it once, then duplicate the project for every later lesson.
+
+1. New project, 16:9, 1920x1080.
+2. Track 1 at 0:00: capcut/00-hello-open-demo.mp4. Trim to about 8 seconds. Later lessons replace only this clip. Same boy, same snake, same classroom. Change only what is on the laptop.
+3. Track 1, hard cut, no fade: the OBS recording.
+4. The open already has a snake. Do not put a second snake on top of it.
+5. If the OBS recording has no snake, put capcut/snake.png on track 2 for the lesson only. Bottom right, about 280 px, just above the circle, facing the code. It must not cover the Run button or the line being typed.
+6. Click the snake. Playhead at the start of the lesson. Diamond next to Position. Two seconds later, raise Y by about 20. Two seconds later, put it back. Copy that clip to the end of the lesson. The snake bobs in place. It does not slide across the screen.
+7. Auto captions. Then fix the words print, Thonny, and Hello.
+8. Export with Video and Audio both checked.
+9. For the next lesson, duplicate this project. Replace the open and the OBS recording. Do not move the snake.
