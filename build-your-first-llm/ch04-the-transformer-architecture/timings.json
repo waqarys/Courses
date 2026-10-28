@@ -1,0 +1,387 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 37.37,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 37.37,
+  "dur": 23.06,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 4 roadmap",
+  "start": 60.42,
+  "dur": 28.28,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 88.71,
+  "dur": 43.11,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 131.81,
+  "dur": 3.15,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Attention is blind to order",
+  "start": 134.97,
+  "dur": 39.88,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "The fix: add a position vector",
+  "start": 174.85,
+  "dur": 35.68,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Sinusoidal encodings (2017)",
+  "start": 210.53,
+  "dur": 37.99,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Learned positions \u2014 real GPT-2 (my experiment)",
+  "start": 248.52,
+  "dur": 46.73,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Rotary embeddings (RoPE)",
+  "start": 295.25,
+  "dur": 44.6,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Part 2",
+  "start": 339.85,
+  "dur": 3.09,
+  "divider": true
+ },
+ {
+  "slide": 12,
+  "title": "Attention mixes; the FFN transforms",
+  "start": 342.94,
+  "dur": 35.23,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Expand \u2192 activate \u2192 contract (my redraw)",
+  "start": 378.17,
+  "dur": 36.81,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Why expand?",
+  "start": 414.99,
+  "dur": 37.86,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Why we need a nonlinearity",
+  "start": 452.84,
+  "dur": 38.75,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "GELU vs ReLU (my plot)",
+  "start": 491.6,
+  "dur": 45.6,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "\u26a0\ufe0f Book check: \"GPT, Claude, LLaMA use GELU\"",
+  "start": 537.2,
+  "dur": 33.74,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 3",
+  "start": 570.94,
+  "dur": 3.07,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "The degradation problem",
+  "start": 574.01,
+  "dur": 27.39,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "The fix: add the input back (my redraw)",
+  "start": 601.39,
+  "dur": 35.43,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Residuals in the Transformer",
+  "start": 636.82,
+  "dur": 27.07,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Part 4",
+  "start": 663.89,
+  "dur": 3.11,
+  "divider": true
+ },
+ {
+  "slide": 23,
+  "title": "The stability problem",
+  "start": 667.0,
+  "dur": 36.9,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "\u26a0\ufe0f Book check: the LayerNorm example",
+  "start": 703.9,
+  "dur": 52.75,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Pre-Norm vs Post-Norm (my redraw)",
+  "start": 756.65,
+  "dur": 27.64,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "RMSNorm: the leaner cousin",
+  "start": 784.29,
+  "dur": 29.42,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Part 5",
+  "start": 813.71,
+  "dur": 3.07,
+  "divider": true
+ },
+ {
+  "slide": 28,
+  "title": "One Transformer layer (Pre-Norm, my redraw)",
+  "start": 816.77,
+  "dur": 26.32,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "The layer recipe",
+  "start": 843.1,
+  "dur": 26.83,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "What each floor does",
+  "start": 869.93,
+  "dur": 29.03,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "The complete model",
+  "start": 898.96,
+  "dur": 26.07,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Where GPT-2's 124M parameters live (my count)",
+  "start": 925.03,
+  "dur": 48.78,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "Part 6",
+  "start": 973.81,
+  "dur": 3.79,
+  "divider": true
+ },
+ {
+  "slide": 34,
+  "title": "Encoder vs decoder attention",
+  "start": 977.6,
+  "dur": 25.13,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Three families (my redraw)",
+  "start": 1002.73,
+  "dur": 35.7,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "GPT vs BERT \u2014 who won?",
+  "start": 1038.43,
+  "dur": 41.65,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Part 7",
+  "start": 1080.09,
+  "dur": 3.9,
+  "divider": true
+ },
+ {
+  "slide": 38,
+  "title": "Training vs inference",
+  "start": 1083.99,
+  "dur": 36.13,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Real inference: \"The capital of France is\" (my experiment)",
+  "start": 1120.12,
+  "dur": 43.87,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Scale: same architecture, more of it",
+  "start": 1163.99,
+  "dur": 48.65,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Everything you now know",
+  "start": 1212.64,
+  "dur": 27.24,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Part 8",
+  "start": 1239.88,
+  "dur": 2.43,
+  "divider": true
+ },
+ {
+  "slide": 43,
+  "title": "Exercise 1 & 2: trace \"The cat sat\"",
+  "start": 1242.31,
+  "dur": 44.15,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "Exercise 3 & 4: design and choose",
+  "start": 1286.46,
+  "dur": 41.27,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "Part 9",
+  "start": 1327.73,
+  "dur": 3.52,
+  "divider": true
+ },
+ {
+  "slide": 46,
+  "title": "Checkpoint (25\u201330 min)",
+  "start": 1331.25,
+  "dur": 29.12,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "My answers to the design questions",
+  "start": 1360.36,
+  "dur": 45.26,
+  "divider": false
+ },
+ {
+  "slide": 48,
+  "title": "Part 10",
+  "start": 1405.62,
+  "dur": 2.47,
+  "divider": true
+ },
+ {
+  "slide": 49,
+  "title": "Key takeaways",
+  "start": 1408.1,
+  "dur": 44.45,
+  "divider": false
+ },
+ {
+  "slide": 50,
+  "title": "Notes on the book (checked)",
+  "start": 1452.54,
+  "dur": 41.14,
+  "divider": false
+ },
+ {
+  "slide": 51,
+  "title": "Review questions 1",
+  "start": 1493.69,
+  "dur": 45.58,
+  "divider": false
+ },
+ {
+  "slide": 52,
+  "title": "Review questions 2",
+  "start": 1539.27,
+  "dur": 44.09,
+  "divider": false
+ },
+ {
+  "slide": 53,
+  "title": "Practice this",
+  "start": 1583.35,
+  "dur": 27.26,
+  "divider": false
+ },
+ {
+  "slide": 54,
+  "title": "Up next: Chapter 5 \u2014 Part II begins",
+  "start": 1610.61,
+  "dur": 21.37,
+  "divider": false
+ },
+ {
+  "slide": 55,
+  "title": "Credits",
+  "start": 1631.99,
+  "dur": 26.22,
+  "divider": true
+ }
+]

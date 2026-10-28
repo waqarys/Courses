@@ -8,3 +8,6 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | 10 | §10.1.3 / §10.9.2 pipeline | token IDs `[464, 3797, 3332, 319, 262, 21547]` for "The cat sat on the mat" | " mat" is **2603** in GPT-2 → `[464, 3797, 3332, 319, 262, 2603]` | GPT-2 tokenizer, notebook cell 30 |
 | 3 | §3.7.2 "Why It Was Revolutionary" | 2-BLEU gain and "training took 12 hours instead of days" | 12 h (8 P100s) is the **base** model; the 28.4-BLEU **big** model trained **3.5 days** (Vaswani et al. 2017, §5.2) | paper |
 | 3 | §3.1.1 Sequential bottleneck | RNN forgetting "is called the vanishing gradient problem" | Imprecise: forward forgetting = fixed-size state bottleneck; vanishing gradients = backward training-signal decay | conceptual |
+| 4 | §4.4.2 LayerNorm example | `[102.5, 98.3, 105.7, 95.2]` → `[0.52, -0.31, 1.12, -0.78]` | → **`[0.52, -0.53, 1.32, -1.31]`** (book's output doesn't sum to 0) | `F.layer_norm` |
+| 4 | §4.2.5 GELU note | "Most modern LLMs (GPT, Claude, LLaMA) use GELU or close variants" | LLaMA uses **SwiGLU** (gated FFN with SiLU); Claude's architecture is unpublished | model papers |
+| 4 | §4.1.7 RoPE | "LLaMA, Mistral, and GPT-4 often use RoPE" | GPT-4's architecture is **not published** | — |

@@ -1,0 +1,1244 @@
+1
+00:00:00,250 --> 00:00:06,408
+Welcome to chapter four of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,408 --> 00:00:09,886
+Attention is the star, but a star needs a stage.
+
+3
+00:00:09,886 --> 00:00:25,391
+Today we assemble the complete transformer: positional encodings, feed forward networks, residual connections and layer normalisation, stacked into the architecture behind GPT, BERT and every modern language model.
+
+4
+00:00:25,391 --> 00:00:36,766
+And as usual, I'll check everything against a real model, GPT-2 small, by counting its parameters, looking at its position vectors, and asking it a question.
+
+5
+00:00:37,616 --> 00:00:42,274
+We have embeddings from chapter two and attention from chapter three.
+
+6
+00:00:42,274 --> 00:00:46,864
+Today we build the whole transformer layer around them and stack it.
+
+7
+00:00:46,864 --> 00:00:50,171
+This is the end of part one, the conceptual part.
+
+8
+00:00:50,171 --> 00:00:55,032
+From chapter five, we start writing real code with the book's notebooks.
+
+9
+00:00:55,032 --> 00:00:59,824
+As before, the snippets and GPT-2 experiments in this video are my own.
+
+10
+00:01:00,674 --> 00:01:01,695
+Here's the plan.
+
+11
+00:01:01,695 --> 00:01:03,928
+First, the missing piece: position.
+
+12
+00:01:03,928 --> 00:01:08,267
+Then feed forward networks and why they need an activation function.
+
+13
+00:01:08,267 --> 00:01:13,817
+Then residual connections, the highway system, and layer normalisation, the thermostat.
+
+14
+00:01:13,817 --> 00:01:16,944
+Then we assemble one complete layer and stack it.
+
+15
+00:01:16,944 --> 00:01:20,197
+Then encoders versus decoders, and GPT versus BERT.
+
+16
+00:01:20,197 --> 00:01:23,898
+Then training and inference, with real numbers from GPT-2.
+
+17
+00:01:23,898 --> 00:01:28,109
+And we finish with exercises, the checkpoint and review questions.
+
+18
+00:01:28,959 --> 00:01:30,040
+The vocabulary.
+
+19
+00:01:30,040 --> 00:01:36,530
+A position encoding is a set of numbers added to an embedding to say where the token sits.
+
+20
+00:01:36,530 --> 00:01:46,409
+A feed forward network is a small neural network applied to each position separately: expand by four, apply an activation, contract back.
+
+21
+00:01:46,409 --> 00:01:52,971
+An activation function is the nonlinearity, like GELU or ReLU, that makes depth worthwhile.
+
+22
+00:01:52,971 --> 00:01:57,081
+A residual connection adds a layer's input to its output.
+
+23
+00:01:57,081 --> 00:02:01,191
+LayerNorm and RMSNorm keep each vector in a stable range.
+
+24
+00:02:01,191 --> 00:02:11,214
+An encoder lets every position see every other one, a decoder only lets positions look backward, and causal masking is how we enforce that.
+
+25
+00:02:12,064 --> 00:02:12,625
+Part one.
+
+26
+00:02:12,625 --> 00:02:14,368
+The missing piece, position.
+
+27
+00:02:15,218 --> 00:02:18,426
+Here's the problem we skipped in chapter three.
+
+28
+00:02:18,426 --> 00:02:22,452
+Attention compares every word with every word, all at once.
+
+29
+00:02:22,452 --> 00:02:25,113
+There's no first word and no last word.
+
+30
+00:02:25,113 --> 00:02:30,095
+So the dog chased the cat and the cat chased the dog look the same to it.
+
+31
+00:02:30,095 --> 00:02:40,194
+I checked this in code: if you shuffle the input vectors, the attention outputs come out shuffled in exactly the same way, and nothing else changes.
+
+32
+00:02:40,194 --> 00:02:43,538
+Mathematicians call that permutation equivariant.
+
+33
+00:02:43,538 --> 00:02:48,110
+RNNs got order for free, because they read word one, then word two.
+
+34
+00:02:48,110 --> 00:02:54,252
+We gave that up to gain parallelism, so we need another way to tell the model about order.
+
+35
+00:02:55,102 --> 00:02:56,301
+The fix is simple.
+
+36
+00:02:56,301 --> 00:03:01,029
+Give every position its own vector, and add it to the word's embedding.
+
+37
+00:03:01,029 --> 00:03:05,958
+Cat at position one becomes the embedding of cat plus position vector one.
+
+38
+00:03:05,958 --> 00:03:11,552
+Cat at position five gets position vector five instead, so the two end up different.
+
+39
+00:03:11,552 --> 00:03:14,816
+The embedding says what, the position says where.
+
+40
+00:03:14,816 --> 00:03:19,344
+It's added once, at the input, and then carried through every layer.
+
+41
+00:03:19,344 --> 00:03:29,933
+The book compares it to GPS coordinates on a message from a search party: the coordinates don't change what the message says, they tell you where it came from.
+
+42
+00:03:30,783 --> 00:03:34,202
+The original transformer used sinusoidal encodings.
+
+43
+00:03:34,202 --> 00:03:39,229
+Each pair of dimensions is a sine and cosine wave at a different frequency.
+
+44
+00:03:39,229 --> 00:03:45,463
+On the left you can see the fast waves in the low dimensions and slow waves in the high ones.
+
+45
+00:03:45,463 --> 00:03:57,127
+The book uses a clock analogy: the hour and minute hands turn at different rates, and together they give every time a unique reading, while times a minute apart look similar.
+
+46
+00:03:57,127 --> 00:04:07,919
+Sinusoidal encodings work the same way with many hands, and because they come from a formula, they're defined for any position, even ones never seen in training.
+
+47
+00:04:08,769 --> 00:04:13,952
+Many models, including GPT-2, simply learn a position table instead.
+
+48
+00:04:13,952 --> 00:04:21,497
+In GPT-2 that table is called wpe, and it's one thousand and twenty four rows by seven sixty eight.
+
+49
+00:04:21,497 --> 00:04:28,433
+So GPT-2 can't handle position one thousand and twenty five, because there's no row for it.
+
+50
+00:04:28,433 --> 00:04:31,481
+That's the trade-off the book describes.
+
+51
+00:04:31,481 --> 00:04:35,673
+I compared the similarity of positions in both schemes.
+
+52
+00:04:35,673 --> 00:04:37,502
+On the left, sinusoidal.
+
+53
+00:04:37,502 --> 00:04:40,246
+On the right, GPT-2's learned table.
+
+54
+00:04:40,246 --> 00:04:54,651
+GPT-2 discovered the same smoothness on its own: position ten and position eleven have a cosine of point nine nine eight, while position ten and position ninety are only at point two seven.
+
+55
+00:04:55,501 --> 00:04:59,703
+Most recent models use rotary position embeddings, RoPE.
+
+56
+00:04:59,703 --> 00:05:08,183
+Instead of adding a position vector, RoPE rotates the query and key vectors by an angle that depends on position.
+
+57
+00:05:08,183 --> 00:05:19,214
+When you take the dot product of two rotated vectors, what's left depends on how far apart they are, so the model naturally sees relative distance.
+
+58
+00:05:19,214 --> 00:05:25,442
+It's a fixed formula with no learned table, and it behaves better on long contexts.
+
+59
+00:05:25,442 --> 00:05:29,194
+Llama, Mistral and most recent open models use it.
+
+60
+00:05:29,194 --> 00:05:39,250
+One small correction: the book lists GPT-4 as using RoPE too, but OpenAI hasn't published GPT-4's architecture, so we can't know that.
+
+61
+00:05:40,099 --> 00:05:40,750
+Part two.
+
+62
+00:05:40,750 --> 00:05:42,339
+Feed forward networks.
+
+63
+00:05:43,189 --> 00:05:45,860
+Why do we need anything after attention?
+
+64
+00:05:45,860 --> 00:05:49,465
+Because attention is fundamentally a mixing operation.
+
+65
+00:05:49,465 --> 00:05:56,208
+It takes weighted averages of value vectors, so it gathers the ingredients but doesn't cook the meal.
+
+66
+00:05:56,208 --> 00:06:01,483
+The feed forward network does the cooking, transforming each position's vector.
+
+67
+00:06:01,483 --> 00:06:05,889
+Every transformer layer follows this rhythm: attend, then process.
+
+68
+00:06:05,889 --> 00:06:17,573
+The book compares it to a factory: attention is the mail room that sorts related letters together, and the feed forward network is the station that actually reads each letter.
+
+69
+00:06:18,423 --> 00:06:21,337
+The feed forward network has three steps.
+
+70
+00:06:21,337 --> 00:06:27,804
+Expand the seven sixty eight numbers to three thousand and seventy two, four times as many.
+
+71
+00:06:27,804 --> 00:06:30,718
+Apply a nonlinear activation to each one.
+
+72
+00:06:30,718 --> 00:06:36,048
+Then contract back to seven sixty eight, so the output fits the next layer.
+
+73
+00:06:36,048 --> 00:06:45,856
+I printed the shapes from real GPT-2: the expansion matrix is seven sixty eight by three oh seven two, and the contraction is the reverse.
+
+74
+00:06:45,856 --> 00:06:49,978
+Crucially, every position goes through this independently.
+
+75
+00:06:49,978 --> 00:06:52,608
+Cat, sat and the don't interact here.
+
+76
+00:06:52,608 --> 00:06:54,385
+That was attention's job.
+
+77
+00:06:55,235 --> 00:06:57,017
+Why expand then contract?
+
+78
+00:06:57,017 --> 00:06:59,870
+Expansion gives the model scratch space.
+
+79
+00:06:59,870 --> 00:07:02,864
+The book's analogy is long multiplication.
+
+80
+00:07:02,864 --> 00:07:14,273
+Twenty three times forty seven: twenty three times forty is nine twenty, twenty three times seven is one sixty one, add them to get one thousand and eighty one.
+
+81
+00:07:14,273 --> 00:07:19,479
+The intermediate numbers don't appear in the answer, but you needed them.
+
+82
+00:07:19,479 --> 00:07:25,112
+The wide hidden layer gives the model room for intermediate features like that.
+
+83
+00:07:25,112 --> 00:07:32,242
+And as we'll see, the feed forward layers hold about two thirds of GPT-2's non embedding parameters.
+
+84
+00:07:33,092 --> 00:07:36,812
+Why do we need the activation function in the middle?
+
+85
+00:07:36,812 --> 00:07:40,954
+Because without it, everything is linear: multiply and add.
+
+86
+00:07:40,954 --> 00:07:46,148
+And a stack of linear operations collapses into a single linear operation.
+
+87
+00:07:46,148 --> 00:07:50,500
+I checked it: B times A times v equals the matrix B A times v.
+
+88
+00:07:50,500 --> 00:07:54,641
+So a hundred linear layers are no more expressive than one.
+
+89
+00:07:54,641 --> 00:08:01,169
+The book's image is photocopying a photocopy: you'll never get a colour photograph out of it.
+
+90
+00:08:01,169 --> 00:08:04,327
+Language is full of thresholds and reversals.
+
+91
+00:08:04,327 --> 00:08:08,469
+Great job can be sincere or sarcastic depending on context.
+
+92
+00:08:08,469 --> 00:08:10,995
+Capturing that needs a nonlinearity.
+
+93
+00:08:11,845 --> 00:08:14,795
+Here are the two most common activations.
+
+94
+00:08:14,795 --> 00:08:19,328
+ReLU passes positive values unchanged and zeroes the negatives.
+
+95
+00:08:19,328 --> 00:08:25,372
+Its gradient there is zero, so units stuck in the negative region can stop learning.
+
+96
+00:08:25,372 --> 00:08:27,026
+GELU is a smooth curve.
+
+97
+00:08:27,026 --> 00:08:35,732
+It's close to the identity for large positive inputs and close to zero for large negatives, with a gentle dip in between.
+
+98
+00:08:35,732 --> 00:08:48,323
+I computed the book's examples: GELU of two is one point nine five four, GELU of minus two is minus point zero four six, and GELU of minus a half is minus point one five four.
+
+99
+00:08:48,323 --> 00:08:49,762
+They match the book.
+
+100
+00:08:49,762 --> 00:08:56,597
+Think of thirty seventy two little judges, each deciding how much of its signal to let through.
+
+101
+00:08:57,447 --> 00:08:58,702
+One correction.
+
+102
+00:08:58,702 --> 00:09:06,151
+The book says most modern LLMs, naming GPT, Claude and Llama, use GELU or close variants.
+
+103
+00:09:06,151 --> 00:09:08,494
+GPT-2 and GPT-3 do use GELU.
+
+104
+00:09:08,494 --> 00:09:18,704
+But Llama uses SwiGLU, a gated feed forward block built on the SiLU activation, and Claude's architecture isn't published.
+
+105
+00:09:18,704 --> 00:09:30,337
+The book's broader point stands: modern models use smooth nonlinear activations, and many now use gated variants of the feed forward block.
+
+106
+00:09:31,187 --> 00:09:31,949
+Part three.
+
+107
+00:09:31,949 --> 00:09:33,405
+Residual connections.
+
+108
+00:09:34,255 --> 00:09:36,738
+Stacking many layers creates a problem.
+
+109
+00:09:36,738 --> 00:09:40,174
+Imagine a game of telephone through ninety six layers.
+
+110
+00:09:40,174 --> 00:09:50,611
+Even if each layer keeps ninety nine percent of the signal, point nine nine to the power ninety six is point three eight one, so only thirty eight percent survives.
+
+111
+00:09:50,611 --> 00:09:52,457
+The book's number is correct.
+
+112
+00:09:52,457 --> 00:10:00,794
+The same thing happens to gradients flowing backward during training: they can vanish or explode, so the early layers barely learn.
+
+113
+00:10:01,644 --> 00:10:03,706
+The fix is beautifully simple.
+
+114
+00:10:03,706 --> 00:10:07,006
+Add the input back to the output: x plus f of x.
+
+115
+00:10:07,006 --> 00:10:14,773
+Now the layer only has to learn the residual, the change to make, rather than rebuilding everything from scratch.
+
+116
+00:10:14,773 --> 00:10:21,028
+If a layer has nothing useful to add, it can learn f close to zero and just pass x through.
+
+117
+00:10:21,028 --> 00:10:24,328
+The book calls it a highway with optional exits.
+
+118
+00:10:24,328 --> 00:10:31,958
+Information can cruise straight from early layers to late ones, and take an exit only where a layer adds value.
+
+119
+00:10:31,958 --> 00:10:36,220
+And during training, gradients get the same highway back down.
+
+120
+00:10:37,069 --> 00:10:45,279
+In a transformer layer there are two skip connections, one around the attention block and one around the feed forward block.
+
+121
+00:10:45,279 --> 00:10:50,113
+People call the vector that flows along this highway the residual stream.
+
+122
+00:10:50,113 --> 00:10:55,740
+Each sublayer reads from the stream, computes something, and adds its update back in.
+
+123
+00:10:55,740 --> 00:11:03,288
+That's also why every sublayer has to output exactly the same size as its input, seven sixty eight in GPT-2 small.
+
+124
+00:11:04,138 --> 00:11:04,892
+Part four.
+
+125
+00:11:04,892 --> 00:11:06,399
+Layer normalisation.
+
+126
+00:11:07,249 --> 00:11:10,950
+Deep networks have a second problem: values can drift.
+
+127
+00:11:10,950 --> 00:11:23,697
+If each layer amplifies its input by just one percent, after ninety six layers it's grown by two point six times, which again matches the book, and it can get much worse during training.
+
+128
+00:11:23,697 --> 00:11:26,575
+LayerNorm resets the scale at every layer.
+
+129
+00:11:26,575 --> 00:11:41,172
+For each vector, compute its mean and standard deviation across the dimensions, subtract the mean, divide by the standard deviation, and then apply a learned scale and shift so the network can undo it if it wants.
+
+130
+00:11:41,172 --> 00:11:43,297
+The book calls it a thermostat.
+
+131
+00:11:44,147 --> 00:11:46,921
+Let's check the book's LayerNorm example.
+
+132
+00:11:46,921 --> 00:11:54,499
+The input is one oh two point five, ninety eight point three, one oh five point seven and ninety five point two.
+
+133
+00:11:54,499 --> 00:12:02,010
+The book gives the output as point five two, minus point three one, one point one two, minus point seven eight.
+
+134
+00:12:02,010 --> 00:12:07,423
+But those add up to point five five, and a normalised vector has to sum to zero.
+
+135
+00:12:07,423 --> 00:12:18,520
+I ran PyTorch's layer norm with no scale or shift, and the correct output is point five two, minus point five three, one point three two, minus one point three one.
+
+136
+00:12:18,520 --> 00:12:25,489
+The mean is one hundred point four two five and the standard deviation is about three point nine eight.
+
+137
+00:12:25,489 --> 00:12:27,722
+The first value happens to match.
+
+138
+00:12:27,722 --> 00:12:34,286
+A quick sanity check for any normalised vector: it should sum to zero and have a variance of one.
+
+139
+00:12:34,286 --> 00:12:36,045
+This one is in the errata.
+
+140
+00:12:36,895 --> 00:12:38,605
+Where does LayerNorm go?
+
+141
+00:12:38,605 --> 00:12:43,593
+The original 2017 transformer normalised after each residual addition.
+
+142
+00:12:43,593 --> 00:12:45,304
+That's called post norm.
+
+143
+00:12:45,304 --> 00:12:54,283
+GPT-2 and most modern models normalise the input to each sublayer instead, before attention and before the feed forward block.
+
+144
+00:12:54,283 --> 00:13:03,689
+That's pre norm, and it trains more stably, especially in very deep stacks, because the residual highway itself is never normalised.
+
+145
+00:13:04,539 --> 00:13:08,900
+Many recent models, including Llama and Mistral, use RMSNorm instead.
+
+146
+00:13:08,900 --> 00:13:16,168
+It skips the mean subtraction and just divides by the root mean square of the vector, then applies a learned scale.
+
+147
+00:13:16,168 --> 00:13:20,971
+It's slightly faster, uses less memory, and works about as well in practice.
+
+148
+00:13:20,971 --> 00:13:28,365
+On the same input it gives one point oh two, point nine seven eight, one point oh five two and point nine four seven.
+
+149
+00:13:28,365 --> 00:13:30,135
+Notice those aren't centred.
+
+150
+00:13:30,135 --> 00:13:33,105
+They're just rescaled to a typical size of one.
+
+151
+00:13:33,955 --> 00:13:34,607
+Part five.
+
+152
+00:13:34,607 --> 00:13:36,173
+Putting it all together.
+
+153
+00:13:37,024 --> 00:13:42,212
+Here's one complete transformer layer, in the pre norm style that GPT-2 uses.
+
+154
+00:13:42,212 --> 00:13:43,762
+Start with the input x.
+
+155
+00:13:43,762 --> 00:13:48,412
+Normalise it, run multi head attention, and add the result back to x.
+
+156
+00:13:48,412 --> 00:13:50,164
+That's the first residual.
+
+157
+00:13:50,164 --> 00:13:54,881
+Then normalise again, run the feed forward network, and add that back.
+
+158
+00:13:54,881 --> 00:13:56,700
+That's the second residual.
+
+159
+00:13:56,700 --> 00:14:02,496
+The output has the same shape as the input, so it can go straight into the next layer.
+
+160
+00:14:03,346 --> 00:14:14,333
+In two lines of pseudocode: h equals x plus attention of layer norm of x, then the output equals h plus the feed forward network of layer norm of h.
+
+161
+00:14:14,333 --> 00:14:18,713
+Six steps: normalise, attend, add, normalise, process, add.
+
+162
+00:14:18,713 --> 00:14:20,569
+Then you stack the layer.
+
+163
+00:14:20,569 --> 00:14:29,330
+GPT-2 small has twelve layers, GPT-3 has ninety six, and big models today have eighty to a hundred and twenty or more.
+
+164
+00:14:30,179 --> 00:14:32,781
+The book compares the stack to a building.
+
+165
+00:14:32,781 --> 00:14:39,842
+Every floor has the same layout, an attention room and a processing room, and the residual stream is the elevator.
+
+166
+00:14:39,842 --> 00:14:52,415
+Researchers generally find that early layers capture local patterns and syntax, middle layers build phrases and semantic relationships, and late layers handle abstract structure and the final prediction.
+
+167
+00:14:52,415 --> 00:14:58,361
+By the top floor, a simple word like sat carries who sat, where, and what's likely to come next.
+
+168
+00:14:59,211 --> 00:15:01,092
+And here's the whole model.
+
+169
+00:15:01,092 --> 00:15:06,595
+Token IDs go into the token embedding table, and position embeddings are added.
+
+170
+00:15:06,595 --> 00:15:09,799
+The result flows through N transformer layers.
+
+171
+00:15:09,799 --> 00:15:20,108
+A final layer norm, then a linear layer maps each vector back onto the vocabulary, producing a score, called a logit, for every possible next token.
+
+172
+00:15:20,108 --> 00:15:22,825
+Softmax turns those into probabilities.
+
+173
+00:15:22,825 --> 00:15:24,427
+That's GPT, end to end.
+
+174
+00:15:25,277 --> 00:15:28,667
+I counted every parameter in the real GPT-2 small.
+
+175
+00:15:28,667 --> 00:15:36,192
+The total is a hundred and twenty four million, four hundred and thirty nine thousand, eight hundred and eight.
+
+176
+00:15:36,192 --> 00:15:45,954
+The token embedding table, fifty thousand two hundred and fifty seven tokens by seven sixty eight, is thirty eight point six million on its own.
+
+177
+00:15:45,954 --> 00:15:55,648
+Each layer has two point three six million parameters in attention and four point seven two million in the feed forward network, twice as many.
+
+178
+00:15:55,648 --> 00:16:03,512
+Across twelve layers, that's fifty seven million in the feed forward networks and twenty eight million in attention.
+
+179
+00:16:03,512 --> 00:16:04,936
+Layer norms are tiny.
+
+180
+00:16:04,936 --> 00:16:13,207
+GPT-2 also reuses the token embedding matrix as its output layer, which is called weight tying, so it isn't counted twice.
+
+181
+00:16:14,057 --> 00:16:14,836
+Part six.
+
+182
+00:16:14,836 --> 00:16:17,001
+Encoders versus decoders.
+
+183
+00:16:17,851 --> 00:16:24,325
+An encoder lets every position attend to every other position, so it has full, bidirectional visibility.
+
+184
+00:16:24,325 --> 00:16:30,550
+A decoder uses a causal mask: each position can see itself and earlier positions, but nothing later.
+
+185
+00:16:30,550 --> 00:16:36,214
+In the grid, the ticks below the diagonal are allowed and the crosses above it are blocked.
+
+186
+00:16:36,214 --> 00:16:40,696
+When you're generating, you can't look at words you haven't written yet.
+
+187
+00:16:40,696 --> 00:16:42,128
+That would be cheating.
+
+188
+00:16:42,978 --> 00:16:44,824
+That gives three families.
+
+189
+00:16:44,824 --> 00:16:56,394
+Encoder only models, like BERT, see everything, which makes them great for classification, entity extraction and retrieval, but they don't naturally generate text.
+
+190
+00:16:56,394 --> 00:17:03,350
+Decoder only models, like GPT, Llama and Claude, are causal and generate text one token at a time.
+
+191
+00:17:03,350 --> 00:17:14,353
+Encoder decoder models, like the original transformer and T5, read the source fully with an encoder, then generate with a decoder that cross attends to it.
+
+192
+00:17:14,353 --> 00:17:17,831
+That's natural for translation and summarisation.
+
+193
+00:17:18,681 --> 00:17:22,972
+The two famous lineages are BERT and GPT, both from 2018.
+
+194
+00:17:22,972 --> 00:17:27,790
+BERT is encoder only and bidirectional, built for understanding.
+
+195
+00:17:27,790 --> 00:17:31,780
+GPT is decoder only and causal, built for generation.
+
+196
+00:17:31,780 --> 00:17:42,622
+As models scaled up, the decoders turned out to be good at understanding too, just by predicting what comes next, and they won the scaling race.
+
+197
+00:17:42,622 --> 00:17:46,160
+ChatGPT, Claude and Llama are all decoder only.
+
+198
+00:17:46,160 --> 00:17:50,000
+That's what we'll build in part three of this book.
+
+199
+00:17:50,000 --> 00:17:59,485
+And GPT stands for generative pre-trained transformer: it generates, it's pre-trained on lots of text, and it's a transformer.
+
+200
+00:18:00,335 --> 00:18:01,098
+Part seven.
+
+201
+00:18:01,098 --> 00:18:03,386
+From architecture to application.
+
+202
+00:18:04,236 --> 00:18:08,764
+Training and inference use the same architecture in different ways.
+
+203
+00:18:08,764 --> 00:18:25,863
+In training, we feed a sequence and ask the model to predict the next token at every position at once, measure how wrong it was with a loss, run the backward pass, and update every weight: embeddings, attention, feed forward networks, norms, everything.
+
+204
+00:18:25,863 --> 00:18:27,080
+Billions of times.
+
+205
+00:18:27,080 --> 00:18:34,920
+In inference, we feed a prompt, read the probabilities at the last position, pick a token, append it, and run again.
+
+206
+00:18:34,920 --> 00:18:39,515
+One forward pass per new token, which is why long outputs take time.
+
+207
+00:18:40,365 --> 00:18:46,443
+The book's inference example uses the capital of France is, with the model picking Paris.
+
+208
+00:18:46,443 --> 00:18:48,356
+So I asked real GPT-2 small.
+
+209
+00:18:48,356 --> 00:18:55,594
+Its top choice is not Paris but the word the, at eight and a half percent, followed by now, a, and France.
+
+210
+00:18:55,594 --> 00:18:58,872
+Paris is only fifth, at three point two percent.
+
+211
+00:18:58,872 --> 00:19:05,701
+If we always pick the most likely token, it continues the capital of the French Republic, and so on.
+
+212
+00:19:05,701 --> 00:19:07,955
+That's a nice lesson about scale.
+
+213
+00:19:07,955 --> 00:19:17,926
+A hundred and twenty four million parameter model, trained only to predict web text, knows Paris is relevant but doesn't answer like an assistant.
+
+214
+00:19:17,926 --> 00:19:23,389
+Bigger models and instruction tuning, which come later in the book, change that.
+
+215
+00:19:24,239 --> 00:19:26,955
+Here's how the same architecture scales.
+
+216
+00:19:26,955 --> 00:19:34,560
+GPT-2 small: twelve layers, width seven sixty eight, twelve heads, a hundred and twenty four million parameters.
+
+217
+00:19:34,560 --> 00:19:41,350
+GPT-2 large: thirty six layers, width twelve eighty, twenty heads, about seven seventy four million.
+
+218
+00:19:41,350 --> 00:19:50,245
+GPT-3: ninety six layers, width twelve thousand two hundred and eighty eight, ninety six heads, a hundred and seventy five billion.
+
+219
+00:19:50,245 --> 00:20:00,973
+Llama three point one four oh five B: a hundred and twenty six layers, width sixteen thousand three hundred and eighty four, a hundred and twenty eight heads.
+
+220
+00:20:00,973 --> 00:20:05,115
+These figures come from the published papers and model cards.
+
+221
+00:20:05,115 --> 00:20:12,041
+The design is the same; the scale changes, and with scale come abilities nobody fully understands yet.
+
+222
+00:20:12,891 --> 00:20:14,084
+Let's take stock.
+
+223
+00:20:14,084 --> 00:20:17,383
+You now know every major part of a transformer.
+
+224
+00:20:17,383 --> 00:20:19,839
+Embeddings turn words into vectors.
+
+225
+00:20:19,839 --> 00:20:22,085
+Position encodings add location.
+
+226
+00:20:22,085 --> 00:20:23,910
+Attention gathers context.
+
+227
+00:20:23,910 --> 00:20:27,138
+Feed forward networks transform each position.
+
+228
+00:20:27,138 --> 00:20:30,016
+Residual connections preserve the signal.
+
+229
+00:20:30,016 --> 00:20:32,472
+Layer norm keeps the values stable.
+
+230
+00:20:32,472 --> 00:20:34,297
+And stacking builds depth.
+
+231
+00:20:34,297 --> 00:20:39,280
+Every response from a modern chatbot flows through exactly this design.
+
+232
+00:20:40,130 --> 00:20:40,998
+Part eight.
+
+233
+00:20:40,998 --> 00:20:41,709
+Hands on.
+
+234
+00:20:42,559 --> 00:20:47,417
+Exercises one and two ask you to trace the cat sat through the model.
+
+235
+00:20:47,417 --> 00:20:55,584
+Tokenise it: in GPT-2 that's three tokens, with IDs four six four, three seven nine seven and three three three two.
+
+236
+00:20:55,584 --> 00:21:00,020
+Look up embeddings, giving a three by seven sixty eight matrix.
+
+237
+00:21:00,020 --> 00:21:02,766
+Add position vectors zero, one and two.
+
+238
+00:21:02,766 --> 00:21:07,554
+In layer one's attention, sat queries for its subject and finds cat.
+
+239
+00:21:07,554 --> 00:21:11,496
+The feed forward network transforms each row on its own.
+
+240
+00:21:11,496 --> 00:21:20,227
+More layers refine the picture, and at the top we get a distribution over the next token, with words like on or down likely.
+
+241
+00:21:20,227 --> 00:21:25,859
+And through it all, the residual stream keeps the original signal for cat alive.
+
+242
+00:21:26,709 --> 00:21:32,585
+Exercise three: design a tiny transformer for predicting the last letter of a word.
+
+243
+00:21:32,585 --> 00:21:42,496
+My choice would be two layers, width sixty four, four heads, and learned positions, because words are short and have a fixed maximum length.
+
+244
+00:21:42,496 --> 00:21:46,247
+Exercise four asks which architecture fits each task.
+
+245
+00:21:46,247 --> 00:21:48,867
+Sentiment classification: an encoder.
+
+246
+00:21:48,867 --> 00:21:54,530
+Translation: classically an encoder decoder, though big decoders do it well too.
+
+247
+00:21:54,530 --> 00:21:56,653
+Continuing a story: a decoder.
+
+248
+00:21:56,653 --> 00:21:58,919
+Extracting entities: an encoder.
+
+249
+00:21:58,919 --> 00:22:07,130
+Question answering over a passage: an encoder if you're extracting a span, a decoder if you're generating an answer.
+
+250
+00:22:07,980 --> 00:22:08,764
+Part nine.
+
+251
+00:22:08,764 --> 00:22:10,647
+The checkpoint exercise.
+
+252
+00:22:11,497 --> 00:22:13,437
+The checkpoint has four parts.
+
+253
+00:22:13,437 --> 00:22:21,846
+First, draw one transformer layer from memory, with both layer norms, attention, the feed forward network and both residual paths.
+
+254
+00:22:21,846 --> 00:22:27,215
+Second, pick a word from the quick brown fox jumps and trace it through two layers.
+
+255
+00:22:27,215 --> 00:22:29,544
+Third, answer four design questions.
+
+256
+00:22:29,544 --> 00:22:36,077
+And fourth, pick the architecture for a document question answerer, an essay writer and a translator.
+
+257
+00:22:36,077 --> 00:22:39,763
+Pause the video and try it before you look at my answers.
+
+258
+00:22:40,613 --> 00:22:41,371
+My answers.
+
+259
+00:22:41,371 --> 00:22:48,256
+Without residuals, a deep stack degrades and the gradients vanish, so the early layers barely learn.
+
+260
+00:22:48,256 --> 00:22:54,522
+Without layer norm, activations drift and blow up or shrink, and training becomes unstable.
+
+261
+00:22:54,522 --> 00:23:06,640
+Positions have to be added before attention, because attention is blind to order: the position information needs to be inside the queries and keys when the scores are computed.
+
+262
+00:23:06,640 --> 00:23:15,660
+More layers give more capacity and more refinement, but they cost compute, are harder to optimise, and can overfit small data sets.
+
+263
+00:23:15,660 --> 00:23:25,023
+And for part four: a document question answerer is naturally an encoder, an essay writer a decoder, and a translator an encoder decoder.
+
+264
+00:23:25,873 --> 00:23:26,568
+Part ten.
+
+265
+00:23:26,568 --> 00:23:27,495
+Wrapping up.
+
+266
+00:23:28,345 --> 00:23:29,722
+The key takeaways.
+
+267
+00:23:29,722 --> 00:23:38,212
+One: attention is blind to order, so we add position information, with sinusoidal, learned or rotary encodings.
+
+268
+00:23:38,212 --> 00:23:46,167
+Two: the feed forward network expands by four, applies GELU, and contracts, separately at each position.
+
+269
+00:23:46,167 --> 00:23:51,827
+Three: residual connections, x plus f of x, are the highway through depth.
+
+270
+00:23:51,827 --> 00:24:00,088
+Four: LayerNorm or RMSNorm keeps values in a stable range, and modern models normalise before each sublayer.
+
+271
+00:24:00,088 --> 00:24:05,978
+Five: a layer is norm, attend, add, norm, feed forward, add, stacked N times.
+
+272
+00:24:05,978 --> 00:24:11,944
+Six: encoders are bidirectional, decoders are causal, and GPT is decoder only.
+
+273
+00:24:12,794 --> 00:24:15,645
+My notes on the book for this chapter.
+
+274
+00:24:15,645 --> 00:24:22,023
+The compounding numbers, the GELU values and the feed forward shapes are all correct.
+
+275
+00:24:22,023 --> 00:24:24,349
+Three items go into the errata.
+
+276
+00:24:24,349 --> 00:24:36,054
+The LayerNorm example output is wrong, and the correct values are point five two, minus point five three, one point three two and minus one point three one.
+
+277
+00:24:36,054 --> 00:24:41,907
+Llama uses SwiGLU rather than GELU, and Claude's architecture isn't published.
+
+278
+00:24:41,907 --> 00:24:47,159
+And GPT-4's architecture, including its position scheme, isn't public.
+
+279
+00:24:47,159 --> 00:24:53,087
+Finally, the Paris example is illustrative: real GPT-2 small ranks Paris fifth.
+
+280
+00:24:53,937 --> 00:24:56,339
+Review questions, with my answers.
+
+281
+00:24:56,339 --> 00:24:58,318
+One: why position encodings?
+
+282
+00:24:58,318 --> 00:25:05,950
+Because attention treats its inputs as an unordered set, so without them dog bites man equals man bites dog.
+
+283
+00:25:05,950 --> 00:25:17,538
+Two: the two main approaches are sinusoidal, a formula that extrapolates, and learned, a table that often works better within range but stops at the maximum length.
+
+284
+00:25:17,538 --> 00:25:20,082
+RoPE is the modern relative variant.
+
+285
+00:25:20,082 --> 00:25:30,682
+Three: the feed forward network is a per position network that expands for scratch space, applies a nonlinearity, and contracts to fit the next layer.
+
+286
+00:25:30,682 --> 00:25:33,579
+Four: residuals are a highway with exits.
+
+287
+00:25:33,579 --> 00:25:38,667
+Adding x back preserves both the signal and the gradients through depth.
+
+288
+00:25:39,517 --> 00:25:49,472
+Five: layer norm stops values drifting by normalising each vector to mean zero and variance one, then applying a learned scale and shift.
+
+289
+00:25:49,472 --> 00:25:52,669
+Modern models apply it before each sublayer.
+
+290
+00:25:52,669 --> 00:25:59,573
+Six: one layer is layer norm, multi head attention, add x, layer norm, feed forward, add again.
+
+291
+00:25:59,573 --> 00:26:04,587
+Seven: encoders use full attention and suit understanding, like BERT.
+
+292
+00:26:04,587 --> 00:26:08,947
+Decoders use causal attention and suit generation, like GPT.
+
+293
+00:26:08,947 --> 00:26:16,504
+Eight: the causal mask sets future scores to minus infinity before the softmax, so they get zero weight.
+
+294
+00:26:16,504 --> 00:26:22,753
+It's needed so that a model trained to predict the next token can't simply look at it.
+
+295
+00:26:23,603 --> 00:26:24,833
+Your practice list.
+
+296
+00:26:24,833 --> 00:26:29,170
+Draw the pre norm layer from memory and check it against the slide.
+
+297
+00:26:29,170 --> 00:26:31,760
+Verify the LayerNorm correction by hand.
+
+298
+00:26:31,760 --> 00:26:35,644
+Load GPT-2 and count its parameters with one line of Python.
+
+299
+00:26:35,644 --> 00:26:39,787
+Do exercises three and four and the checkpoint design questions.
+
+300
+00:26:39,787 --> 00:26:45,483
+And get your Python environment ready, because the book's chapter five notebook is next.
+
+301
+00:26:45,483 --> 00:26:50,014
+The code in this video is my own, since part one has no book notebook.
+
+302
+00:26:50,864 --> 00:26:53,853
+That's chapter four, and the end of part one.
+
+303
+00:26:53,853 --> 00:27:01,756
+You understand what AI is, how words become numbers, how attention works, and how the transformer puts it all together.
+
+304
+00:27:01,756 --> 00:27:03,151
+Part two is hands on.
+
+305
+00:27:03,151 --> 00:27:08,929
+In chapter five we set up Python and start writing real code with the book's notebooks.
+
+306
+00:27:08,929 --> 00:27:10,457
+The theory is in place.
+
+307
+00:27:10,457 --> 00:27:11,387
+Time to build.
+
+308
+00:27:12,237 --> 00:27:17,549
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+309
+00:27:17,549 --> 00:27:27,202
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+310
+00:27:27,202 --> 00:27:33,936
+The companion code is at github dot com slash First LLM slash code, under the MIT license.
+
+311
+00:27:33,936 --> 00:27:37,602
+Thanks for watching, and see you in chapter five.
+
