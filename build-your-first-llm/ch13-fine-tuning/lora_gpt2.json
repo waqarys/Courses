@@ -1,0 +1,81 @@
+{
+ "before": [
+  0.0,
+  0.05301365301365302
+ ],
+ "hist": [
+  3.1532399654388428,
+  2.5488081659589494,
+  2.231867109026228,
+  1.9310538598469325,
+  1.6961808545248849,
+  1.511581199509757,
+  1.349020140511649,
+  1.2030903100967407,
+  1.0820730924606323,
+  0.922907829284668,
+  0.8105398331369672,
+  0.7308886647224426
+ ],
+ "test_em": 0.0,
+ "test_overlap": 0.18472519543948115,
+ "train_em": 0.21428571428571427,
+ "train_overlap": 0.534188727938728,
+ "test_samples": [
+  [
+   "How can I reach customer service?",
+   "Email support@techstartupinc.com or use the chat widget in the app. We respond within 24 hours.",
+   "Contact customerservice@techstartupinc.com or 1-855-276-8100."
+  ],
+  [
+   "Is there training available?",
+   "Yes, we offer free webinars and video tutorials at learn.techstartupinc.com.",
+   "We offer online courses that cover all levels of technology."
+  ],
+  [
+   "What's your uptime guarantee?",
+   "We guarantee 99.9% uptime. Check status.techstartupinc.com for real-time status.",
+   "Our uptime guarantee is based on your annual needs."
+  ],
+  [
+   "Does SmartScheduler handle time zones?",
+   "Yes, it automatically detects and converts time zones for all participants.",
+   "SmartScheduler supports time zones that are compatible with your organization's calendar."
+  ],
+  [
+   "Where are you based?",
+   "TechStartup Inc is headquartered in Amsterdam, Netherlands.",
+   "We're based in Amsterdam, Netherlands. We're based in Amsterdam, Netherlands."
+  ],
+  [
+   "How does SmartScheduler find meeting times?",
+   "It analyzes participants' calendars, time zones, and preferences to suggest optimal slots.",
+   "SmartScheduler finds meeting times for meetings with less than 30 minutes."
+  ]
+ ],
+ "train_samples": [
+  [
+   "What's new at TechStartup?",
+   "Check our blog at techstartupinc.com/blog for the latest product updates and company news.",
+   "SmartStartup builds focus on small businesses and small businesses."
+  ],
+  [
+   "What languages does TechStartup support?",
+   "Our products are available in English, Dutch, German, French, and Spanish.",
+   "SmartScheduler is available in English, Dutch, German, French, Spanish, Dutch, German, French, Italian, Dutch, Dutch, French, German, Spanish, Dutch, French, German"
+  ],
+  [
+   "Can I have multiple users on one account?",
+   "Yes, team plans support multiple users. Each user gets their own login.",
+   "Users can have multiple accounts on one website. Each gets their own login page."
+  ],
+  [
+   "Is TechStartup Inc hiring?",
+   "Yes! Check our careers page at techstartupinc.com/careers for open positions.",
+   "TechStartup Inc is hiring for 2018."
+  ]
+ ],
+ "trainable": 294912,
+ "total": 124734720,
+ "lora_kb": 1158.3134765625
+}

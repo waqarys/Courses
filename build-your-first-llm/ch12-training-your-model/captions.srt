@@ -1,0 +1,752 @@
+1
+00:00:00,250 --> 00:00:06,260
+Welcome to chapter twelve of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,260 --> 00:00:11,372
+This is the chapter where our hand built MiniGPT finally learns something.
+
+3
+00:00:11,372 --> 00:00:21,182
+We cover the next token objective, cross entropy, data loaders, the five step training loop, validation, perplexity, checkpoints and sampling.
+
+4
+00:00:21,182 --> 00:00:28,920
+I ran the notebook on a CPU for the full three epochs, and the numbers I got are very different from the book's.
+
+5
+00:00:28,920 --> 00:00:36,243
+I'll show you why: a padding bug hiding in one argument, and a data pipeline that wastes a lot of compute.
+
+6
+00:00:36,243 --> 00:00:40,457
+Then I'll show a fixed version and how much better it trains.
+
+7
+00:00:41,307 --> 00:00:48,624
+So far we have a tokenizer, embeddings, attention and a complete MiniGPT, but every weight is random.
+
+8
+00:00:48,624 --> 00:00:51,015
+Today we train it on Shakespeare.
+
+9
+00:00:51,015 --> 00:00:52,899
+Next chapter we fine tune.
+
+10
+00:00:52,899 --> 00:00:56,304
+Everything follows the chapter twelve notebook.
+
+11
+00:00:57,154 --> 00:00:58,287
+Here's the plan.
+
+12
+00:00:58,287 --> 00:01:00,270
+Training as a feedback loop.
+
+13
+00:01:00,270 --> 00:01:01,261
+The objective.
+
+14
+00:01:01,261 --> 00:01:03,740
+Cross entropy and the ignore index.
+
+15
+00:01:03,740 --> 00:01:05,014
+The data pipeline.
+
+16
+00:01:05,014 --> 00:01:08,272
+The five step recipe with warmup and clipping.
+
+17
+00:01:08,272 --> 00:01:11,033
+Validation, overfitting and perplexity.
+
+18
+00:01:11,033 --> 00:01:12,945
+Checkpoints and generation.
+
+19
+00:01:12,945 --> 00:01:17,265
+Then my run against the book, the bug, and a better pipeline.
+
+20
+00:01:17,265 --> 00:01:19,106
+Then exercises and review.
+
+21
+00:01:19,956 --> 00:01:20,732
+Some terms.
+
+22
+00:01:20,732 --> 00:01:26,023
+Cross entropy is minus the log of the probability given to the right token.
+
+23
+00:01:26,023 --> 00:01:28,493
+The learning rate is the step size.
+
+24
+00:01:28,493 --> 00:01:30,327
+Warmup ramps it up gently.
+
+25
+00:01:30,327 --> 00:01:32,796
+An epoch is one pass over the data.
+
+26
+00:01:32,796 --> 00:01:34,771
+Perplexity is e to the loss.
+
+27
+00:01:34,771 --> 00:01:39,428
+Overfitting is when training loss falls but validation loss rises.
+
+28
+00:01:39,428 --> 00:01:43,167
+And a checkpoint saves everything you need to resume.
+
+29
+00:01:44,017 --> 00:01:44,620
+Part one.
+
+30
+00:01:44,620 --> 00:01:46,363
+What training actually is.
+
+31
+00:01:47,213 --> 00:01:51,706
+The book uses a nice engineering framing, which I've redrawn here.
+
+32
+00:01:51,706 --> 00:01:54,020
+The target is the true next token.
+
+33
+00:01:54,020 --> 00:01:55,994
+The error signal is the loss.
+
+34
+00:01:55,994 --> 00:01:58,648
+The controller is the optimizer, AdamW.
+
+35
+00:01:58,648 --> 00:02:07,088
+Its action is a weight update, and the plant output is the model's new predictions, which we compare with the targets again.
+
+36
+00:02:07,088 --> 00:02:10,083
+Measure, adjust, repeat, thousands of times.
+
+37
+00:02:10,933 --> 00:02:11,535
+Part two.
+
+38
+00:02:11,535 --> 00:02:14,410
+What exactly are we asking the model to do?
+
+39
+00:02:15,260 --> 00:02:17,485
+Take one sequence of six tokens.
+
+40
+00:02:17,485 --> 00:02:22,838
+Drop the last token to get the inputs, and drop the first to get the targets.
+
+41
+00:02:22,838 --> 00:02:26,523
+Now every position has a job: predict the next token.
+
+42
+00:02:26,523 --> 00:02:30,625
+Six tokens give five training examples in one forward pass.
+
+43
+00:02:30,625 --> 00:02:40,775
+And because of the causal mask from chapter ten, position two can only see positions zero to two, so asking it for token three is a fair question.
+
+44
+00:02:41,625 --> 00:02:43,300
+Here's the book's helper.
+
+45
+00:02:43,300 --> 00:02:52,077
+Slice the inputs, slice and clone the targets, then replace padding with minus one hundred, which cross entropy ignores by default.
+
+46
+00:02:52,077 --> 00:02:54,958
+Notice that the default padding id is zero.
+
+47
+00:02:54,958 --> 00:02:59,246
+Hold on to that, because it comes back to bite us in part eight.
+
+48
+00:03:00,096 --> 00:03:00,794
+Part three.
+
+49
+00:03:00,794 --> 00:03:02,443
+How we score a prediction.
+
+50
+00:03:03,293 --> 00:03:10,006
+Cross entropy looks only at the probability the model gave the correct token, and takes minus its log.
+
+51
+00:03:10,006 --> 00:03:13,100
+Ninety percent gives a loss of about point one.
+
+52
+00:03:13,100 --> 00:03:15,338
+Ten percent gives two point three.
+
+53
+00:03:15,338 --> 00:03:17,509
+One percent gives four point six.
+
+54
+00:03:17,509 --> 00:03:29,554
+A brand new model that spreads probability evenly over fifty thousand tokens scores about ten point eight, which is why a loss stuck near ten or eleven means nothing has been learned.
+
+55
+00:03:30,404 --> 00:03:38,929
+PyTorch's cross entropy wants a two D table of scores and a one D list of correct classes, so we flatten batch and time together.
+
+56
+00:03:38,929 --> 00:03:47,322
+The targets use reshape rather than view, because slicing off the first column leaves a tensor that isn't contiguous in memory.
+
+57
+00:03:48,172 --> 00:03:53,548
+Before any training, here's what my random model wrote after "The fair maiden".
+
+58
+00:03:53,548 --> 00:03:54,296
+Pure noise.
+
+59
+00:03:54,296 --> 00:04:00,013
+Every token is about equally likely, so whichever one happens to score highest wins.
+
+60
+00:04:00,013 --> 00:04:01,782
+That's our starting point.
+
+61
+00:04:02,632 --> 00:04:03,289
+Part four.
+
+62
+00:04:03,289 --> 00:04:05,128
+Getting data into the model.
+
+63
+00:04:05,978 --> 00:04:10,864
+The data is TinyShakespeare, about one point one million characters.
+
+64
+00:04:10,864 --> 00:04:16,970
+With the GPT-2 tokenizer that's about three hundred and thirty eight thousand tokens.
+
+65
+00:04:16,970 --> 00:04:21,209
+The dataset class cuts the raw text into fixed size chunks.
+
+66
+00:04:21,209 --> 00:04:25,520
+Note that the chunks are measured in characters, not tokens.
+
+67
+00:04:25,520 --> 00:04:26,885
+That matters later.
+
+68
+00:04:27,735 --> 00:04:32,443
+The collate function turns a list of strings into a padded tensor.
+
+69
+00:04:32,443 --> 00:04:40,291
+It tokenises them, truncates at one hundred and twenty eight tokens and pads each batch to its longest member.
+
+70
+00:04:40,291 --> 00:04:45,570
+GPT-2 has no padding token, so the notebook borrows the end of text token.
+
+71
+00:04:45,570 --> 00:04:49,922
+Its id is fifty thousand two hundred and fifty six, not zero.
+
+72
+00:04:50,772 --> 00:04:54,272
+A batch is the group processed together for one update.
+
+73
+00:04:54,272 --> 00:04:56,627
+An epoch is one pass over everything.
+
+74
+00:04:56,627 --> 00:05:03,055
+The book's arithmetic example says ten thousand examples give about three hundred and twelve batches.
+
+75
+00:05:03,055 --> 00:05:15,530
+But the actual notebook, with two hundred and fifty six character chunks, has three thousand nine hundred and twenty one training chunks, so one epoch is only one hundred and twenty three batches.
+
+76
+00:05:15,530 --> 00:05:22,467
+And the book's printed training output also shows three hundred and twelve, which doesn't match its own code.
+
+77
+00:05:23,317 --> 00:05:34,251
+A seeded ninety ten split, a partial to bind the tokenizer into the collate function, and data loaders that shuffle the training set but not the validation set.
+
+78
+00:05:34,251 --> 00:05:35,754
+Standard and sensible.
+
+79
+00:05:36,604 --> 00:05:37,262
+Part five.
+
+80
+00:05:37,262 --> 00:05:38,908
+The heart of the chapter.
+
+81
+00:05:39,758 --> 00:05:43,510
+Every neural network trains with the same five steps.
+
+82
+00:05:43,510 --> 00:05:47,261
+Zero the gradients, because PyTorch accumulates them.
+
+83
+00:05:47,261 --> 00:05:48,747
+Run the forward pass.
+
+84
+00:05:48,747 --> 00:05:49,951
+Compute the loss.
+
+85
+00:05:49,951 --> 00:05:50,942
+Backpropagate.
+
+86
+00:05:50,942 --> 00:05:53,065
+Optionally clip the gradients.
+
+87
+00:05:53,065 --> 00:05:57,949
+Then let the optimizer step, and advance the learning rate scheduler.
+
+88
+00:05:57,949 --> 00:05:59,577
+Repeat for every batch.
+
+89
+00:06:00,427 --> 00:06:02,714
+The learning rate is the step size.
+
+90
+00:06:02,714 --> 00:06:06,503
+Too big and you overshoot, too small and it takes forever.
+
+91
+00:06:06,503 --> 00:06:11,860
+Warmup starts tiny because early gradients from random weights aren't trustworthy.
+
+92
+00:06:11,860 --> 00:06:18,002
+The notebook uses AdamW at three e minus four, with a hundred warmup steps and a linear decay.
+
+93
+00:06:18,002 --> 00:06:25,515
+One thing I noticed: with only a hundred and twenty three steps per epoch, warmup takes up most of the first epoch.
+
+94
+00:06:26,365 --> 00:06:28,922
+Gradient clipping is a safety limiter.
+
+95
+00:06:28,922 --> 00:06:37,335
+If the overall gradient norm is bigger than one, the whole gradient is scaled down, so one bad batch can't wreck the weights.
+
+96
+00:06:37,335 --> 00:06:43,325
+It has to happen after backward, when the gradients exist, and before the optimizer step.
+
+97
+00:06:44,175 --> 00:06:46,972
+Here's the training function, condensed.
+
+98
+00:06:46,972 --> 00:06:51,516
+It's the five step recipe exactly, after calling model dot train.
+
+99
+00:06:51,516 --> 00:06:57,669
+But look at the loss: ignore index zero, with a comment saying padding is token id zero.
+
+100
+00:06:57,669 --> 00:07:02,983
+We just saw that the padding id is fifty thousand two hundred and fifty six.
+
+101
+00:07:02,983 --> 00:07:04,591
+I'll come back to this.
+
+102
+00:07:05,441 --> 00:07:06,130
+Part six.
+
+103
+00:07:06,130 --> 00:07:08,428
+Is it learning, or memorising?
+
+104
+00:07:09,278 --> 00:07:12,806
+Always watch training and validation loss together.
+
+105
+00:07:12,806 --> 00:07:14,813
+If both fall, you're healthy.
+
+106
+00:07:14,813 --> 00:07:21,802
+If training keeps falling but validation turns upward, the model is memorising, which is overfitting.
+
+107
+00:07:21,802 --> 00:07:27,752
+If both stay high, the model is underfitting: too small, too little training or a bug.
+
+108
+00:07:28,602 --> 00:07:36,741
+Perplexity is e to the validation loss, and you can read it as how many equally likely tokens the model is torn between.
+
+109
+00:07:36,741 --> 00:07:40,743
+Ten point eight means guessing across the whole vocabulary.
+
+110
+00:07:40,743 --> 00:07:45,016
+Six means it has learned word frequencies, around four hundred.
+
+111
+00:07:45,016 --> 00:07:46,779
+Four and a half is ninety.
+
+112
+00:07:46,779 --> 00:07:52,816
+And it's only fair to compare perplexities that use the same tokenizer and the same data.
+
+113
+00:07:53,666 --> 00:07:57,468
+Evaluation runs without gradients and with dropout off.
+
+114
+00:07:57,468 --> 00:08:04,104
+It sums the loss and divides by the number of counted tokens to get average loss and perplexity.
+
+115
+00:08:04,104 --> 00:08:09,980
+Early stopping halts training when validation loss has risen several epochs in a row.
+
+116
+00:08:09,980 --> 00:08:15,511
+With only three epochs, the book's patience of three can never actually trigger.
+
+117
+00:08:16,361 --> 00:08:17,148
+Part seven.
+
+118
+00:08:17,148 --> 00:08:18,580
+Saving and sampling.
+
+119
+00:08:19,430 --> 00:08:22,096
+A checkpoint needs more than the weights.
+
+120
+00:08:22,096 --> 00:08:29,511
+AdamW keeps two running averages for every parameter, and the scheduler knows where it is in the warmup and decay.
+
+121
+00:08:29,511 --> 00:08:34,064
+Save all of it, and keep the checkpoint with the best validation loss.
+
+122
+00:08:34,914 --> 00:08:39,387
+Generation now samples instead of always picking the top token.
+
+123
+00:08:39,387 --> 00:08:45,067
+Divide the last position's logits by a temperature, softmax, and draw one token.
+
+124
+00:08:45,067 --> 00:08:47,622
+Below one sharpens the distribution.
+
+125
+00:08:47,622 --> 00:08:49,184
+Above one flattens it.
+
+126
+00:08:49,184 --> 00:08:53,231
+As temperature goes to zero you get greedy decoding back.
+
+127
+00:08:53,231 --> 00:08:56,781
+Chapter fourteen goes deeper with top k and top p.
+
+128
+00:08:57,631 --> 00:08:58,271
+Part eight.
+
+129
+00:08:58,271 --> 00:09:00,426
+What actually happened when I ran it.
+
+130
+00:09:01,276 --> 00:09:06,628
+Here's the book's printed run next to mine, same notebook, same seed, on a CPU.
+
+131
+00:09:06,628 --> 00:09:10,694
+The parameter count is sixteen million, not ten point eight.
+
+132
+00:09:10,694 --> 00:09:15,979
+One epoch is a hundred and twenty three batches, not three hundred and twelve.
+
+133
+00:09:15,979 --> 00:09:25,194
+My validation loss went six point two two, five point six six, five point five one, ending at a perplexity of two hundred and forty six.
+
+134
+00:09:25,194 --> 00:09:28,785
+The book prints three point seven five and forty two.
+
+135
+00:09:28,785 --> 00:09:41,184
+That's a big gap, and the perplexity table from part six tells us what it means: my model has learned word frequencies and some line structure, nothing like a perplexity of forty two.
+
+136
+00:09:42,034 --> 00:09:46,898
+And here's what it actually wrote after three epochs, for "to be or not to be".
+
+137
+00:09:46,898 --> 00:09:52,686
+It has learned the shape of a play: short lines, speaker tags in capitals, thee, thy and hath.
+
+138
+00:09:52,686 --> 00:09:54,348
+But these aren't sentences.
+
+139
+00:09:54,348 --> 00:09:59,889
+The book shows the king is a man of great virtue and honour, which my run is nowhere near.
+
+140
+00:09:59,889 --> 00:10:04,445
+The notebook's own closing message says training makes all the difference.
+
+141
+00:10:04,445 --> 00:10:08,509
+It does, but three epochs on this setup isn't enough to get there.
+
+142
+00:10:09,359 --> 00:10:10,864
+Here's the first bug.
+
+143
+00:10:10,864 --> 00:10:21,541
+Ignore index zero doesn't ignore padding, because in GPT-2 token zero is the exclamation mark, a real character, about point six percent of the text.
+
+144
+00:10:21,541 --> 00:10:28,635
+Meanwhile the real padding token, fifty thousand two hundred and fifty six, is counted in the loss.
+
+145
+00:10:28,635 --> 00:10:35,155
+Batches are padded to about a hundred tokens when the average chunk is about seventy eight.
+
+146
+00:10:35,155 --> 00:10:41,891
+I counted: twenty two percent of all target positions are padding that the model is scored on.
+
+147
+00:10:41,891 --> 00:10:49,630
+The fix is to mask using the attention mask, or the real pad id, and set those targets to minus one hundred.
+
+148
+00:10:50,480 --> 00:10:53,271
+The second issue is design rather than a bug.
+
+149
+00:10:53,271 --> 00:11:01,394
+Chunks are measured in characters, so they're only about seventy eight tokens long, less than the model's hundred and twenty eight.
+
+150
+00:11:01,394 --> 00:11:03,006
+Every batch needs padding.
+
+151
+00:11:03,006 --> 00:11:09,206
+And three epochs is only three hundred and sixty nine weight updates, a hundred of which are warmup.
+
+152
+00:11:09,206 --> 00:11:17,701
+A better pipeline tokenises the whole text once and samples random hundred and twenty eight token windows, which needs no padding at all.
+
+153
+00:11:18,552 --> 00:11:31,126
+Here's my fix: the same sixteen million parameter model, same learning rate and warmup, but trained on random hundred and twenty eight token windows from the token stream, with no padding at all.
+
+154
+00:11:31,126 --> 00:11:34,350
+The two curves overlap early, which is reassuring.
+
+155
+00:11:34,350 --> 00:11:47,118
+At step three fifty, mine was at five point three seven, against the notebook's five point five one after three sixty nine steps, and my metric counts every token, with no padding to make it easier.
+
+156
+00:11:47,118 --> 00:11:57,436
+Running on to twelve hundred steps reached a validation loss of four point eight seven, a perplexity of about a hundred and thirty, roughly half the notebook's.
+
+157
+00:11:57,436 --> 00:12:00,015
+Still nowhere near the book's forty two.
+
+158
+00:12:00,015 --> 00:12:03,175
+It took about an hour and a half on a shared CPU.
+
+159
+00:12:04,025 --> 00:12:08,188
+And here's what that model writes when prompted with King Henry.
+
+160
+00:12:08,188 --> 00:12:17,620
+It answers with Queen Margaret, a real character from the history plays, uses line breaks, thou and my lord, and sounds roughly like Shakespeare.
+
+161
+00:12:17,620 --> 00:12:19,051
+But it makes no sense.
+
+162
+00:12:19,051 --> 00:12:26,532
+That's honestly what a perplexity of a hundred and thirty looks like on a small model trained for an hour on a CPU.
+
+163
+00:12:27,382 --> 00:12:30,440
+Why do I doubt the book's perplexity of forty two?
+
+164
+00:12:30,440 --> 00:12:38,271
+Three hundred and thirty eight thousand tokens, sixteen million parameters, and only three hundred and sixty nine small updates.
+
+165
+00:12:38,271 --> 00:12:49,465
+Neither the notebook nor my better pipeline gets anywhere near that, and the printed sample about a man of great virtue and honour reads like an illustration rather than a logged run.
+
+166
+00:12:49,465 --> 00:12:55,094
+The lesson: trust your own logs, and always check what your ignore index actually points at.
+
+167
+00:12:55,944 --> 00:12:56,741
+Part nine.
+
+168
+00:12:56,741 --> 00:12:57,458
+Practice.
+
+169
+00:12:58,308 --> 00:13:00,440
+Quick notes on the exercises.
+
+170
+00:13:00,440 --> 00:13:07,422
+A custom dataset smaller than about a megabyte overfits quickly, so watch the validation curve.
+
+171
+00:13:07,422 --> 00:13:16,609
+In the learning rate sweep, one e minus five barely moves, three e minus four is healthy, and one e minus two tends to spike.
+
+172
+00:13:16,609 --> 00:13:20,137
+Low temperature loops, high temperature is soup.
+
+173
+00:13:20,137 --> 00:13:24,033
+For resuming, reload the optimizer and scheduler too.
+
+174
+00:13:24,033 --> 00:13:27,781
+Early stopping needs more epochs than its patience.
+
+175
+00:13:27,781 --> 00:13:32,265
+And the perplexity improvement is one minus final over first.
+
+176
+00:13:33,115 --> 00:13:33,991
+Short answers.
+
+177
+00:13:33,991 --> 00:13:35,868
+The five steps, as we've seen.
+
+178
+00:13:35,868 --> 00:13:39,998
+Without shifting, the model can see the answer and learns to copy.
+
+179
+00:13:39,998 --> 00:13:44,253
+Ignore index skips positions, but only if it points at the right id.
+
+180
+00:13:44,253 --> 00:13:57,267
+Ten thousand over thirty two is three hundred and twelve point five, so three hundred and thirteen batches including the last partial one, or one thousand five hundred and sixty five updates over five epochs.
+
+181
+00:13:57,267 --> 00:14:01,147
+And saving only weights resets the optimizer and the schedule.
+
+182
+00:14:01,997 --> 00:14:08,393
+Your practice: run the notebook, change the ignore index to the real pad id, and compare.
+
+183
+00:14:08,393 --> 00:14:11,771
+Log loss every few steps, not just every epoch.
+
+184
+00:14:11,771 --> 00:14:16,226
+And try the stream sampler from my notes for a thousand steps.
+
+185
+00:14:17,076 --> 00:14:21,724
+This video is based on Build Your First LLM by Hasan Degismez.
+
+186
+00:14:21,724 --> 00:14:32,443
+The explanations and diagrams are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+187
+00:14:32,443 --> 00:14:37,615
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+188
+00:14:37,615 --> 00:14:41,588
+Thanks for watching, and see you in chapter thirteen.
+

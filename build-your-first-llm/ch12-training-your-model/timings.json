@@ -1,0 +1,303 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 41.06,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 41.06,
+  "dur": 15.85,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 12 roadmap",
+  "start": 56.9,
+  "dur": 22.8,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 79.71,
+  "dur": 24.06,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 103.77,
+  "dur": 3.2,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Learning = closing a loop",
+  "start": 106.96,
+  "dur": 23.72,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Part 2",
+  "start": 130.68,
+  "dur": 4.33,
+  "divider": true
+ },
+ {
+  "slide": 8,
+  "title": "One sequence, many examples",
+  "start": 135.01,
+  "dur": 26.36,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "The label-shifting helper",
+  "start": 161.38,
+  "dur": 18.47,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Part 3",
+  "start": 179.85,
+  "dur": 3.2,
+  "divider": true
+ },
+ {
+  "slide": 11,
+  "title": "Cross-entropy = \u2212ln p(correct)",
+  "start": 183.04,
+  "dur": 27.11,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Flattening for `F.cross_entropy`",
+  "start": 210.15,
+  "dur": 17.77,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Before training: noise",
+  "start": 227.92,
+  "dur": 14.46,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Part 4",
+  "start": 242.38,
+  "dur": 3.35,
+  "divider": true
+ },
+ {
+  "slide": 15,
+  "title": "TinyShakespeare",
+  "start": 245.73,
+  "dur": 21.76,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "The collate function",
+  "start": 267.49,
+  "dur": 23.04,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Batch vs epoch",
+  "start": 290.52,
+  "dur": 32.55,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "The DataLoader",
+  "start": 323.07,
+  "dur": 13.29,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Part 5",
+  "start": 336.35,
+  "dur": 3.15,
+  "divider": true
+ },
+ {
+  "slide": 20,
+  "title": "The 5-step recipe",
+  "start": 339.51,
+  "dur": 20.67,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Learning rate and warmup",
+  "start": 360.18,
+  "dur": 25.94,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Gradient clipping",
+  "start": 386.12,
+  "dur": 17.81,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "`train_epoch`, in the notebook",
+  "start": 403.93,
+  "dur": 21.27,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Part 6",
+  "start": 425.19,
+  "dur": 3.84,
+  "divider": true
+ },
+ {
+  "slide": 25,
+  "title": "Reading loss curves",
+  "start": 429.03,
+  "dur": 19.32,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Perplexity = e^loss",
+  "start": 448.35,
+  "dur": 25.06,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Evaluation and early stopping",
+  "start": 473.42,
+  "dur": 22.7,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Part 7",
+  "start": 496.11,
+  "dur": 3.07,
+  "divider": true
+ },
+ {
+  "slide": 29,
+  "title": "What goes in a checkpoint",
+  "start": 499.18,
+  "dur": 15.48,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Sampling with temperature",
+  "start": 514.66,
+  "dur": 22.72,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Part 8",
+  "start": 537.38,
+  "dur": 3.64,
+  "divider": true
+ },
+ {
+  "slide": 32,
+  "title": "The book's printed result vs my run",
+  "start": 541.03,
+  "dur": 40.76,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "What it wrote after 3 epochs",
+  "start": 581.78,
+  "dur": 27.32,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Bug 1: `ignore_index=0` ignores the wrong token",
+  "start": 609.11,
+  "dur": 41.12,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Bug 2 (design): short, padded, character chunks",
+  "start": 650.23,
+  "dur": 28.07,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "My fix: stream training, same model, same lr",
+  "start": 678.3,
+  "dur": 45.47,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Stream model samples",
+  "start": 723.78,
+  "dur": 23.36,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Why the book's 42 is suspicious",
+  "start": 747.13,
+  "dur": 28.56,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Part 9",
+  "start": 775.69,
+  "dur": 2.36,
+  "divider": true
+ },
+ {
+  "slide": 40,
+  "title": "Exercises, worked",
+  "start": 778.06,
+  "dur": 34.81,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Review questions: short answers",
+  "start": 812.87,
+  "dur": 28.88,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Practice this",
+  "start": 841.75,
+  "dur": 15.08,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "Credits",
+  "start": 856.83,
+  "dur": 25.36,
+  "divider": false
+ }
+]
