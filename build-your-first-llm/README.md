@@ -28,7 +28,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 10 | Attention Is All You Need | [slides](ch10-attention-is-all-you-need/slides.md) | [notes](ch10-attention-is-all-you-need/notes.md) | [ch10](https://github.com/FirstLLM/code/blob/main/notebooks/ch10.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch10.ipynb) | ✅ pilot |
 | 11 | Building the Transformer | [slides](ch11-building-the-transformer/slides.md) | [notes](ch11-building-the-transformer/notes.md) | [ch11](https://github.com/FirstLLM/code/blob/main/notebooks/ch11.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch11.ipynb) | ✅ |
 | 12 | Training Your Model | | | [ch12](https://github.com/FirstLLM/code/blob/main/notebooks/ch12.ipynb) | planned |
-| 13 | Fine-Tuning | | | [ch13](https://github.com/FirstLLM/code/blob/main/notebooks/ch13.ipynb) | planned |
+| 13 | Fine-Tuning | [slides](ch13-fine-tuning/slides.md) | [notes](ch13-fine-tuning/notes.md) | [ch13](https://github.com/FirstLLM/code/blob/main/notebooks/ch13.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch13.ipynb) | ✅ |
 | 14 | Prompt Engineering | | | [ch14](https://github.com/FirstLLM/code/blob/main/notebooks/ch14.ipynb) | planned |
 | 15 | Building Applications | | | [ch15](https://github.com/FirstLLM/code/blob/main/notebooks/ch15.ipynb) | planned |
 | 16 | Preparing for Production | [slides](ch16-preparing-for-production/slides.md) | [notes](ch16-preparing-for-production/notes.md) | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | ✅ |

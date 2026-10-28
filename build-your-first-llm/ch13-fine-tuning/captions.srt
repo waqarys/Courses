@@ -1,0 +1,716 @@
+1
+00:00:00,250 --> 00:00:06,476
+Welcome to chapter thirteen of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,476 --> 00:00:14,941
+Today we turn a generalist model into a specialist: instruction data, loss masking, and LoRA adapters built from scratch.
+
+3
+00:00:14,941 --> 00:00:28,793
+I ran the notebook, found why it can't show any improvement, and then ran the same recipe on a properly pretrained GPT-2 with a real held-out test set, so you can see what fine-tuning actually does.
+
+4
+00:00:29,643 --> 00:00:34,271
+Chapter twelve was pretraining: predict the next token of raw text.
+
+5
+00:00:34,271 --> 00:00:41,039
+Today is fine-tuning: teach the model to answer in a specific way using question and answer pairs.
+
+6
+00:00:41,039 --> 00:00:46,219
+Chapter fourteen gets better behaviour without touching the weights at all.
+
+7
+00:00:47,069 --> 00:00:47,745
+The plan.
+
+8
+00:00:47,745 --> 00:00:49,620
+When to fine tune at all.
+
+9
+00:00:49,620 --> 00:00:51,270
+How to shape the data.
+
+10
+00:00:51,270 --> 00:00:52,245
+Loss masking.
+
+11
+00:00:52,245 --> 00:00:54,721
+LoRA, from the maths to the code.
+
+12
+00:00:54,721 --> 00:00:55,921
+How to evaluate.
+
+13
+00:00:55,921 --> 00:00:57,496
+How to ship adapters.
+
+14
+00:00:57,496 --> 00:01:03,197
+And then my two runs: the notebook as written, and a fixed version on GPT-2.
+
+15
+00:01:04,048 --> 00:01:04,826
+Key terms.
+
+16
+00:01:04,826 --> 00:01:09,185
+Supervised fine tuning trains on input and output pairs.
+
+17
+00:01:09,185 --> 00:01:11,988
+Loss masking grades only the answer.
+
+18
+00:01:11,988 --> 00:01:16,581
+LoRA learns a small low rank change next to frozen weights.
+
+19
+00:01:16,581 --> 00:01:19,617
+An adapter is a small trainable add on.
+
+20
+00:01:19,617 --> 00:01:22,965
+The rank is the width of LoRA's bottleneck.
+
+21
+00:01:22,965 --> 00:01:26,234
+And freezing means a weight never updates.
+
+22
+00:01:27,084 --> 00:01:27,665
+Part one.
+
+23
+00:01:27,665 --> 00:01:29,601
+Do you even need to fine tune?
+
+24
+00:01:30,451 --> 00:01:32,755
+A pretrained model is a generalist.
+
+25
+00:01:32,755 --> 00:01:35,782
+It knows language but hasn't mastered any job.
+
+26
+00:01:35,782 --> 00:01:40,718
+Ask a Shakespeare model about your refund policy and you get thee and thou.
+
+27
+00:01:40,718 --> 00:01:42,034
+You have two levers.
+
+28
+00:01:42,034 --> 00:01:49,865
+Give it better instructions, which is prompting, or show it many examples of the right behaviour, which is fine tuning.
+
+29
+00:01:50,715 --> 00:01:57,096
+Prompting wins for simple, varied tasks, when you have no examples and need results today.
+
+30
+00:01:57,096 --> 00:02:07,376
+Fine tuning wins when you need the same format and vocabulary every time, on one high volume task, and you have at least a hundred good examples.
+
+31
+00:02:08,226 --> 00:02:09,517
+The rule of thumb.
+
+32
+00:02:09,517 --> 00:02:12,387
+Try five to ten prompt variations first.
+
+33
+00:02:12,387 --> 00:02:14,180
+Then ask three questions.
+
+34
+00:02:14,180 --> 00:02:17,409
+Do I have a hundred or more correct examples?
+
+35
+00:02:17,409 --> 00:02:20,637
+Must the model use specific terms every time?
+
+36
+00:02:20,637 --> 00:02:23,865
+Is the task far from what the base model saw?
+
+37
+00:02:23,865 --> 00:02:25,945
+Two or more yeses, fine tune.
+
+38
+00:02:25,945 --> 00:02:28,599
+Otherwise keep working on the prompt.
+
+39
+00:02:29,449 --> 00:02:29,808
+Cost.
+
+40
+00:02:29,808 --> 00:02:36,682
+Prompting is fast and free to set up, but long instructions cost tokens on every single request.
+
+41
+00:02:36,682 --> 00:02:40,692
+Fine tuning costs compute once, then prompts stay short.
+
+42
+00:02:40,692 --> 00:02:42,697
+At high volume that can win.
+
+43
+00:02:42,697 --> 00:02:48,927
+The hidden cost is that every fine tune is a new artifact to store, version and deploy.
+
+44
+00:02:49,777 --> 00:02:50,491
+Part two.
+
+45
+00:02:50,491 --> 00:02:51,206
+The data.
+
+46
+00:02:52,056 --> 00:02:54,896
+In chapter seven a record was just text.
+
+47
+00:02:54,896 --> 00:02:58,942
+Now each record is an instruction and the ideal response.
+
+48
+00:02:58,942 --> 00:03:04,835
+Pretraining is like reading the whole textbook; fine tuning is drilling flashcards.
+
+49
+00:03:05,685 --> 00:03:10,020
+The dataset is an FAQ for a fictional company called TechStartup.
+
+50
+00:03:10,020 --> 00:03:14,288
+The book says eighty training examples and twenty test examples.
+
+51
+00:03:14,288 --> 00:03:21,158
+The notebook actually has sixty nine, and it takes the first eighty for training, which is all of them.
+
+52
+00:03:21,158 --> 00:03:25,092
+So the test set is empty, and that breaks evaluation later.
+
+53
+00:03:25,092 --> 00:03:26,293
+Keep that in mind.
+
+54
+00:03:27,143 --> 00:03:30,608
+JSON lines stores one JSON object per line.
+
+55
+00:03:30,608 --> 00:03:34,153
+You can stream it, append to it and diff it.
+
+56
+00:03:34,153 --> 00:03:39,068
+Saving is a loop of json dumps; loading reads each line back.
+
+57
+00:03:39,918 --> 00:03:45,074
+In fine tuning, each example is seen many times, so errors get amplified.
+
+58
+00:03:45,074 --> 00:03:47,404
+One wrong answer becomes a habit.
+
+59
+00:03:47,404 --> 00:03:56,939
+Check that answers are accurate, use consistent terms, never contradict each other, cover varied phrasings, and contain nothing unsafe.
+
+60
+00:03:56,939 --> 00:04:02,660
+If one record says Amsterdam and another says Berlin, the model learns confusion.
+
+61
+00:04:03,509 --> 00:04:04,331
+Part three.
+
+62
+00:04:04,331 --> 00:04:05,301
+Loss masking.
+
+63
+00:04:06,151 --> 00:04:09,028
+In chapter twelve every position was graded.
+
+64
+00:04:09,028 --> 00:04:20,667
+For question answer data, that means grading the model on predicting the words of the question itself, which teaches nothing useful and even encourages it to parrot the question.
+
+65
+00:04:20,667 --> 00:04:23,282
+We only care about producing the answer.
+
+66
+00:04:24,132 --> 00:04:25,170
+Here's the idea.
+
+67
+00:04:25,170 --> 00:04:31,786
+The prompt tokens, from the instruction marker to the closing marker, get the label minus one hundred.
+
+68
+00:04:31,786 --> 00:04:33,991
+Only the answer tokens are graded.
+
+69
+00:04:33,991 --> 00:04:38,596
+Like a teacher who doesn't mark you for copying the question correctly.
+
+70
+00:04:39,446 --> 00:04:51,970
+In code: format the prompt with the markers, tokenize prompt plus response, tokenize the prompt alone to find where the answer starts, then set everything before that to minus one hundred.
+
+71
+00:04:51,970 --> 00:05:01,163
+In the notebook, one example had a hundred and fifteen masked positions and only thirteen trained ones, because the padding is masked too.
+
+72
+00:05:02,014 --> 00:05:08,346
+The loss is chapter twelve's shifted cross entropy with ignore index minus one hundred.
+
+73
+00:05:08,346 --> 00:05:11,330
+The training loop is the same five steps.
+
+74
+00:05:11,330 --> 00:05:18,899
+One tip the chapter skips: put an end of text token after each answer, so the model learns when to stop.
+
+75
+00:05:18,899 --> 00:05:20,574
+My GPT-2 run does that.
+
+76
+00:05:21,424 --> 00:05:22,547
+Part four.
+
+77
+00:05:22,547 --> 00:05:23,109
+LoRA.
+
+78
+00:05:23,959 --> 00:05:32,273
+Full fine tuning needs gradients and optimizer state for every weight, and you ship a full copy of the model for every task.
+
+79
+00:05:32,273 --> 00:05:35,089
+At billions of weights that's impractical.
+
+80
+00:05:35,089 --> 00:05:41,793
+And updating everything risks catastrophic forgetting, where the new task overwrites the old skills.
+
+81
+00:05:42,644 --> 00:05:47,209
+LoRA's insight is that the change a fine tune needs is low rank.
+
+82
+00:05:47,209 --> 00:05:54,770
+So freeze the big matrix W and learn a thin correction made of two small matrices, scaled by alpha over r.
+
+83
+00:05:54,770 --> 00:06:04,043
+On a two fifty six square layer with rank eight, that's four thousand ninety six trainable numbers instead of sixty five thousand.
+
+84
+00:06:04,043 --> 00:06:05,470
+Sixteen times fewer.
+
+85
+00:06:06,320 --> 00:06:09,142
+The book's headline is forty eight times.
+
+86
+00:06:09,142 --> 00:06:12,514
+That's true for a seven sixty eight square layer.
+
+87
+00:06:12,514 --> 00:06:20,222
+MiniGPT's real attention projection goes from two fifty six to seven sixty eight, which gives twenty four times.
+
+88
+00:06:20,222 --> 00:06:22,975
+The notebook's demo layer gives sixteen.
+
+89
+00:06:22,975 --> 00:06:28,550
+The ratio depends on the shape, so don't quote forty eight as a property of LoRA.
+
+90
+00:06:29,400 --> 00:06:31,815
+The scale is alpha divided by rank.
+
+91
+00:06:31,815 --> 00:06:34,507
+Alpha is a volume knob for the adapter.
+
+92
+00:06:34,507 --> 00:06:44,376
+Dividing by rank means that if you try a different rank, the update size stays roughly the same, so you don't need to retune the learning rate.
+
+93
+00:06:44,376 --> 00:06:47,896
+Rank eight with alpha sixteen gives a scale of two.
+
+94
+00:06:48,746 --> 00:06:50,408
+Here's the book's layer.
+
+95
+00:06:50,408 --> 00:06:54,566
+A frozen base linear layer, two small matrices, and a scale.
+
+96
+00:06:54,566 --> 00:07:05,514
+One matrix gets a small random start; the other starts at zero, so the adapter adds exactly nothing at step zero and training grows the correction from there.
+
+97
+00:07:06,364 --> 00:07:07,468
+A naming gotcha.
+
+98
+00:07:07,468 --> 00:07:11,677
+The book calls the down projection B and the up projection A.
+
+99
+00:07:11,677 --> 00:07:20,234
+The original paper and Hugging Face's PEFT library do the opposite: A is down and starts random, B is up and starts at zero.
+
+100
+00:07:20,234 --> 00:07:26,583
+The maths is the same, but if you ever load or compare PEFT weights, the names are reversed.
+
+101
+00:07:26,583 --> 00:07:30,171
+The notebook shows lora B as two fifty six by eight.
+
+102
+00:07:31,022 --> 00:07:44,580
+Injecting LoRA: freeze every parameter, then in every block replace the combined query key value projection with a LoRA version that copies the old weights into its frozen base.
+
+103
+00:07:44,580 --> 00:07:47,491
+Only the new small matrices can learn.
+
+104
+00:07:48,341 --> 00:07:54,017
+The book says adapting the fused projection primarily affects queries and values.
+
+105
+00:07:54,017 --> 00:07:54,788
+It doesn't.
+
+106
+00:07:54,788 --> 00:08:00,113
+One adapter on the fused output can change queries, keys and values equally.
+
+107
+00:08:00,113 --> 00:08:04,949
+If you want only Q and V, split the projection or mask the key slice.
+
+108
+00:08:04,949 --> 00:08:09,504
+The paper's finding was about which matrices you choose to adapt.
+
+109
+00:08:10,354 --> 00:08:19,860
+In the notebook, thirty two thousand seven hundred and sixty eight parameters are trainable out of sixteen million, which is zero point two percent.
+
+110
+00:08:19,860 --> 00:08:24,484
+The book prints a different pair of numbers from an older configuration.
+
+111
+00:08:24,484 --> 00:08:28,146
+Either way only a fifth of a percent of the model learns.
+
+112
+00:08:28,996 --> 00:08:41,848
+QLoRA keeps the frozen base in four bit precision and trains LoRA on top, which is how people fine tune seven billion parameter models on one consumer GPU.
+
+113
+00:08:41,848 --> 00:08:47,321
+It's the same idea plus quantisation, using bitsandbytes and PEFT.
+
+114
+00:08:48,171 --> 00:08:48,927
+Part five.
+
+115
+00:08:48,927 --> 00:08:49,835
+Did it work?
+
+116
+00:08:50,685 --> 00:08:51,587
+Three checks.
+
+117
+00:08:51,587 --> 00:08:53,599
+Exact match, which is strict.
+
+118
+00:08:53,599 --> 00:08:57,415
+Word overlap, the share of expected words that show up.
+
+119
+00:08:57,415 --> 00:09:02,133
+And actually reading the outputs, because numbers can hide nonsense.
+
+120
+00:09:02,133 --> 00:09:05,810
+All on held out questions the model never trained on.
+
+121
+00:09:06,660 --> 00:09:12,544
+The book's evaluation calls model dot generate with Hugging Face style arguments.
+
+122
+00:09:12,544 --> 00:09:14,941
+MiniGPT doesn't have that method.
+
+123
+00:09:14,941 --> 00:09:20,607
+You need a small greedy loop: take the argmax, append it, stop at end of text.
+
+124
+00:09:20,607 --> 00:09:24,239
+And set seeds before both training and evaluation.
+
+125
+00:09:25,089 --> 00:09:26,718
+Here's my notebook run.
+
+126
+00:09:26,718 --> 00:09:30,968
+The base model is randomly initialised, so it knows nothing.
+
+127
+00:09:30,968 --> 00:09:36,564
+Loss moved from ten point eight six to ten point seven four, about one percent.
+
+128
+00:09:36,564 --> 00:09:39,398
+Outputs were gibberish before and after.
+
+129
+00:09:39,398 --> 00:09:44,427
+And because the test set is empty, the evaluation cell divides by zero.
+
+130
+00:09:44,427 --> 00:09:50,732
+LoRA can't teach language to a random model; it can only nudge one that already knows it.
+
+131
+00:09:51,582 --> 00:09:54,977
+The part that does work in the notebook: file size.
+
+132
+00:09:54,977 --> 00:10:03,700
+The adapter is a hundred and thirty two kilobytes, the full model sixty one megabytes, four hundred and seventy eight times bigger.
+
+133
+00:10:03,700 --> 00:10:08,627
+The book's numbers come from an older configuration, but the point stands.
+
+134
+00:10:09,477 --> 00:10:12,082
+So I ran the same recipe properly.
+
+135
+00:10:12,082 --> 00:10:29,402
+A pretrained GPT-2 small, LoRA rank eight alpha sixteen on every attention projection, the book's sixty nine FAQ examples shuffled into fifty five for training and fourteen held out, with loss masking and an end of text token.
+
+136
+00:10:30,252 --> 00:10:31,654
+Here are my numbers.
+
+137
+00:10:31,654 --> 00:10:37,614
+Training loss fell from three point one five to point seven three over twelve epochs.
+
+138
+00:10:37,614 --> 00:10:46,519
+On the fourteen held out questions, exact match stayed at zero, and word overlap rose from five percent to eighteen and a half.
+
+139
+00:10:46,519 --> 00:10:53,320
+On questions it trained on, overlap was fifty three percent, with three of fourteen word perfect.
+
+140
+00:10:53,320 --> 00:10:59,911
+Only a quarter of a percent of GPT-2's weights trained, and the adapter is about one megabyte.
+
+141
+00:10:59,911 --> 00:11:10,780
+So the book's fifty percent exact match isn't realistic for unseen questions: with sixty nine examples, the model learns the style, not facts it never saw.
+
+142
+00:11:11,630 --> 00:11:14,161
+Reading the answers tells the real story.
+
+143
+00:11:14,161 --> 00:11:20,891
+Where are you based: Amsterdam, correct, because other training answers mention it, though it repeats itself.
+
+144
+00:11:20,891 --> 00:11:24,904
+Customer service: it invents an email address and a phone number.
+
+145
+00:11:24,904 --> 00:11:29,164
+Uptime: a vague non answer instead of ninety nine point nine percent.
+
+146
+00:11:29,164 --> 00:11:35,708
+The fine tune learned the company's voice and answer format perfectly, but facts it never saw get made up.
+
+147
+00:11:35,708 --> 00:11:40,771
+Fine tuning teaches behaviour; for facts, use retrieval, which is chapter fifteen.
+
+148
+00:11:41,621 --> 00:11:42,357
+Part six.
+
+149
+00:11:42,357 --> 00:11:43,093
+Shipping.
+
+150
+00:11:43,943 --> 00:11:47,338
+Save only the parameters whose names contain lora.
+
+151
+00:11:47,338 --> 00:11:57,456
+To use it, build the same model, add the same LoRA structure, and load with strict equals false, because the base weights aren't in the adapter file.
+
+152
+00:11:57,456 --> 00:12:02,482
+Remember the base must be the same pretrained weights you trained against.
+
+153
+00:12:03,332 --> 00:12:07,267
+Keep adapters separate if you want to swap tasks like apps.
+
+154
+00:12:07,267 --> 00:12:13,603
+Merge if you want one simple file and slightly faster inference, accepting that it's permanent.
+
+155
+00:12:13,603 --> 00:12:19,673
+Merging is just adding the scaled product into W, transposed for the linear layer's layout.
+
+156
+00:12:20,523 --> 00:12:21,254
+Takeaways.
+
+157
+00:12:21,254 --> 00:12:25,933
+Prompt first, fine tune when you have the data and a clear need.
+
+158
+00:12:25,933 --> 00:12:28,565
+Loss masking grades only the answer.
+
+159
+00:12:28,565 --> 00:12:32,440
+LoRA trains a tiny low rank update on frozen weights.
+
+160
+00:12:32,440 --> 00:12:42,091
+And the lesson from my runs: fine tuning only works on a pretrained base, and you only know it worked with a real held out test set.
+
+161
+00:12:42,941 --> 00:12:43,941
+Short answers.
+
+162
+00:12:43,941 --> 00:12:49,156
+Two hundred examples and a fixed format: fine tune, after trying prompts.
+
+163
+00:12:49,156 --> 00:12:51,157
+Masking stops wasted signal.
+
+164
+00:12:51,157 --> 00:12:57,301
+LoRA works because task changes are low rank, though bigger shifts may need more rank.
+
+165
+00:12:57,301 --> 00:12:59,372
+Freezing prevents forgetting.
+
+166
+00:12:59,372 --> 00:13:04,445
+And ten thousand noisy examples can be worse than a hundred clean ones.
+
+167
+00:13:05,295 --> 00:13:06,849
+The checkpoint, fixed.
+
+168
+00:13:06,849 --> 00:13:08,756
+Load trained weights first.
+
+169
+00:13:08,756 --> 00:13:12,642
+Shuffle and split the data so the test set isn't empty.
+
+170
+00:13:12,642 --> 00:13:16,951
+Rank eight, end of text on answers, a greedy evaluation loop.
+
+171
+00:13:16,951 --> 00:13:22,532
+Report exact match, overlap, three before and after pairs and the adapter size.
+
+172
+00:13:23,382 --> 00:13:23,990
+Practice.
+
+173
+00:13:23,990 --> 00:13:27,437
+Sweep the rank and plot overlap against parameters.
+
+174
+00:13:27,437 --> 00:13:31,694
+Train once without masking and see if it parrots the questions.
+
+175
+00:13:31,694 --> 00:13:36,289
+And train a second adapter for another domain and swap between them.
+
+176
+00:13:37,139 --> 00:13:41,799
+This video is based on Build Your First LLM by Hasan Degismez.
+
+177
+00:13:41,799 --> 00:13:52,546
+The explanations and diagrams are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+178
+00:13:52,546 --> 00:13:57,732
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+179
+00:13:57,732 --> 00:14:01,715
+Thanks for watching, and see you in chapter fourteen.
+
