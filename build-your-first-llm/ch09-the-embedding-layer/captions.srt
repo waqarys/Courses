@@ -1,0 +1,748 @@
+1
+00:00:00,250 --> 00:00:06,543
+Welcome to chapter nine of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,543 --> 00:00:08,838
+Today token IDs become vectors.
+
+3
+00:00:08,838 --> 00:00:21,943
+We'll build token embeddings and position embeddings from scratch, combine them into GPT-2's embedding layer, and then open up the real GPT-2 to see what its embeddings learned.
+
+4
+00:00:21,943 --> 00:00:33,716
+I ran the notebook and some experiments of my own, and one of them shows why the book's similarity search returns odd results, and how a single space fixes it.
+
+5
+00:00:34,566 --> 00:00:36,844
+We have clean data and token IDs.
+
+6
+00:00:36,844 --> 00:00:41,056
+Today those IDs become vectors that also know their position.
+
+7
+00:00:41,056 --> 00:00:45,338
+Next chapter, attention lets those vectors look at each other.
+
+8
+00:00:45,338 --> 00:00:50,309
+Everything follows the chapter nine notebook, linked in the description.
+
+9
+00:00:51,160 --> 00:00:52,347
+Here's the plan.
+
+10
+00:00:52,347 --> 00:00:54,202
+Why token IDs alone fail.
+
+11
+00:00:54,202 --> 00:00:56,800
+Token embeddings as a lookup table.
+
+12
+00:00:56,800 --> 00:01:03,108
+Why order is invisible without positions, and how learned position embeddings fix it.
+
+13
+00:01:03,108 --> 00:01:06,893
+Putting both together into GPT-2's embedding layer.
+
+14
+00:01:06,893 --> 00:01:12,088
+Then exploring the real thing, some practical details, and the review.
+
+15
+00:01:12,938 --> 00:01:13,788
+Some terms.
+
+16
+00:01:13,788 --> 00:01:17,730
+An embedding is a learned dense vector for a token.
+
+17
+00:01:17,730 --> 00:01:21,749
+The lookup table is a matrix with one row per token.
+
+18
+00:01:21,749 --> 00:01:28,010
+In GPT-2 the token table is called w t e, and the position table is called w p e.
+
+19
+00:01:28,010 --> 00:01:33,807
+One hot is the naive alternative: a huge vector of zeros with a single one.
+
+20
+00:01:33,807 --> 00:01:38,367
+And cosine similarity measures how aligned two vectors are.
+
+21
+00:01:39,217 --> 00:01:39,784
+Part one.
+
+22
+00:01:39,784 --> 00:01:43,185
+Why can't we feed token IDs straight into the network?
+
+23
+00:01:44,035 --> 00:01:46,744
+Token IDs are labels, not quantities.
+
+24
+00:01:46,744 --> 00:02:00,069
+In GPT-2, space cat is three seven nine seven, space dog is three two nine zero, space car is one zero nine seven, and space kitten is forty two thousand one hundred and forty three.
+
+25
+00:02:00,069 --> 00:02:10,173
+Numerically cat is close to dog and far from kitten, but that means nothing: the IDs come from the order in which BPE merges were learned.
+
+26
+00:02:10,173 --> 00:02:16,835
+If a network multiplied raw IDs, it would treat cat as roughly one point one six times dog.
+
+27
+00:02:16,835 --> 00:02:20,936
+We need a representation where distance means something.
+
+28
+00:02:21,786 --> 00:02:23,617
+A book check on those IDs.
+
+29
+00:02:23,617 --> 00:02:29,462
+Three seven nine seven is right for cat, but it's the version with a leading space.
+
+30
+00:02:29,462 --> 00:02:32,561
+Without the space, cat is nine two four six.
+
+31
+00:02:32,561 --> 00:02:40,449
+The book's dog, four two seven three, is actually the token space pet, and its kitten ID is the token space W C.
+
+32
+00:02:40,449 --> 00:02:46,647
+The real IDs are three two nine zero and forty two thousand one hundred and forty three.
+
+33
+00:02:46,647 --> 00:02:52,352
+In the full pipeline example, mat is two six zero three, and the notebook agrees.
+
+34
+00:02:52,352 --> 00:02:58,409
+And the batch example labelled I will help you actually decodes to I like animals you.
+
+35
+00:02:58,409 --> 00:03:02,846
+The point the book makes is right; the specific numbers aren't.
+
+36
+00:03:03,696 --> 00:03:09,565
+The naive alternative is one hot: a vector fifty thousand long with a single one.
+
+37
+00:03:09,565 --> 00:03:14,637
+It's huge, and every pair of words is exactly the same distance apart.
+
+38
+00:03:14,637 --> 00:03:21,955
+A dense embedding uses seven hundred and sixty eight learned numbers, and similar words can be close.
+
+39
+00:03:21,955 --> 00:03:33,549
+Here's a nice fact I verified in code: multiplying a one hot vector by the embedding matrix gives exactly the same result as picking row three seven nine seven.
+
+40
+00:03:33,549 --> 00:03:37,824
+An embedding lookup is just a fast one hot matrix multiply.
+
+41
+00:03:38,673 --> 00:03:41,106
+Why seven hundred and sixty eight?
+
+42
+00:03:41,106 --> 00:03:48,548
+It's two to the eighth times three, which splits cleanly into twelve attention heads of sixty four each.
+
+43
+00:03:48,548 --> 00:03:58,207
+GPT-2's sizes go from seven sixty eight up to sixteen hundred, and the largest GPT-3 uses twelve thousand two hundred and eighty eight.
+
+44
+00:03:58,207 --> 00:04:02,214
+More dimensions means more capacity but more parameters.
+
+45
+00:04:02,214 --> 00:04:15,809
+In GPT-2 small, the token table alone is thirty eight point six million of the one hundred and twenty four point four million parameters, nearly a third, which I counted from the real model.
+
+46
+00:04:16,659 --> 00:04:17,246
+Part two.
+
+47
+00:04:17,246 --> 00:04:19,923
+Token embeddings are just a lookup table.
+
+48
+00:04:20,773 --> 00:04:23,398
+Here's the whole idea in one picture.
+
+49
+00:04:23,398 --> 00:04:33,542
+The embedding matrix has one row per token, fifty thousand two hundred and fifty seven rows, and seven hundred and sixty eight numbers per row.
+
+50
+00:04:33,542 --> 00:04:39,644
+Token ID three seven nine seven, space cat, simply selects row three seven nine seven.
+
+51
+00:04:39,644 --> 00:04:41,701
+No arithmetic, just indexing.
+
+52
+00:04:42,551 --> 00:04:44,569
+In code, it's fancy indexing.
+
+53
+00:04:44,569 --> 00:04:48,397
+A random matrix of fifty thousand by seven sixty eight.
+
+54
+00:04:48,397 --> 00:04:54,033
+Index it with three IDs and you get three rows, shape three by seven sixty eight.
+
+55
+00:04:54,033 --> 00:05:00,505
+Index it with a batch of two sequences of four, and you get two by four by seven sixty eight.
+
+56
+00:05:00,505 --> 00:05:06,978
+Remember this shape rule: batch by sequence becomes batch by sequence by embedding dimension.
+
+57
+00:05:07,827 --> 00:05:15,457
+The module version wraps nn dot Embedding, which is the same table but registered as a trainable parameter.
+
+58
+00:05:15,457 --> 00:05:22,873
+It's initialised from a normal distribution with standard deviation zero point zero two, GPT-2's choice.
+
+59
+00:05:22,873 --> 00:05:25,012
+Forward just looks up the IDs.
+
+60
+00:05:25,012 --> 00:05:36,777
+On my run, one sequence of four becomes one by four by seven sixty eight, and the values are small, around plus or minus zero point zero two, exactly as initialised.
+
+61
+00:05:37,627 --> 00:05:38,397
+Part three.
+
+62
+00:05:38,397 --> 00:05:39,867
+Why position matters.
+
+63
+00:05:40,717 --> 00:05:42,295
+I tested this directly.
+
+64
+00:05:42,295 --> 00:05:49,979
+I embedded the cat sat and sat cat the with the same table, and ran both through a real PyTorch attention layer.
+
+65
+00:05:49,979 --> 00:05:58,967
+Without positions, the output for cat in the first sentence is exactly the output for cat in the second, just at a different index.
+
+66
+00:05:58,967 --> 00:06:07,200
+Attention is permutation equivariant: shuffle the input, and the output shuffles the same way, and nothing else changes.
+
+67
+00:06:07,200 --> 00:06:10,973
+Once I added position embeddings, the outputs differed.
+
+68
+00:06:10,973 --> 00:06:18,108
+So without position information, dog bites man and man bites dog would mean the same thing to the model.
+
+69
+00:06:18,958 --> 00:06:22,047
+There are several ways to add position.
+
+70
+00:06:22,047 --> 00:06:29,966
+Learned absolute embeddings, a trainable table with one vector per position, used by GPT-2 and BERT.
+
+71
+00:06:29,966 --> 00:06:35,510
+Sinusoidal encodings, fixed waves from the original transformer paper.
+
+72
+00:06:35,510 --> 00:06:43,112
+And rotary embeddings, RoPE, which rotate queries and keys by an angle that depends on position.
+
+73
+00:06:43,112 --> 00:06:56,971
+The book describes GPT-2 as a modern LLM that prefers learned embeddings; GPT-2 is from twenty nineteen, and most current open models such as LLaMA, Mistral and Qwen use RoPE.
+
+74
+00:06:56,971 --> 00:06:58,872
+I added that row myself.
+
+75
+00:06:58,872 --> 00:07:02,515
+We'll implement learned positions, like GPT-2.
+
+76
+00:07:03,365 --> 00:07:09,094
+The position module is another embedding table, indexed by position instead of token ID.
+
+77
+00:07:09,094 --> 00:07:24,459
+Forward reads the sequence length, checks it against the maximum, creates positions zero to length minus one on the same device as the input, adds a batch dimension with unsqueeze, and expands it across the batch without copying memory.
+
+78
+00:07:24,459 --> 00:07:25,892
+Then it looks them up.
+
+79
+00:07:25,892 --> 00:07:29,733
+Note it never looks at the token values, only at the shape.
+
+80
+00:07:30,583 --> 00:07:33,306
+What if a sequence is longer than the table?
+
+81
+00:07:33,306 --> 00:07:41,785
+I tried looking up fifteen hundred positions in a table of one thousand and twenty four, and got index error, index out of range in self.
+
+82
+00:07:41,785 --> 00:07:46,674
+That's the cryptic error that the explicit check replaces with a clear message.
+
+83
+00:07:46,674 --> 00:07:55,277
+And it's a real limitation of learned positions: there's no vector for position one thousand and twenty four, because it was never trained.
+
+84
+00:07:55,277 --> 00:07:59,361
+The usual fixes are truncating or sliding a window over long text.
+
+85
+00:08:00,211 --> 00:08:00,903
+Part four.
+
+86
+00:08:00,903 --> 00:08:03,667
+Combining token and position embeddings.
+
+87
+00:08:04,517 --> 00:08:07,736
+We combine the two by simple element wise addition.
+
+88
+00:08:07,736 --> 00:08:15,816
+The token vector says what, the position vector says where, and their sum carries both in the same seven sixty eight dimensions.
+
+89
+00:08:15,816 --> 00:08:21,685
+Concatenating would double the width to fifteen thirty six and make every later layer bigger.
+
+90
+00:08:21,685 --> 00:08:30,459
+Addition works because in a high dimensional space the network can learn to use somewhat different directions for content and for position.
+
+91
+00:08:31,309 --> 00:08:34,375
+Here's the complete GPT-2 embedding layer.
+
+92
+00:08:34,375 --> 00:08:39,703
+Two tables, both initialised with standard deviation zero point zero two.
+
+93
+00:08:39,703 --> 00:08:45,835
+Forward builds the position indices exactly as before, looks up both, and adds them.
+
+94
+00:08:45,835 --> 00:08:50,580
+Batch by sequence in, batch by sequence by seven sixty eight out.
+
+95
+00:08:50,580 --> 00:08:56,930
+In the notebook, a batch of two sequences of six gives two by six by seven sixty eight.
+
+96
+00:08:57,780 --> 00:08:59,297
+Now the full pipeline.
+
+97
+00:08:59,297 --> 00:09:08,604
+The GPT-2 tokenizer turns the cat sat on the mat into six IDs, and our embedding layer turns them into one by six by seven sixty eight.
+
+98
+00:09:08,604 --> 00:09:23,081
+The book lists three common mistakes worth remembering: passing token IDs to the position table instead of positions, creating positions on the CPU when the input is on the GPU, and forgetting the length check.
+
+99
+00:09:23,932 --> 00:09:24,772
+Part five.
+
+100
+00:09:24,772 --> 00:09:27,964
+Let's open up the real, trained GPT-2.
+
+101
+00:09:28,813 --> 00:09:39,230
+Hugging Face exposes the two tables as w t e and w p e: fifty thousand by seven sixty eight, and one thousand and twenty four by seven sixty eight.
+
+102
+00:09:39,230 --> 00:09:40,930
+I measured their spread.
+
+103
+00:09:40,930 --> 00:09:50,709
+The trained token table has a standard deviation of about zero point one four four, and the position table about zero point one two three.
+
+104
+00:09:50,709 --> 00:09:56,803
+Both started at zero point zero two, so training spread them out by about seven times.
+
+105
+00:09:57,653 --> 00:09:59,122
+Here's the book check.
+
+106
+00:09:59,122 --> 00:10:04,464
+The book shows a beautiful list for king: prince, queen, kingdom, royal, throne.
+
+107
+00:10:04,464 --> 00:10:10,940
+When I ran the notebook, the nearest neighbours of king were ked, KING in capitals, kers and ker.
+
+108
+00:10:10,940 --> 00:10:11,207
+Why?
+
+109
+00:10:11,207 --> 00:10:21,357
+Encoding king without a leading space gives the no space token, which is mostly used as a fragment inside other words, for example at the end of making.
+
+110
+00:10:21,357 --> 00:10:23,694
+Its neighbours are other fragments.
+
+111
+00:10:23,694 --> 00:10:29,569
+The function also assumes the top hit is always the word itself, which isn't guaranteed.
+
+112
+00:10:29,569 --> 00:10:32,975
+The book's printed lists don't come from this code.
+
+113
+00:10:33,825 --> 00:10:35,542
+The fix is one character.
+
+114
+00:10:35,542 --> 00:10:39,871
+Use space king, the token for king in the middle of a sentence.
+
+115
+00:10:39,871 --> 00:10:44,131
+Now the neighbours are kings, King, queen, prince and monarch.
+
+116
+00:10:44,131 --> 00:10:47,017
+Space computer gives computers and laptop.
+
+117
+00:10:47,017 --> 00:10:49,833
+Space doctor gives doctors and physician.
+
+118
+00:10:49,833 --> 00:10:52,170
+Space fast gives faster and quick.
+
+119
+00:10:52,170 --> 00:10:57,735
+Even so, notice that most top hits are case and plural variants of the same word.
+
+120
+00:10:57,735 --> 00:11:02,475
+GPT-2's input embeddings encode spelling and form as much as meaning.
+
+121
+00:11:03,326 --> 00:11:05,165
+Same story with analogies.
+
+122
+00:11:05,165 --> 00:11:09,551
+The notebook's king minus man plus woman returns ked and KING.
+
+123
+00:11:09,551 --> 00:11:16,838
+With the space prefixed tokens, the top answer is queen, at zero point seven one, followed by princess.
+
+124
+00:11:16,838 --> 00:11:21,225
+And Paris minus France plus Germany gives Berlin, then Munich.
+
+125
+00:11:21,225 --> 00:11:28,936
+So the classic analogy really does work in GPT-2's input embeddings, as long as you look up the right tokens.
+
+126
+00:11:28,936 --> 00:11:37,709
+Note that the three input words are excluded from the results, which is standard practice and flatters these tests a little.
+
+127
+00:11:38,559 --> 00:11:41,070
+And what did the position table learn?
+
+128
+00:11:41,070 --> 00:11:47,876
+On the left, the cosine similarity between every pair of the first two hundred and fifty six positions.
+
+129
+00:11:47,876 --> 00:11:54,880
+There's a bright diagonal band: nearby positions have similar vectors, and similarity fades with distance.
+
+130
+00:11:54,880 --> 00:12:01,620
+On the right, a few individual dimensions plotted across all positions: smooth, slowly varying curves.
+
+131
+00:12:01,620 --> 00:12:08,426
+Nobody told GPT-2 to do this; it learned a smooth sense of order purely from predicting the next token.
+
+132
+00:12:09,276 --> 00:12:10,008
+Part six.
+
+133
+00:12:10,008 --> 00:12:11,878
+Some practical details.
+
+134
+00:12:12,728 --> 00:12:13,758
+Initialization.
+
+135
+00:12:13,758 --> 00:12:19,595
+GPT-2 and BERT use a normal distribution with standard deviation zero point zero two.
+
+136
+00:12:19,595 --> 00:12:27,354
+Too large and activations blow up early in training; too small and the signal is tiny and learning starts slowly.
+
+137
+00:12:27,354 --> 00:12:32,504
+The book calls zero point zero two proven across billions of training runs.
+
+138
+00:12:32,504 --> 00:12:40,675
+I'd call it a well tested default rather than a law: many newer models scale their initialization with the model width.
+
+139
+00:12:41,525 --> 00:12:43,451
+Devices and length checks.
+
+140
+00:12:43,451 --> 00:12:50,415
+Creating positions with device equals token IDs dot device means they always follow the input.
+
+141
+00:12:50,415 --> 00:12:59,528
+If the model is on the GPU and the IDs are on the CPU, you get a runtime error, so move the IDs first; that's exercise six.
+
+142
+00:12:59,528 --> 00:13:03,306
+And validate the length with a clear error message.
+
+143
+00:13:04,156 --> 00:13:05,109
+Weight tying.
+
+144
+00:13:05,109 --> 00:13:09,801
+On the way in, a token ID selects a row of the embedding matrix.
+
+145
+00:13:09,801 --> 00:13:18,671
+On the way out, the final hidden state is multiplied by the transpose of that same matrix to get a score for every token.
+
+146
+00:13:18,671 --> 00:13:33,038
+Sharing one matrix for both saves thirty eight point six million parameters in GPT-2 small, and it makes intuitive sense: if a hidden state points towards cat's embedding, cat should score highly.
+
+147
+00:13:33,038 --> 00:13:37,217
+GPT-2 ties them, and we'll do the same in chapter eleven.
+
+148
+00:13:38,067 --> 00:13:39,753
+One important limitation.
+
+149
+00:13:39,753 --> 00:13:41,642
+These embeddings are static.
+
+150
+00:13:41,642 --> 00:13:46,567
+Space bank has exactly the same vector in river bank and in savings bank.
+
+151
+00:13:46,567 --> 00:13:55,944
+Attention, in chapter ten, lets each token look at its neighbours and update its vector, so after attention the two banks become different.
+
+152
+00:13:56,794 --> 00:13:57,711
+Part seven.
+
+153
+00:13:57,711 --> 00:13:59,461
+Exercises and review.
+
+154
+00:14:00,311 --> 00:14:01,522
+Exercise answers.
+
+155
+00:14:01,522 --> 00:14:07,508
+Exercise one: a ten by eight matrix, three IDs, and the lookup gives three by eight.
+
+156
+00:14:07,508 --> 00:14:17,412
+The notebook cell for this is a template with question marks, so it raises a syntax error until you fill it in; that's intended, not a bug.
+
+157
+00:14:17,412 --> 00:14:25,393
+Exercise three: positions are looked up by index, so position zero gets the same vector whatever token is there.
+
+158
+00:14:25,393 --> 00:14:34,656
+Exercise four: pad the shorter sequence to eight, giving two by eight by d, and later use an attention mask so padding is ignored.
+
+159
+00:14:34,656 --> 00:14:37,863
+Exercise five: use the space prefixed tokens.
+
+160
+00:14:37,863 --> 00:14:42,779
+Exercise seven: slice the IDs to the maximum length before embedding.
+
+161
+00:14:43,630 --> 00:14:44,711
+Key takeaways.
+
+162
+00:14:44,711 --> 00:14:48,727
+Token IDs are labels; embeddings give them geometry.
+
+163
+00:14:48,727 --> 00:14:54,751
+An embedding layer is a lookup table, equivalent to a one hot matrix multiply.
+
+164
+00:14:54,751 --> 00:14:59,154
+Attention can't see order, so we add position embeddings.
+
+165
+00:14:59,154 --> 00:15:05,410
+GPT-2 adds token and learned position embeddings in seven sixty eight dimensions.
+
+166
+00:15:05,410 --> 00:15:12,515
+Real GPT-2 embeddings do cluster related words, as long as you use the space prefixed token.
+
+167
+00:15:12,515 --> 00:15:17,458
+And embeddings are static until attention makes them contextual.
+
+168
+00:15:18,308 --> 00:15:25,147
+The notebook ran on my CPU; the only error is the exercise template, which is meant to be filled in.
+
+169
+00:15:25,147 --> 00:15:40,604
+The book checks: several example token IDs are wrong, the printed similarity and analogy results don't come from the code shown, and the fix is a leading space, and current models mostly use RoPE rather than learned positions.
+
+170
+00:15:40,604 --> 00:15:43,887
+All of these are in the errata file in the repo.
+
+171
+00:15:44,737 --> 00:15:46,063
+Pause and try these.
+
+172
+00:15:46,063 --> 00:15:47,191
+Why raw IDs fail.
+
+173
+00:15:47,191 --> 00:16:00,192
+The shapes for a vocabulary of ten thousand, dimension five twelve, and a batch of four by twenty; the answer is a ten thousand by five twelve table and an output of four by twenty by five twelve.
+
+174
+00:16:00,192 --> 00:16:03,973
+Two sentences with the same words but different meanings.
+
+175
+00:16:03,973 --> 00:16:05,499
+Add versus concatenate.
+
+176
+00:16:05,499 --> 00:16:07,422
+What the initialization does.
+
+177
+00:16:07,422 --> 00:16:09,877
+What happens past the maximum length.
+
+178
+00:16:09,877 --> 00:16:13,260
+And from our own experiment, why king returned ked.
+
+179
+00:16:14,110 --> 00:16:20,740
+To practise: run the notebook, then add a leading space to the similarity queries and run it again.
+
+180
+00:16:20,740 --> 00:16:26,032
+Plot the position similarity across all one thousand and twenty four positions.
+
+181
+00:16:26,032 --> 00:16:28,778
+And compare cat with kitten, dog and car.
+
+182
+00:16:28,778 --> 00:16:37,619
+I got cosine similarities of zero point five, zero point four five and zero point three eight, which is at least in the right order.
+
+183
+00:16:38,469 --> 00:16:44,229
+Next time, chapter ten: self attention in code, where tokens finally look at each other.
+
+184
+00:16:45,079 --> 00:16:49,739
+This video is based on Build Your First LLM by Hasan Degismez.
+
+185
+00:16:49,739 --> 00:17:00,862
+The explanations and diagrams here are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+186
+00:17:00,862 --> 00:17:06,047
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+187
+00:17:06,047 --> 00:17:09,655
+Thanks for watching, and see you in chapter ten.
+

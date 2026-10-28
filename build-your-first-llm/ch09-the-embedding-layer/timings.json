@@ -1,0 +1,289 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 34.32,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 34.32,
+  "dur": 16.59,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 9 roadmap",
+  "start": 50.91,
+  "dur": 21.78,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 72.69,
+  "dur": 26.28,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 98.97,
+  "dur": 4.82,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "IDs are labels, not quantities",
+  "start": 103.79,
+  "dur": 37.75,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "\u26a0\ufe0f Book check: the example IDs",
+  "start": 141.54,
+  "dur": 41.91,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "One-hot vs dense",
+  "start": 183.45,
+  "dur": 34.98,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Why 768?",
+  "start": 218.42,
+  "dur": 37.99,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Part 2",
+  "start": 256.41,
+  "dur": 4.11,
+  "divider": true
+ },
+ {
+  "slide": 11,
+  "title": "The lookup (my redraw)",
+  "start": 260.52,
+  "dur": 21.78,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Manual lookup with fancy indexing (cells 8\u201312)",
+  "start": 282.3,
+  "dur": 25.28,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "`TokenEmbedding` (notebook cell 14)",
+  "start": 307.58,
+  "dur": 29.8,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Part 3",
+  "start": 337.38,
+  "dur": 3.09,
+  "divider": true
+ },
+ {
+  "slide": 15,
+  "title": "Order is invisible to attention (my experiment)",
+  "start": 340.47,
+  "dur": 38.24,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Two ways to add position",
+  "start": 378.71,
+  "dur": 44.41,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "`PositionalEmbedding` (notebook cell 18, condensed)",
+  "start": 423.12,
+  "dur": 27.22,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "What happens past `max_seq_len`? (my run)",
+  "start": 450.33,
+  "dur": 29.63,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Part 4",
+  "start": 479.96,
+  "dur": 4.31,
+  "divider": true
+ },
+ {
+  "slide": 20,
+  "title": "Add, don't concatenate (my redraw)",
+  "start": 484.27,
+  "dur": 26.79,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "`GPT2Embeddings` (notebook cell 20, condensed)",
+  "start": 511.06,
+  "dur": 26.47,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Full pipeline: text \u2192 vectors (cell 22 \u2014 my run)",
+  "start": 537.53,
+  "dur": 26.15,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Part 5",
+  "start": 563.68,
+  "dur": 4.88,
+  "divider": true
+ },
+ {
+  "slide": 24,
+  "title": "Loading `wte` and `wpe` (cell 24)",
+  "start": 568.56,
+  "dur": 28.84,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "\u26a0\ufe0f Book check: \"similar words\" (notebook cell 26)",
+  "start": 597.4,
+  "dur": 36.17,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "The one-space fix (my experiment)",
+  "start": 633.58,
+  "dur": 29.5,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Analogies, fixed (my experiment)",
+  "start": 663.08,
+  "dur": 35.23,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "What did `wpe` learn? (my experiment)",
+  "start": 698.31,
+  "dur": 30.72,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Part 6",
+  "start": 729.03,
+  "dur": 3.45,
+  "divider": true
+ },
+ {
+  "slide": 30,
+  "title": "Initialization",
+  "start": 732.48,
+  "dur": 28.8,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Devices and length checks",
+  "start": 761.28,
+  "dur": 22.63,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Weight tying",
+  "start": 783.91,
+  "dur": 33.91,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "Embeddings are **static** \u2014 attention fixes that",
+  "start": 817.82,
+  "dur": 18.73,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Part 7",
+  "start": 836.54,
+  "dur": 3.52,
+  "divider": true
+ },
+ {
+  "slide": 35,
+  "title": "Exercises (my answers)",
+  "start": 840.06,
+  "dur": 43.32,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Key takeaways",
+  "start": 883.38,
+  "dur": 34.68,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Notebook run & book check",
+  "start": 918.06,
+  "dur": 26.43,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Review questions",
+  "start": 944.49,
+  "dur": 29.37,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Practice this",
+  "start": 973.86,
+  "dur": 24.36,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Up next: Chapter 10",
+  "start": 998.22,
+  "dur": 6.61,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Credits",
+  "start": 1004.83,
+  "dur": 25.43,
+  "divider": true
+ }
+]
