@@ -1,0 +1,30 @@
+/* @theme llmdark */
+/* @size 16:9 1920px 1080px */
+@import 'default';
+section{width:1920px;height:1080px;background:#0f1724;color:#e6edf3;font-family:'DejaVu Sans','Inter',sans-serif;font-size:38px;padding:70px 90px 80px 90px;line-height:1.38;justify-content:flex-start !important;display:flex;flex-direction:column}
+section h1{color:#7ee0c3;font-size:64px;margin:0 0 24px 0;border-bottom:4px solid #2b3a52;padding-bottom:10px}
+section h2{color:#ffd479;font-size:46px;margin:6px 0 14px}
+section strong{color:#ffd479}
+section em{color:#9ecbff}
+section code{font-family:'DejaVu Sans Mono',monospace;background:#1b2638;color:#ffd9a0;padding:0 8px;border-radius:6px;font-size:0.92em}
+section pre{background:#0a111c;border:2px solid #2b3a52;border-radius:12px;padding:18px 24px;margin:8px 0}
+section pre code{background:none;color:#e6edf3;font-size:29px;line-height:1.32;padding:0}
+section table{font-size:31px;border-collapse:collapse;margin:8px 0}
+section th{background:#1d2b42;color:#7ee0c3}
+section td,section th{border:1px solid #2b3a52;padding:8px 18px;background:#121c2c}
+section li{margin:6px 0}
+section blockquote{border-left:8px solid #7ee0c3;color:#c9d6e3;background:#13203a;padding:12px 26px;margin:12px 0;font-style:italic}
+section img{background:transparent;max-height:690px;object-fit:contain}
+section::after{color:#6c7f99;font-size:24px}
+section footer{color:#6c7f99;font-size:22px;left:90px;bottom:26px}
+section.lead{justify-content:center;text-align:center}
+section.lead h1{font-size:84px;border:none}
+.hljs-keyword,.hljs-built_in{color:#ff8fa3}.hljs-string{color:#a5e887}.hljs-comment{color:#7d8ea6;font-style:italic}.hljs-number{color:#ffb86c}.hljs-title,.hljs-function{color:#82aaff}
+section.divider{justify-content:center !important;background:linear-gradient(135deg,#0f1724 0%,#12324a 100%)}
+section.divider h1{font-size:80px;border:none;color:#7ee0c3}
+section.divider p{font-size:40px;color:#9ecbff}
+section.lead{justify-content:center !important}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+section.small{font-size:32px}
+section.small pre code{font-size:25px}
+.hljs-literal,.hljs-type,.hljs-params{color:#ffb86c}.hljs-meta{color:#9ecbff}

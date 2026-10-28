@@ -1,0 +1,590 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 37.43,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Run along with the notebook",
+  "start": 37.43,
+  "dur": 28.95,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 10 roadmap",
+  "start": 66.38,
+  "dur": 44.3,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Notation used throughout",
+  "start": 110.68,
+  "dur": 42.47,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "10.1 Why Static Embeddings Aren't Enough",
+  "start": 153.14,
+  "dur": 3.92,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "The \"bank\" problem",
+  "start": 157.06,
+  "dur": 37.35,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Recap: what Chapter 9 gives us",
+  "start": 194.41,
+  "dur": 25.75,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Dictionary definition vs sentence meaning",
+  "start": 220.16,
+  "dur": 40.03,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Evidence from real GPT-2 (my experiment)",
+  "start": 260.19,
+  "dur": 48.69,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Not just ambiguous words",
+  "start": 308.88,
+  "dur": 35.75,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Where we are in the pipeline",
+  "start": 344.63,
+  "dur": 35.89,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "10.2 What IS Attention?",
+  "start": 380.52,
+  "dur": 5.97,
+  "divider": true
+ },
+ {
+  "slide": 13,
+  "title": "Analogy 1: the committee meeting",
+  "start": 386.49,
+  "dur": 30.42,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Analogy 2: the search engine \u2192 Q, K, V",
+  "start": 416.91,
+  "dur": 35.75,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Why three separate vectors?",
+  "start": 452.66,
+  "dur": 33.46,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Analogy 3: the spotlight",
+  "start": 486.12,
+  "dur": 36.04,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "The math in plain English",
+  "start": 522.16,
+  "dur": 43.81,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "The full flow, with shapes",
+  "start": 565.97,
+  "dur": 28.82,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Self-attention vs cross-attention",
+  "start": 594.79,
+  "dur": 28.48,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "10.3 Building Self-Attention Step by Step",
+  "start": 623.27,
+  "dur": 6.08,
+  "divider": true
+ },
+ {
+  "slide": 21,
+  "title": "Step 0 \u00b7 setup (notebook cells 2 & 4)",
+  "start": 629.34,
+  "dur": 37.84,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Step 1 \u00b7 Q, K, V projections (cell 6)",
+  "start": 667.18,
+  "dur": 43.87,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "What `nn.Linear` does to shapes",
+  "start": 711.05,
+  "dur": 43.19,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Step 2 \u00b7 scores = Q\u00b7K\u1d40 (cell 8)",
+  "start": 754.24,
+  "dur": 39.52,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Reading the 6\u00d76 score matrix",
+  "start": 793.77,
+  "dur": 44.71,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Worked example by hand (notebook exercise 1)",
+  "start": 838.47,
+  "dur": 70.47,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Step 3 \u00b7 scale by \u221ad_k (cell 10)",
+  "start": 908.94,
+  "dur": 20.97,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Why \u221ad_k? The variance argument",
+  "start": 929.91,
+  "dur": 44.88,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Why big scores hurt: softmax saturates",
+  "start": 974.78,
+  "dur": 38.09,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Step 4 \u00b7 softmax \u2192 attention weights (cell 12)",
+  "start": 1012.88,
+  "dur": 38.88,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Step 5 \u00b7 weighted sum of values (cell 14)",
+  "start": 1051.76,
+  "dur": 42.36,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "The five steps on real numbers (my run)",
+  "start": 1094.12,
+  "dur": 28.01,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "All together: `scaled_dot_product_attention` (cell 16)",
+  "start": 1122.12,
+  "dur": 46.97,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Shape tracking summary",
+  "start": 1169.09,
+  "dur": 39.01,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "10.4 Causal Masking",
+  "start": 1208.1,
+  "dur": 4.56,
+  "divider": true
+ },
+ {
+  "slide": 36,
+  "title": "The cheating problem",
+  "start": 1212.66,
+  "dur": 40.72,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "The rule: token *i* sees only positions 0\u2026i",
+  "start": 1253.38,
+  "dur": 26.62,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Creating the mask (cell 18)",
+  "start": 1280.0,
+  "dur": 40.63,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Applying it: \u2212\u221e before softmax (cell 20)",
+  "start": 1320.63,
+  "dur": 47.86,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Mask \u2192 masked scores \u2192 weights (my run)",
+  "start": 1368.49,
+  "dur": 30.82,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Training vs inference",
+  "start": 1399.31,
+  "dur": 32.91,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "10.5 From One Head to Many",
+  "start": 1432.22,
+  "dur": 3.41,
+  "divider": true
+ },
+ {
+  "slide": 43,
+  "title": "Why one head isn't enough",
+  "start": 1435.63,
+  "dur": 34.02,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "Multi-head = several perspectives, same budget",
+  "start": 1469.65,
+  "dur": 41.8,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "MultiHeadAttention \u00b7 `__init__` (cell 22)",
+  "start": 1511.45,
+  "dur": 40.1,
+  "divider": false
+ },
+ {
+  "slide": 46,
+  "title": "`forward` part 1 \u00b7 project and split (cell 22)",
+  "start": 1551.55,
+  "dur": 49.4,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "The reshape trick, visualised",
+  "start": 1600.95,
+  "dur": 49.1,
+  "divider": false
+ },
+ {
+  "slide": 48,
+  "title": "`forward` part 2 \u00b7 attention per head (cell 22)",
+  "start": 1650.05,
+  "dur": 40.42,
+  "divider": false
+ },
+ {
+  "slide": 49,
+  "title": "`forward` part 3 \u00b7 concatenate and project (cell 22)",
+  "start": 1690.47,
+  "dur": 33.29,
+  "divider": false
+ },
+ {
+  "slide": 50,
+  "title": "Testing it (cell 22) \u00b7 real output",
+  "start": 1723.76,
+  "dur": 26.73,
+  "divider": false
+ },
+ {
+  "slide": 51,
+  "title": "Why `.reshape()` and not `.view()`?",
+  "start": 1750.49,
+  "dur": 41.04,
+  "divider": false
+ },
+ {
+  "slide": 52,
+  "title": "10.6 The Complete Transformer Block",
+  "start": 1791.52,
+  "dur": 3.94,
+  "divider": true
+ },
+ {
+  "slide": 53,
+  "title": "What attention alone is missing",
+  "start": 1795.47,
+  "dur": 40.65,
+  "divider": false
+ },
+ {
+  "slide": 54,
+  "title": "Component 1 \u00b7 Feed-forward network (cell 24)",
+  "start": 1836.12,
+  "dur": 44.64,
+  "divider": false
+ },
+ {
+  "slide": 55,
+  "title": "GELU vs ReLU",
+  "start": 1880.76,
+  "dur": 34.06,
+  "divider": false
+ },
+ {
+  "slide": 56,
+  "title": "FFN parameters & why bias here",
+  "start": 1914.82,
+  "dur": 41.87,
+  "divider": false
+ },
+ {
+  "slide": 57,
+  "title": "Component 2 \u00b7 LayerNorm",
+  "start": 1956.69,
+  "dur": 51.75,
+  "divider": false
+ },
+ {
+  "slide": 58,
+  "title": "Component 3 \u00b7 Residual (skip) connections",
+  "start": 2008.43,
+  "dur": 50.25,
+  "divider": false
+ },
+ {
+  "slide": 59,
+  "title": "Component 4 \u00b7 Pre-norm vs post-norm",
+  "start": 2058.68,
+  "dur": 37.9,
+  "divider": false
+ },
+ {
+  "slide": 60,
+  "title": "The block, top to bottom",
+  "start": 2096.58,
+  "dur": 26.34,
+  "divider": false
+ },
+ {
+  "slide": 61,
+  "title": "`TransformerBlock` (cell 26)",
+  "start": 2122.93,
+  "dur": 35.72,
+  "divider": false
+ },
+ {
+  "slide": 62,
+  "title": "Testing the block \u00b7 real output",
+  "start": 2158.65,
+  "dur": 33.68,
+  "divider": false
+ },
+ {
+  "slide": 63,
+  "title": "Parameter count for one block (verified)",
+  "start": 2192.33,
+  "dur": 41.95,
+  "divider": false
+ },
+ {
+  "slide": 64,
+  "title": "Information flow through one block",
+  "start": 2234.28,
+  "dur": 37.81,
+  "divider": false
+ },
+ {
+  "slide": 65,
+  "title": "From block to model (Ch 11 preview)",
+  "start": 2272.1,
+  "dur": 37.39,
+  "divider": false
+ },
+ {
+  "slide": 66,
+  "title": "10.7 Visualising Attention",
+  "start": 2309.48,
+  "dur": 3.58,
+  "divider": true
+ },
+ {
+  "slide": 67,
+  "title": "`visualize_attention` (cell 28)",
+  "start": 2313.06,
+  "dur": 29.99,
+  "divider": false
+ },
+ {
+  "slide": 68,
+  "title": "Running it on a real sentence (cell 28)",
+  "start": 2343.06,
+  "dur": 39.46,
+  "divider": false
+ },
+ {
+  "slide": 69,
+  "title": "Untrained block (notebook figure, my run)",
+  "start": 2382.51,
+  "dur": 25.06,
+  "divider": false
+ },
+ {
+  "slide": 70,
+  "title": "Trained GPT-2 heads (my experiment)",
+  "start": 2407.58,
+  "dur": 47.76,
+  "divider": false
+ },
+ {
+  "slide": 71,
+  "title": "Attention \u2260 explanation",
+  "start": 2455.33,
+  "dur": 40.63,
+  "divider": false
+ },
+ {
+  "slide": 72,
+  "title": "10.8 Practical Considerations",
+  "start": 2495.96,
+  "dur": 3.69,
+  "divider": true
+ },
+ {
+  "slide": 73,
+  "title": "Memory is O(n\u00b2) in sequence length",
+  "start": 2499.65,
+  "dur": 46.45,
+  "divider": false
+ },
+ {
+  "slide": 74,
+  "title": "The full pipeline in code (cell 30) \u00b7 real output",
+  "start": 2546.11,
+  "dur": 43.11,
+  "divider": false
+ },
+ {
+  "slide": 75,
+  "title": "10.9 Key Takeaways",
+  "start": 2589.21,
+  "dur": 3.03,
+  "divider": true
+ },
+ {
+  "slide": 76,
+  "title": "What we built",
+  "start": 2592.24,
+  "dur": 37.41,
+  "divider": false
+ },
+ {
+  "slide": 77,
+  "title": "Core concepts to remember",
+  "start": 2629.65,
+  "dur": 36.26,
+  "divider": false
+ },
+ {
+  "slide": 78,
+  "title": "Review questions 1\u20133",
+  "start": 2665.9,
+  "dur": 52.56,
+  "divider": false
+ },
+ {
+  "slide": 79,
+  "title": "Review questions 4\u20136",
+  "start": 2718.46,
+  "dur": 51.28,
+  "divider": false
+ },
+ {
+  "slide": 80,
+  "title": "Review questions 7\u20138",
+  "start": 2769.74,
+  "dur": 42.23,
+  "divider": false
+ },
+ {
+  "slide": 81,
+  "title": "Review questions 9\u201310",
+  "start": 2811.97,
+  "dur": 42.64,
+  "divider": false
+ },
+ {
+  "slide": 82,
+  "title": "Practice this (notebook ch10.ipynb)",
+  "start": 2854.6,
+  "dur": 63.56,
+  "divider": false
+ },
+ {
+  "slide": 83,
+  "title": "Up next: Chapter 11",
+  "start": 2918.16,
+  "dur": 15.08,
+  "divider": false
+ },
+ {
+  "slide": 84,
+  "title": "Credits",
+  "start": 2933.24,
+  "dur": 27.11,
+  "divider": true
+ }
+]

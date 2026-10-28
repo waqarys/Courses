@@ -1,0 +1,50 @@
+# Build Your First LLM — study course (Waqar Shaikh Builds)
+
+A chapter-by-chapter study companion to **"Build Your First LLM: A Hands-On Guide to Language Models"** by **Hasan Degismez** (2025). Slides, study notes and narration are my own teaching adaptation. **Please buy the book:** <https://leanpub.com/FirstLLM/>.
+Companion code: <https://github.com/FirstLLM/code> (MIT License).
+
+Each chapter folder has:
+- `slides.md` — Marp deck (16:9, dark theme; diagrams in `img/`)
+- `notes.md` — long-form study notes with code references
+- `script.md` — narration per slide
+- `youtube.md` — title, description with timestamps, tags
+- `captions.srt`, `timings.json`, `thumbnail.png`
+
+Videos (MP4) are not stored in git; they are uploaded to YouTube.
+
+## Chapters
+
+| # | Chapter | Slides | Notes | Notebook | Status |
+|---|---|---|---|---|---|
+| 1 | What is AI, Really? | [slides](ch01-what-is-ai/slides.md) | [notes](ch01-what-is-ai/notes.md) | — (no notebook) | ✅ pilot |
+| 2 | How Computers "Understand" Words | | | — | planned |
+| 3 | The Attention Mechanism | | | — | planned |
+| 4 | The Transformer Architecture | | | — | planned |
+| 5 | Your First Python Program | | | [ch05](https://github.com/FirstLLM/code/blob/main/notebooks/ch05.ipynb) | planned |
+| 6 | NumPy & PyTorch Survival Guide | | | [ch06](https://github.com/FirstLLM/code/blob/main/notebooks/ch06.ipynb) | planned |
+| 7 | Preparing Your Data | | | [ch07](https://github.com/FirstLLM/code/blob/main/notebooks/ch07.ipynb) | planned |
+| 8 | Building the Tokenizer | | | [ch08](https://github.com/FirstLLM/code/blob/main/notebooks/ch08.ipynb) | planned |
+| 9 | The Embedding Layer | | | [ch09](https://github.com/FirstLLM/code/blob/main/notebooks/ch09.ipynb) | planned |
+| 10 | Attention Is All You Need | [slides](ch10-attention-is-all-you-need/slides.md) | [notes](ch10-attention-is-all-you-need/notes.md) | [ch10](https://github.com/FirstLLM/code/blob/main/notebooks/ch10.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch10.ipynb) | ✅ pilot |
+| 11 | Building the Transformer | | | [ch11](https://github.com/FirstLLM/code/blob/main/notebooks/ch11.ipynb) | planned |
+| 12 | Training Your Model | | | [ch12](https://github.com/FirstLLM/code/blob/main/notebooks/ch12.ipynb) | planned |
+| 13 | Fine-Tuning | | | [ch13](https://github.com/FirstLLM/code/blob/main/notebooks/ch13.ipynb) | planned |
+| 14 | Prompt Engineering | | | [ch14](https://github.com/FirstLLM/code/blob/main/notebooks/ch14.ipynb) | planned |
+| 15 | Building Applications | | | [ch15](https://github.com/FirstLLM/code/blob/main/notebooks/ch15.ipynb) | planned |
+| 16 | Preparing for Production | | | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | planned |
+| 17 | Deployment Options | | | [ch17](https://github.com/FirstLLM/code/blob/main/notebooks/ch17.ipynb) | planned |
+| 18 | What's Next | | | [ch18](https://github.com/FirstLLM/code/blob/main/notebooks/ch18.ipynb) | planned |
+
+## Rebuilding a video
+`_pipeline/` holds the build: Marp CLI renders slides to PNG, Kokoro TTS (voice `am_michael`) reads the `say:` notes in each slide, ffmpeg assembles a 1920×1080 30 fps H.264/AAC MP4 and writes `captions.srt` + `timings.json`.
+
+```bash
+npm i -g @marp-team/marp-cli
+pip install kokoro-onnx soundfile numpy matplotlib torch transformers
+python _pipeline/build.py ch10-attention-is-all-you-need
+python _pipeline/youtube.py ch10-attention-is-all-you-need 10 "Attention Is All You Need" "<blurb>" ch10
+```
+(Kokoro model files `kokoro-v1.0.onnx` and `voices-v1.0.bin` from the kokoro-onnx releases; paths are set in `build.py`.)
+
+## Credits
+Based on "Build Your First LLM" by Hasan Degismez — <https://leanpub.com/FirstLLM/>. Code: <https://github.com/FirstLLM/code> (MIT). Course adaptation: Waqar Shaikh Builds.

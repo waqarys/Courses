@@ -1,0 +1,1248 @@
+1
+00:00:00,250 --> 00:00:07,252
+Welcome to the first chapter of my study series on the book Build Your First LLM, by Hasan Degismez.
+
+2
+00:00:07,252 --> 00:00:18,526
+I'm making this series for myself as much as for you: the goal is to understand transformers properly, all the way down to the tensor shapes, and then build one.
+
+3
+00:00:18,526 --> 00:00:21,117
+This first chapter is the foundation.
+
+4
+00:00:21,117 --> 00:00:21,957
+No code yet.
+
+5
+00:00:21,957 --> 00:00:33,652
+We're going to clear away the myths, and replace them with a precise mental model of what an AI system actually is, how it learns, and where large language models fit.
+
+6
+00:00:34,502 --> 00:00:37,003
+A quick note on how to use these videos.
+
+7
+00:00:37,003 --> 00:00:43,696
+Every chapter has a slide deck, long-form study notes, and links into the book's companion code repository.
+
+8
+00:00:43,696 --> 00:00:48,262
+The first four chapters are conceptual, so there is no notebook for them.
+
+9
+00:00:48,262 --> 00:00:52,452
+From chapter five onward we'll be writing and running real PyTorch.
+
+10
+00:00:52,452 --> 00:00:57,894
+These videos are a teaching adaptation in my own words, not a replacement for the book.
+
+11
+00:00:57,894 --> 00:01:02,022
+If you find them useful, please buy the book, it goes much deeper.
+
+12
+00:01:02,871 --> 00:01:04,216
+Here's the roadmap.
+
+13
+00:01:04,216 --> 00:01:07,967
+We start by throwing out the Hollywood picture of AI.
+
+14
+00:01:07,967 --> 00:01:13,630
+Then we define AI properly as pattern recognition, using the humble spam filter.
+
+15
+00:01:13,630 --> 00:01:24,741
+We'll write down the simple formula behind modern AI, and then look very concretely at what learning means, by watching a model fit a line, number by number.
+
+16
+00:01:24,741 --> 00:01:38,189
+After that we place large language models in the family tree of AI, look at a short history, and then get honest about what language models can and cannot do, including why they hallucinate.
+
+17
+00:01:38,189 --> 00:01:46,258
+We finish with exercises, the reasons to build one yourself, the key takeaways, and review questions with answers.
+
+18
+00:01:47,108 --> 00:01:53,794
+Let me put the vocabulary on the table first, because we'll use these words for the rest of the series.
+
+19
+00:01:53,794 --> 00:01:56,780
+Artificial intelligence is the broad umbrella.
+
+20
+00:01:56,780 --> 00:02:01,518
+Machine learning is the part of AI where the rules are learned from data.
+
+21
+00:02:01,518 --> 00:02:06,517
+Deep learning is machine learning with neural networks that have many layers.
+
+22
+00:02:06,517 --> 00:02:13,333
+A large language model is a deep network trained on an enormous amount of text to predict the next token.
+
+23
+00:02:13,333 --> 00:02:17,617
+Parameters, also called weights, are the numbers inside the model.
+
+24
+00:02:17,617 --> 00:02:20,928
+Training is the process of adjusting those numbers.
+
+25
+00:02:20,928 --> 00:02:27,354
+Emergence is when surprisingly complex skills appear from a simple training goal once you scale up.
+
+26
+00:02:27,354 --> 00:02:33,651
+And hallucination is when the model produces something fluent and confident that is simply false.
+
+27
+00:02:34,501 --> 00:02:35,363
+Section one.
+
+28
+00:02:35,363 --> 00:02:36,655
+Forget the movies.
+
+29
+00:02:37,506 --> 00:02:44,602
+Films give us killer robots, a calm computer voice that turns on its crew, and androids that fall in love.
+
+30
+00:02:44,602 --> 00:02:49,222
+Great stories, but almost nothing to do with the systems we'll build.
+
+31
+00:02:49,222 --> 00:02:53,975
+Read the right column carefully, because each line is a technical fact.
+
+32
+00:02:53,975 --> 00:02:57,724
+Today's systems show no evidence of feelings or desires.
+
+33
+00:02:57,724 --> 00:02:59,398
+They don't want anything.
+
+34
+00:02:59,398 --> 00:03:01,407
+They process patterns in data.
+
+35
+00:03:01,407 --> 00:03:04,486
+They are limited by what they were trained on.
+
+36
+00:03:04,486 --> 00:03:10,646
+And physically, the whole thing is a lot of matrix multiplication running on graphics cards.
+
+37
+00:03:10,646 --> 00:03:16,270
+The last line, sophisticated autocomplete, sounds like an insult, but hold on to it.
+
+38
+00:03:16,270 --> 00:03:21,425
+It is literally the training objective of the model we'll build in this book.
+
+39
+00:03:22,275 --> 00:03:25,199
+Here's what autocomplete means concretely.
+
+40
+00:03:25,199 --> 00:03:32,581
+Give the model the words, the cat sat on the, and it produces a probability for every possible next token.
+
+41
+00:03:32,581 --> 00:03:40,588
+In this illustrative chart, mat gets about forty six percent, floor twenty one, sofa seventeen, and moon only four.
+
+42
+00:03:40,588 --> 00:03:43,722
+The model picks one, appends it, and repeats.
+
+43
+00:03:43,722 --> 00:03:46,089
+That's the entire generation loop.
+
+44
+00:03:46,089 --> 00:03:54,445
+What's remarkable is that training only on this one simple task produces systems that can write essays and working code.
+
+45
+00:03:54,445 --> 00:04:01,757
+But don't lose the mechanical picture: it is pattern matching over text, extremely good pattern matching.
+
+46
+00:04:02,607 --> 00:04:06,332
+The book quotes the computer scientist Edsger Dijkstra here.
+
+47
+00:04:06,332 --> 00:04:12,044
+His point is that asking whether a computer thinks is like asking whether a submarine swims.
+
+48
+00:04:12,044 --> 00:04:16,514
+A submarine doesn't move like a fish, but it clearly gets through water.
+
+49
+00:04:16,514 --> 00:04:23,405
+In the same way, these models don't think the way we do, but they process information in genuinely useful ways.
+
+50
+00:04:23,405 --> 00:04:28,868
+As builders, we care about what the system does and how it does it, not about the label.
+
+51
+00:04:29,718 --> 00:04:30,702
+Section two.
+
+52
+00:04:30,702 --> 00:04:32,833
+AI is pattern recognition.
+
+53
+00:04:33,683 --> 00:04:35,483
+Here's a working definition.
+
+54
+00:04:35,483 --> 00:04:37,733
+AI is pattern recognition at scale.
+
+55
+00:04:37,733 --> 00:04:47,762
+It finds patterns in data that are too complicated, or simply too many, for a person to write down as rules, and it uses those patterns to make predictions.
+
+56
+00:04:47,762 --> 00:04:49,434
+The words at scale matter.
+
+57
+00:04:49,434 --> 00:04:55,220
+We're talking about millions of examples and millions, or billions, of adjustable numbers.
+
+58
+00:04:55,220 --> 00:05:02,099
+The best everyday example is something you use every day without thinking about it, your email spam filter.
+
+59
+00:05:02,949 --> 00:05:05,636
+Look at the two halves of this diagram.
+
+60
+00:05:05,636 --> 00:05:08,323
+On the left is traditional programming.
+
+61
+00:05:08,323 --> 00:05:14,869
+A human writes the rules, for example, if the email contains a certain phrase, mark it as spam.
+
+62
+00:05:14,869 --> 00:05:19,279
+Data goes in with those rules, and the program produces answers.
+
+63
+00:05:19,279 --> 00:05:21,553
+On the right is machine learning.
+
+64
+00:05:21,553 --> 00:05:22,793
+We flip it around.
+
+65
+00:05:22,793 --> 00:05:30,855
+We give the system data together with the answers, emails labelled spam or not spam, and training produces the rules.
+
+66
+00:05:30,855 --> 00:05:34,506
+The learned rules are not lines of code anyone wrote.
+
+67
+00:05:34,506 --> 00:05:36,987
+They are patterns stored as numbers.
+
+68
+00:05:36,987 --> 00:05:40,639
+That inversion is the whole idea of machine learning.
+
+69
+00:05:41,489 --> 00:05:42,370
+Step by step.
+
+70
+00:05:42,370 --> 00:05:48,133
+First, training data: a huge pile of emails, each labelled by a human as spam or not.
+
+71
+00:05:48,133 --> 00:05:51,116
+Second, the system finds patterns by itself.
+
+72
+00:05:51,116 --> 00:06:02,032
+It might notice that spam uses lots of capital letters, talks about money, prizes and urgency, comes from certain kinds of addresses, and has unusual formatting.
+
+73
+00:06:02,032 --> 00:06:09,083
+Third, when a new email arrives, it scores that email against all those patterns and makes a prediction.
+
+74
+00:06:09,083 --> 00:06:13,490
+The crucial point is that no programmer typed any of those rules.
+
+75
+00:06:13,490 --> 00:06:15,524
+They came out of the examples.
+
+76
+00:06:15,524 --> 00:06:27,456
+The book compares this to training a new employee to sort mail: you don't hand them a five hundred page rulebook, you go through a stack together until they get the hang of it.
+
+77
+00:06:28,306 --> 00:06:33,167
+Here's a toy picture of what learned patterns look like inside a model.
+
+78
+00:06:33,167 --> 00:06:35,973
+Each word gets a number, called a weight.
+
+79
+00:06:35,973 --> 00:06:41,518
+Positive weights push towards spam, negative weights push towards a normal email.
+
+80
+00:06:41,518 --> 00:06:45,146
+Free, winner, and dollar signs are strongly positive.
+
+81
+00:06:45,146 --> 00:06:47,816
+Meeting, lunch and report are negative.
+
+82
+00:06:47,816 --> 00:06:52,334
+To classify an email, add up the weights of the words it contains.
+
+83
+00:06:52,334 --> 00:07:03,287
+For example, an email saying free lunch meeting scores two point one, minus one point five, minus one point three, which is minus zero point seven, so not spam.
+
+84
+00:07:03,287 --> 00:07:14,103
+These particular numbers are made up for illustration, but the principle is real: a learned pattern is just a number, and learning means finding good numbers.
+
+85
+00:07:14,953 --> 00:07:22,036
+The book boils modern AI down to a formula: statistics, plus lots of data, plus computing power.
+
+86
+00:07:22,036 --> 00:07:27,202
+Statistics gives us the methods to find patterns and make predictions.
+
+87
+00:07:27,202 --> 00:07:29,194
+Data gives us the examples.
+
+88
+00:07:29,194 --> 00:07:32,736
+Compute lets us process them in reasonable time.
+
+89
+00:07:32,736 --> 00:07:35,244
+Notice that the statistics is old.
+
+90
+00:07:35,244 --> 00:07:38,417
+Many of the core ideas existed decades ago.
+
+91
+00:07:38,417 --> 00:07:46,903
+What changed is that the internet gave us enormous amounts of data, and graphics processors gave us enough compute.
+
+92
+00:07:46,903 --> 00:07:51,256
+That combination is why AI suddenly seems to be everywhere.
+
+93
+00:07:52,106 --> 00:07:55,030
+Now the most important idea in this chapter.
+
+94
+00:07:55,030 --> 00:07:59,018
+When we say a model learns, we mean something very specific.
+
+95
+00:07:59,018 --> 00:08:04,799
+A model is just a big collection of numbers, its parameters, and they start out random.
+
+96
+00:08:04,799 --> 00:08:06,062
+Training is a loop.
+
+97
+00:08:06,062 --> 00:08:07,590
+One, make a prediction.
+
+98
+00:08:07,590 --> 00:08:09,584
+Two, measure how wrong it was.
+
+99
+00:08:09,584 --> 00:08:11,976
+That measurement is called the loss.
+
+100
+00:08:11,976 --> 00:08:18,024
+Three, nudge every number slightly in the direction that would have made the error smaller.
+
+101
+00:08:18,024 --> 00:08:21,878
+Four, repeat, for real language models, billions of times.
+
+102
+00:08:21,878 --> 00:08:22,543
+That's it.
+
+103
+00:08:22,543 --> 00:08:31,315
+Everything in later chapters, the attention layers, the transformer blocks, is just a more elaborate way of arranging those numbers.
+
+104
+00:08:31,315 --> 00:08:33,508
+The learning loop stays the same.
+
+105
+00:08:34,358 --> 00:08:39,653
+Let's make that concrete with the simplest model possible: a straight line.
+
+106
+00:08:39,653 --> 00:08:42,830
+The prediction y hat equals w times x plus b.
+
+107
+00:08:42,830 --> 00:08:48,901
+The weight w is the slope, and the bias b is where the line crosses the vertical axis.
+
+108
+00:08:48,901 --> 00:08:54,902
+On the left, we start with w equal to four point five and b equal to zero point four.
+
+109
+00:08:54,902 --> 00:08:59,138
+The green line is too steep and misses the blue data points.
+
+110
+00:08:59,138 --> 00:09:13,116
+On the right, after four hundred small adjustment steps of gradient descent, which I actually ran for this video, the line fits the data with w about three point oh nine and b about one point seven.
+
+111
+00:09:13,116 --> 00:09:21,093
+The data was generated from slope three and intercept two, plus noise, so the model recovered the hidden pattern.
+
+112
+00:09:21,943 --> 00:09:25,148
+Here are the two numbers over the training steps.
+
+113
+00:09:25,148 --> 00:09:26,979
+The gold line is the weight.
+
+114
+00:09:26,979 --> 00:09:29,857
+It falls from four point five towards three.
+
+115
+00:09:29,857 --> 00:09:34,239
+The mint line is the bias, rising from zero point four towards two.
+
+116
+00:09:34,239 --> 00:09:36,659
+The dashed lines are the true values.
+
+117
+00:09:36,659 --> 00:09:47,843
+Each step uses a simple update: take the current weight and subtract a small learning rate times the gradient, which is the slope of the error with respect to that weight.
+
+118
+00:09:47,843 --> 00:09:53,664
+The gradient tells you which direction makes the error bigger, so you step the other way.
+
+119
+00:09:53,664 --> 00:10:00,466
+You'll see this exact rule again in chapter twelve, applied to a hundred million numbers instead of two.
+
+120
+00:10:01,315 --> 00:10:05,554
+And this is the loss, the mean squared error, on a log scale.
+
+121
+00:10:05,554 --> 00:10:10,765
+It starts around ten point three and falls to about zero point eight eight.
+
+122
+00:10:10,765 --> 00:10:19,033
+It can't reach zero, because the data has random noise in it, so the best possible line still misses individual points.
+
+123
+00:10:19,033 --> 00:10:25,355
+That floor is a useful idea to keep: a model can only be as good as the signal in its data.
+
+124
+00:10:25,355 --> 00:10:28,412
+Learning is not philosophical or mysterious.
+
+125
+00:10:28,412 --> 00:10:33,971
+It is adjusting numbers based on errors, until the numbers produce good outputs.
+
+126
+00:10:34,821 --> 00:10:38,269
+Put our toy next to a real large language model.
+
+127
+00:10:38,269 --> 00:10:40,281
+Our line has two parameters.
+
+128
+00:10:40,281 --> 00:10:43,658
+GPT three has one hundred seventy five billion.
+
+129
+00:10:43,658 --> 00:10:45,597
+We trained on forty points.
+
+130
+00:10:45,597 --> 00:10:49,908
+GPT three trained on hundreds of billions of tokens of text.
+
+131
+00:10:49,908 --> 00:10:52,279
+Our task was predicting y from x.
+
+132
+00:10:52,279 --> 00:10:56,949
+Its task is predicting the next token from all the previous ones.
+
+133
+00:10:56,949 --> 00:10:58,386
+And the update rule?
+
+134
+00:10:58,386 --> 00:11:06,720
+It's the same family: gradient descent, in practice with an optimiser called Adam that we'll meet in chapter twelve.
+
+135
+00:11:06,720 --> 00:11:09,953
+The mechanism really does scale up unchanged.
+
+136
+00:11:09,953 --> 00:11:13,257
+That's the reassuring part of this whole book.
+
+137
+00:11:14,107 --> 00:11:15,266
+Section three.
+
+138
+00:11:15,266 --> 00:11:16,838
+The AI family tree.
+
+139
+00:11:17,688 --> 00:11:19,767
+Think of AI as nested circles.
+
+140
+00:11:19,767 --> 00:11:27,599
+The outer circle is artificial intelligence, any system doing something we'd call intelligent if a person did it.
+
+141
+00:11:27,599 --> 00:11:31,619
+That includes hand-written rule systems and chess engines.
+
+142
+00:11:31,619 --> 00:11:39,866
+Inside it is machine learning, systems that learn from data instead of fixed rules, like spam filters and recommenders.
+
+143
+00:11:39,866 --> 00:11:44,995
+Inside that is deep learning, which uses neural networks with many layers.
+
+144
+00:11:44,995 --> 00:11:53,935
+And inside deep learning are large language models, deep networks specialised for language and trained to predict the next token.
+
+145
+00:11:53,935 --> 00:11:58,579
+Every LLM is deep learning, which is machine learning, which is AI.
+
+146
+00:11:58,579 --> 00:12:00,519
+But not the other way round.
+
+147
+00:12:01,369 --> 00:12:02,845
+Why is it called deep?
+
+148
+00:12:02,845 --> 00:12:09,886
+Because the network has many layers stacked on top of each other, and each layer builds on the one below.
+
+149
+00:12:09,886 --> 00:12:21,152
+In image recognition, the early layers detect simple edges and curves, the middle layers combine them into parts like eyes, and the deep layers conclude this is a face.
+
+150
+00:12:21,152 --> 00:12:31,144
+Language models work similarly in spirit: lower layers deal with word pieces, middle layers with phrases and grammar, and higher layers with meaning.
+
+151
+00:12:31,144 --> 00:12:38,185
+In chapter eleven we'll stack twelve transformer blocks, and that stacking is exactly what makes it deep.
+
+152
+00:12:39,035 --> 00:12:40,106
+A quick history.
+
+153
+00:12:40,106 --> 00:12:43,787
+In nineteen fifty Alan Turing proposed his famous test.
+
+154
+00:12:43,787 --> 00:12:50,080
+In nineteen fifty six the term artificial intelligence was coined at the Dartmouth conference.
+
+155
+00:12:50,080 --> 00:12:58,380
+Then came early optimism and, in the sixties and seventies, the first AI winter, when progress stalled and funding dried up.
+
+156
+00:12:58,380 --> 00:13:01,660
+In ninety seven Deep Blue beat Kasparov at chess.
+
+157
+00:13:01,660 --> 00:13:07,818
+In twenty twelve AlexNet won the ImageNet competition and kicked off the deep learning boom.
+
+158
+00:13:07,818 --> 00:13:15,984
+Then the one highlighted in gold: twenty seventeen, the paper Attention Is All You Need, which introduced the transformer.
+
+159
+00:13:15,984 --> 00:13:30,911
+GPT one followed in twenty eighteen with a hundred seventeen million parameters, GPT three in twenty twenty with a hundred seventy five billion, and ChatGPT in late twenty twenty two brought all of this into the mainstream.
+
+160
+00:13:31,761 --> 00:13:35,911
+The twenty seventeen paper is the reason this series exists.
+
+161
+00:13:35,911 --> 00:13:43,103
+It introduced the transformer architecture, and every modern large language model is a descendant of it.
+
+162
+00:13:43,103 --> 00:13:47,045
+The book builds a GPT two style transformer from scratch.
+
+163
+00:13:47,045 --> 00:13:58,042
+Chapters three and four give the intuition, chapter ten implements attention in PyTorch, chapter eleven assembles the full model, and chapter twelve trains it.
+
+164
+00:13:58,042 --> 00:14:05,718
+So when you get to chapter ten in this series, you'll be writing the very mechanism that this paper introduced.
+
+165
+00:14:06,568 --> 00:14:07,462
+Section four.
+
+166
+00:14:07,462 --> 00:14:10,280
+What makes large language models special?
+
+167
+00:14:11,130 --> 00:14:13,795
+Why was language so hard for computers?
+
+168
+00:14:13,795 --> 00:14:16,118
+Take the sentence, I saw her duck.
+
+169
+00:14:16,118 --> 00:14:20,490
+Did you see the bird she owns, or did you see her drop her head?
+
+170
+00:14:20,490 --> 00:14:23,223
+You resolve this instantly from context.
+
+171
+00:14:23,223 --> 00:14:32,583
+Earlier systems struggled because they had no good way to represent context, they looked at words mostly in isolation or in tiny windows.
+
+172
+00:14:32,583 --> 00:14:34,564
+The transformer changed that.
+
+173
+00:14:34,564 --> 00:14:40,986
+It lets every word look at every other word in the passage and update its meaning accordingly.
+
+174
+00:14:40,986 --> 00:14:46,452
+That mechanism is called attention, and it's the star of chapters three and ten.
+
+175
+00:14:47,302 --> 00:14:59,575
+Modern language models can write and edit, generate code, translate, summarise, answer questions, reason through multi-step problems, though not always reliably, and adopt personas.
+
+176
+00:14:59,575 --> 00:15:04,117
+The striking thing is that none of these abilities were programmed.
+
+177
+00:15:04,117 --> 00:15:07,575
+Nobody wrote a translation module or a code module.
+
+178
+00:15:07,575 --> 00:15:13,542
+They all came out of training on next token prediction over a huge, varied body of text.
+
+179
+00:15:14,392 --> 00:15:16,867
+This phenomenon is called emergence.
+
+180
+00:15:16,867 --> 00:15:22,230
+A simple objective, applied at large enough scale, produces complex behaviour.
+
+181
+00:15:22,230 --> 00:15:36,532
+Nobody fully understands why predicting the next token leads to something that looks like reasoning, and researchers actively debate whether it's genuine reasoning or extremely sophisticated pattern matching.
+
+182
+00:15:36,532 --> 00:15:40,657
+As a builder, my practical stance is: don't assume, measure.
+
+183
+00:15:40,657 --> 00:15:43,545
+Test the model on the task you care about.
+
+184
+00:15:43,545 --> 00:15:48,840
+We'll come back to evaluation when we fine-tune and deploy later in the book.
+
+185
+00:15:49,689 --> 00:15:56,328
+Now the limits, and it's important to be precise about the base model, the raw network on its own.
+
+186
+00:15:56,328 --> 00:16:03,576
+It has no real-time information, because its knowledge was frozen at the point training data was collected.
+
+187
+00:16:03,576 --> 00:16:09,605
+It has no memory between sessions, each conversation starts from an empty context window.
+
+188
+00:16:09,605 --> 00:16:12,992
+It cannot act in the world, it only produces text.
+
+189
+00:16:12,992 --> 00:16:20,444
+It is unreliable at arithmetic, because it predicts digit tokens by pattern rather than running a calculation.
+
+190
+00:16:20,444 --> 00:16:22,883
+And it doesn't know when it's wrong.
+
+191
+00:16:22,883 --> 00:16:25,118
+There's no built-in fact checker.
+
+192
+00:16:25,968 --> 00:16:32,348
+This is why products like ChatGPT, Claude or Gemini feel more capable than the bare model.
+
+193
+00:16:32,348 --> 00:16:35,041
+They wrap the language model in tools.
+
+194
+00:16:35,041 --> 00:16:37,309
+Web search supplies fresh facts.
+
+195
+00:16:37,309 --> 00:16:39,861
+A code interpreter does exact maths.
+
+196
+00:16:39,861 --> 00:16:43,122
+Memory systems carry information across chats.
+
+197
+00:16:43,122 --> 00:16:49,430
+Document retrieval, which we'll build later as RAG, lets it look things up in your files.
+
+198
+00:16:49,430 --> 00:16:54,747
+When ChatGPT tells you today's weather, the model doesn't know the weather.
+
+199
+00:16:54,747 --> 00:16:59,779
+It decided to call a tool, read the result, and wrote a reply about it.
+
+200
+00:16:59,779 --> 00:17:06,159
+The book's analogy: the model is the brain, and the tools give it hands, eyes and a phone.
+
+201
+00:17:06,159 --> 00:17:09,845
+In part four you'll add these capabilities yourself.
+
+202
+00:17:10,695 --> 00:17:15,226
+Why do these models sometimes make things up with total confidence?
+
+203
+00:17:15,226 --> 00:17:17,931
+Because there's no fact database inside.
+
+204
+00:17:17,931 --> 00:17:21,041
+There are only patterns stored in the weights.
+
+205
+00:17:21,041 --> 00:17:26,587
+Andrej Karpathy describes a language model as a lossy compression of the internet.
+
+206
+00:17:26,587 --> 00:17:31,794
+Picture squeezing trillions of words of text into a few gigabytes of numbers.
+
+207
+00:17:31,794 --> 00:17:34,499
+You can't keep everything word for word.
+
+208
+00:17:34,499 --> 00:17:38,691
+You keep the gist: grammar, common facts, styles of reasoning.
+
+209
+00:17:38,691 --> 00:17:40,247
+That's the compression.
+
+210
+00:17:40,247 --> 00:17:43,222
+But details get lost, that's the lossy part.
+
+211
+00:17:44,072 --> 00:17:49,951
+When you ask a question, the model is reconstructing an answer from that fuzzy memory.
+
+212
+00:17:49,951 --> 00:17:56,172
+For common facts, seen thousands of times in training, the reconstruction is usually right.
+
+213
+00:17:56,172 --> 00:18:08,340
+For rare details, a specific citation, an exact date, the name of a small company's chief executive, there are gaps, and the model fills them with whatever sounds most plausible.
+
+214
+00:18:08,340 --> 00:18:12,647
+Remember, it was trained to produce likely text, not true text.
+
+215
+00:18:12,647 --> 00:18:14,151
+Usually those overlap.
+
+216
+00:18:14,151 --> 00:18:17,501
+Sometimes they don't, and that's a hallucination.
+
+217
+00:18:17,501 --> 00:18:22,628
+The statistician George Box said all models are wrong, but some are useful.
+
+218
+00:18:22,628 --> 00:18:25,772
+Language models are useful models of language.
+
+219
+00:18:25,772 --> 00:18:29,122
+So the rule is simple: verify anything important.
+
+220
+00:18:29,972 --> 00:18:31,168
+Section five.
+
+221
+00:18:31,168 --> 00:18:32,916
+Hands-on exercises.
+
+222
+00:18:33,766 --> 00:18:36,583
+Open any chatbot and try these six prompts.
+
+223
+00:18:36,583 --> 00:18:42,281
+Ask it to explain photosynthesis like you're five, and watch how it changes vocabulary.
+
+224
+00:18:42,281 --> 00:18:47,063
+Ask for a haiku about debugging, and check the five seven five structure.
+
+225
+00:18:47,063 --> 00:18:52,565
+Make it a pirate explaining compound interest, and see whether it holds the persona.
+
+226
+00:18:52,565 --> 00:19:01,604
+Try the classic puzzle: if five machines make five widgets in five minutes, how long do a hundred machines take to make a hundred widgets?
+
+227
+00:19:01,604 --> 00:19:07,368
+The right answer is five minutes, because each machine makes one widget in five minutes.
+
+228
+00:19:07,368 --> 00:19:09,792
+See whether it falls for one hundred.
+
+229
+00:19:09,792 --> 00:19:16,342
+Ask about yesterday's news, which shows you the difference between the base model and a search tool.
+
+230
+00:19:16,342 --> 00:19:18,176
+And ask it what it can't do.
+
+231
+00:19:19,026 --> 00:19:20,437
+Then three exercises.
+
+232
+00:19:20,437 --> 00:19:21,915
+First, find a mistake.
+
+233
+00:19:21,915 --> 00:19:24,333
+Ask about something you know deeply.
+
+234
+00:19:24,333 --> 00:19:26,684
+For me that's software engineering.
+
+235
+00:19:26,684 --> 00:19:29,707
+Try to catch a subtle error or a fabrication.
+
+236
+00:19:29,707 --> 00:19:35,148
+This isn't about bashing the technology, it's about calibrating when to trust it.
+
+237
+00:19:35,148 --> 00:19:36,357
+Second, variation.
+
+238
+00:19:36,357 --> 00:19:40,254
+Ask the same question in three separate chats and compare.
+
+239
+00:19:40,254 --> 00:19:48,247
+The answers differ because generation samples from a probability distribution, which we'll implement in chapter eleven.
+
+240
+00:19:48,247 --> 00:19:57,047
+Third, push the limits: multi-step arithmetic, obscure topics, exact facts, and logic puzzles designed to trip up pattern matching.
+
+241
+00:19:57,047 --> 00:20:04,033
+If your product has tools, try with and without them, and write down where it shines and where it fails.
+
+242
+00:20:04,884 --> 00:20:05,776
+Section six.
+
+243
+00:20:05,776 --> 00:20:07,486
+Why learn to build one?
+
+244
+00:20:08,336 --> 00:20:11,169
+If ChatGPT already exists, why build one?
+
+245
+00:20:11,169 --> 00:20:13,104
+The book gives four reasons.
+
+246
+00:20:13,104 --> 00:20:14,555
+One, demystification.
+
+247
+00:20:14,555 --> 00:20:19,046
+Magic invites fear and hype, understanding invites good judgment.
+
+248
+00:20:19,046 --> 00:20:24,504
+Picture a meeting where someone proposes an AI project and everyone nods along.
+
+249
+00:20:24,504 --> 00:20:28,926
+You'll be the person who can say what's feasible and what isn't.
+
+250
+00:20:28,926 --> 00:20:30,447
+Two, career advantage.
+
+251
+00:20:30,447 --> 00:20:42,055
+Understanding how these systems work makes you better in almost any technical role, and that advantage compounds, like understanding the internet early in the nineties.
+
+252
+00:20:42,055 --> 00:20:43,506
+Three, customisation.
+
+253
+00:20:43,506 --> 00:20:53,317
+You can fine-tune a model on your own documents, shrink one to run on a phone, or adapt one to a domain or language that big providers ignore.
+
+254
+00:20:53,317 --> 00:20:58,016
+Four, understanding through building, which leads to the next slide.
+
+255
+00:20:58,865 --> 00:21:05,521
+Richard Feynman kept a note on his blackboard that said, what I cannot create, I do not understand.
+
+256
+00:21:05,521 --> 00:21:14,463
+Andrej Karpathy's Zero to Hero video series is built on the same idea, and the author says the book is designed as a companion to it.
+
+257
+00:21:14,463 --> 00:21:18,496
+I'd recommend watching those lectures alongside this series.
+
+258
+00:21:18,496 --> 00:21:26,295
+The payoff is a real moment in chapter twelve, when a model you built and trained generates its first coherent text.
+
+259
+00:21:26,295 --> 00:21:31,606
+That's the difference between watching a magic trick and knowing how it's done.
+
+260
+00:21:32,456 --> 00:21:33,517
+Section seven.
+
+261
+00:21:33,517 --> 00:21:35,336
+The checkpoint exercise.
+
+262
+00:21:36,186 --> 00:21:37,699
+Here's the checkpoint.
+
+263
+00:21:37,699 --> 00:21:43,335
+Spend fifteen or twenty minutes listing five AI systems you used in the last week.
+
+264
+00:21:43,335 --> 00:21:49,935
+For each, write what it does, where it sits in the family tree, and what patterns it recognises.
+
+265
+00:21:49,935 --> 00:21:55,915
+The book gives examples: the spam filter is machine learning, recognising spam signals.
+
+266
+00:21:55,915 --> 00:22:01,896
+Netflix recommendations are machine learning on your viewing history and similar users.
+
+267
+00:22:01,896 --> 00:22:08,358
+Voice assistants were classic deep learning, and modern ones increasingly use language models.
+
+268
+00:22:08,358 --> 00:22:16,676
+Phone autocomplete predicts the next word from the words before it, which, notice, is a tiny version of what an LLM does.
+
+269
+00:22:16,676 --> 00:22:18,463
+Now find five of your own.
+
+270
+00:22:19,313 --> 00:22:21,489
+Let's wrap up with the key takeaways.
+
+271
+00:22:22,339 --> 00:22:23,333
+Six takeaways.
+
+272
+00:22:23,333 --> 00:22:29,086
+One: AI is pattern recognition at scale, built from statistics, data and compute.
+
+273
+00:22:29,086 --> 00:22:37,537
+Two: machine learning systems learn by adjusting parameters from feedback, the loop of predict, measure, nudge, repeat.
+
+274
+00:22:37,537 --> 00:22:45,988
+Three: the hierarchy, AI contains machine learning, which contains deep learning, which contains large language models.
+
+275
+00:22:45,988 --> 00:22:55,717
+Four: language models can write, code, translate and reason, but on their own they don't have real-time knowledge or reliable arithmetic.
+
+276
+00:22:55,717 --> 00:23:00,617
+Five: hallucination is a reconstruction error from lossy compression.
+
+277
+00:23:00,617 --> 00:23:04,807
+And six: the products you use wrap the base model in tools.
+
+278
+00:23:05,658 --> 00:23:06,813
+Review questions.
+
+279
+00:23:06,813 --> 00:23:10,689
+Try answering each one out loud before I give the answer.
+
+280
+00:23:10,689 --> 00:23:14,225
+Question one: what is the simplest definition of AI?
+
+281
+00:23:14,225 --> 00:23:20,888
+Answer: pattern recognition at scale, finding patterns in data and using them to make predictions.
+
+282
+00:23:20,888 --> 00:23:26,055
+Question two: how does machine learning differ from traditional programming?
+
+283
+00:23:26,055 --> 00:23:29,523
+In traditional programming, people write the rules.
+
+284
+00:23:29,523 --> 00:23:36,390
+In machine learning, we provide data and answers, and the system learns the rules, stored as numbers.
+
+285
+00:23:36,390 --> 00:23:38,702
+Question three: where do LLMs fit?
+
+286
+00:23:38,702 --> 00:23:46,249
+They're the innermost circle, deep learning models specialised for language, trained to predict the next token.
+
+287
+00:23:47,099 --> 00:23:50,881
+Question four: name three strengths and three weaknesses.
+
+288
+00:23:50,881 --> 00:23:54,132
+Strengths: writing, generating code, summarising.
+
+289
+00:23:54,132 --> 00:24:00,436
+Weaknesses on its own: real-time information, reliable arithmetic, and knowing when it's wrong.
+
+290
+00:24:00,436 --> 00:24:03,422
+Question five: why does hallucination happen?
+
+291
+00:24:03,422 --> 00:24:15,167
+Because the model has no database of facts, its weights are a lossy compression of its training text, and when details are missing it fills the gap with plausible sounding text.
+
+292
+00:24:15,167 --> 00:24:20,608
+Question six: why understand these systems if you're not going to be a researcher?
+
+293
+00:24:20,608 --> 00:24:30,229
+Because it gives you sound judgment about what's feasible, a career advantage, the ability to customise models, and intuition for debugging them.
+
+294
+00:24:31,079 --> 00:24:32,845
+Here's your practice list.
+
+295
+00:24:32,845 --> 00:24:37,669
+Run the six prompts on two different chatbots and note the differences.
+
+296
+00:24:37,669 --> 00:24:44,599
+Do the three exercises and keep a little log of when you trusted the model and when you had to verify.
+
+297
+00:24:44,599 --> 00:24:46,637
+Fill in the five system table.
+
+298
+00:24:46,637 --> 00:25:00,089
+And for a first taste of code, re-implement the line fit from this video: forty noisy points, start at w four point five and b zero point four, learning rate zero point zero two, four hundred steps.
+
+299
+00:25:00,089 --> 00:25:05,728
+You should land near w equals three point oh nine and b equals one point seven one.
+
+300
+00:25:05,728 --> 00:25:08,582
+The code is in the notes for this chapter.
+
+301
+00:25:08,582 --> 00:25:12,454
+It's my own illustration, not from the book's repository.
+
+302
+00:25:12,454 --> 00:25:17,822
+Finally, browse the companion repo at github dot com slash FirstLLM slash code.
+
+303
+00:25:17,822 --> 00:25:20,268
+The notebooks start at chapter five.
+
+304
+00:25:21,118 --> 00:25:22,357
+That's chapter one.
+
+305
+00:25:22,357 --> 00:25:28,165
+You now know what AI is and isn't, where language models fit, and why they make mistakes.
+
+306
+00:25:28,165 --> 00:25:30,318
+But we've stayed at a high level.
+
+307
+00:25:30,318 --> 00:25:37,039
+Computers only understand numbers, so how do we turn words into numbers in a way that captures meaning?
+
+308
+00:25:37,039 --> 00:25:43,368
+That's chapter two, how computers understand words, where we meet tokens, vectors and embeddings.
+
+309
+00:25:44,218 --> 00:25:49,537
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+310
+00:25:49,537 --> 00:25:59,202
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+311
+00:25:59,202 --> 00:26:05,945
+The companion code is at github dot com slash First LLM slash code, under the MIT license.
+
+312
+00:26:05,945 --> 00:26:09,541
+Thanks for watching, and see you in chapter two.
+

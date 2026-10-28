@@ -1,0 +1,331 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 34.25,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "How to use this series",
+  "start": 34.25,
+  "dur": 28.37,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 1 roadmap",
+  "start": 62.62,
+  "dur": 44.24,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 106.86,
+  "dur": 47.39,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "1.1 Forget the Movies",
+  "start": 154.25,
+  "dur": 3.0,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Movie AI vs real AI",
+  "start": 157.26,
+  "dur": 44.77,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "\"Autocomplete\" is not an insult",
+  "start": 202.03,
+  "dur": 40.33,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "The submarine analogy",
+  "start": 242.36,
+  "dur": 27.11,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "1.2 AI is Pattern Recognition",
+  "start": 269.47,
+  "dur": 3.96,
+  "divider": true
+ },
+ {
+  "slide": 10,
+  "title": "Definition you can actually use",
+  "start": 273.43,
+  "dur": 29.27,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Rules vs learning",
+  "start": 302.7,
+  "dur": 38.54,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "The spam filter, step by step",
+  "start": 341.24,
+  "dur": 46.82,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "A toy version: patterns become numbers",
+  "start": 388.06,
+  "dur": 46.65,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "The formula for modern AI",
+  "start": 434.7,
+  "dur": 37.15,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "What \"learning\" means: adjust numbers from feedback",
+  "start": 471.86,
+  "dur": 42.25,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Worked example: fitting a line",
+  "start": 514.11,
+  "dur": 47.59,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Watching the two numbers move",
+  "start": 561.69,
+  "dur": 39.37,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "The error shrinks",
+  "start": 601.07,
+  "dur": 33.51,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Same idea, enormous scale",
+  "start": 634.57,
+  "dur": 39.29,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "1.3 The AI Family Tree",
+  "start": 673.86,
+  "dur": 3.58,
+  "divider": true
+ },
+ {
+  "slide": 21,
+  "title": "Nested circles",
+  "start": 677.44,
+  "dur": 43.68,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Why \"deep\"? Layers build abstraction",
+  "start": 721.12,
+  "dur": 37.67,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "A brief timeline",
+  "start": 758.79,
+  "dur": 52.73,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Why 2017 matters for this course",
+  "start": 811.51,
+  "dur": 34.81,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "1.4 What Makes LLMs Special?",
+  "start": 846.32,
+  "dur": 4.56,
+  "divider": true
+ },
+ {
+  "slide": 26,
+  "title": "Language is hard: \"I saw her duck\"",
+  "start": 850.88,
+  "dur": 36.17,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "What LLMs can do",
+  "start": 887.05,
+  "dur": 27.09,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Emergence",
+  "start": 914.14,
+  "dur": 35.3,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "What the base LLM cannot do on its own",
+  "start": 949.44,
+  "dur": 36.28,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "The model vs the product",
+  "start": 985.72,
+  "dur": 44.73,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Why do LLMs hallucinate?",
+  "start": 1030.45,
+  "dur": 33.38,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Hallucination = reconstruction error",
+  "start": 1063.82,
+  "dur": 45.9,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "1.5 Hands-On Exercises",
+  "start": 1109.72,
+  "dur": 3.79,
+  "divider": true
+ },
+ {
+  "slide": 34,
+  "title": "Six prompts to try (and what to watch for)",
+  "start": 1113.52,
+  "dur": 45.26,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Three exercises",
+  "start": 1158.78,
+  "dur": 45.86,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "1.6 Why Learn to Build One?",
+  "start": 1204.63,
+  "dur": 3.45,
+  "divider": true
+ },
+ {
+  "slide": 37,
+  "title": "Four reasons",
+  "start": 1208.09,
+  "dur": 50.53,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "\"What I cannot create, I do not understand.\"",
+  "start": 1258.62,
+  "dur": 33.59,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "1.7 Checkpoint Exercise",
+  "start": 1292.21,
+  "dur": 3.73,
+  "divider": true
+ },
+ {
+  "slide": 40,
+  "title": "Classify 5 AI systems you used this week",
+  "start": 1295.94,
+  "dur": 43.13,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "1.8 Key Takeaways",
+  "start": 1339.06,
+  "dur": 3.03,
+  "divider": true
+ },
+ {
+  "slide": 42,
+  "title": "Key takeaways",
+  "start": 1342.09,
+  "dur": 43.32,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "Review questions (1/2)",
+  "start": 1385.41,
+  "dur": 41.44,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "Review questions (2/2)",
+  "start": 1426.85,
+  "dur": 43.98,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "Practice this",
+  "start": 1470.83,
+  "dur": 50.04,
+  "divider": false
+ },
+ {
+  "slide": 46,
+  "title": "Up next: Chapter 2",
+  "start": 1520.87,
+  "dur": 23.1,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "Credits",
+  "start": 1543.97,
+  "dur": 26.17,
+  "divider": true
+ }
+]
