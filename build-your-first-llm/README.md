@@ -26,7 +26,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 8 | Building the Tokenizer | [slides](ch08-building-the-tokenizer/slides.md) | [notes](ch08-building-the-tokenizer/notes.md) | [ch08](https://github.com/FirstLLM/code/blob/main/notebooks/ch08.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch08.ipynb) | ✅ |
 | 9 | The Embedding Layer | [slides](ch09-the-embedding-layer/slides.md) | [notes](ch09-the-embedding-layer/notes.md) | [ch09](https://github.com/FirstLLM/code/blob/main/notebooks/ch09.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch09.ipynb) | ✅ |
 | 10 | Attention Is All You Need | [slides](ch10-attention-is-all-you-need/slides.md) | [notes](ch10-attention-is-all-you-need/notes.md) | [ch10](https://github.com/FirstLLM/code/blob/main/notebooks/ch10.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch10.ipynb) | ✅ pilot |
-| 11 | Building the Transformer | | | [ch11](https://github.com/FirstLLM/code/blob/main/notebooks/ch11.ipynb) | planned |
+| 11 | Building the Transformer | [slides](ch11-building-the-transformer/slides.md) | [notes](ch11-building-the-transformer/notes.md) | [ch11](https://github.com/FirstLLM/code/blob/main/notebooks/ch11.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch11.ipynb) | ✅ |
 | 12 | Training Your Model | | | [ch12](https://github.com/FirstLLM/code/blob/main/notebooks/ch12.ipynb) | planned |
 | 13 | Fine-Tuning | | | [ch13](https://github.com/FirstLLM/code/blob/main/notebooks/ch13.ipynb) | planned |
 | 14 | Prompt Engineering | | | [ch14](https://github.com/FirstLLM/code/blob/main/notebooks/ch14.ipynb) | planned |

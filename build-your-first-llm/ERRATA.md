@@ -34,3 +34,8 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | ch09 | §9.5.2 similarity output | king → King, prince, Queen, kingdom…; happy → glad, pleased… | Notebook code gives king → 'ked','KING','kers'… because `encode("king")` is the no-space word-piece; with ' king' → kings, King, queen, prince, monarch |
 | ch09 | §9.5 analogy | king − man + woman ≈ queen (implied) | Notebook returns 'ked'; with space-prefixed tokens ' queen' is top (0.709) |
 | ch09 | §9.3.2 positions | "modern LLMs like GPT-2 prefer learned embeddings" | Most current open LLMs (LLaMA, Mistral, Qwen) use RoPE |
+| ch11 | §11.3.4 / notebook MiniGPT | Attention uses `bias=False`; loading GPT-2 "generates coherent text" | GPT-2's `c_attn`/`c_proj` biases are silently dropped → loaded model degenerates ("foxeseseses…", "to to to…"); max logit error 58. Adding the biases (and tanh GELU) matches HF to 6e-5 |
+| ch11 | §11.4.2 param count | "Total parameters: 124,439,808" from this code | This code gives 124,402,944 (no attention biases); 124,439,808 is HF GPT-2. The formula estimate is 124,356,864, not 124,354,560 |
+| ch11 | §11.6.4 generation | "The quick brown fox jumps over the lazy dog. The dog is…" | Notebook: "The quick brown foxeseseses…"; with fixed loader: "…foxes are a great way to get a little bit of a kick out of your dog." |
+| ch11 | Weight-tying gotcha 4 | `lm_head.weight` shouldn't appear in `state_dict()` keys | It does appear (both keys, shared storage); `torch.save` stores the storage once |
+| ch11 | §11.12 checkpoint | "Parameter count: ~150,000" | 132,608 with the book's config (133,120 with attention biases) |

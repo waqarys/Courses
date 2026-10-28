@@ -1,0 +1,716 @@
+1
+00:00:00,250 --> 00:00:06,632
+Welcome to chapter eleven of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,632 --> 00:00:18,444
+Today we assemble everything into a complete GPT: a config object, a stack of transformer blocks, a final layer norm, a language modelling head and weight tying.
+
+3
+00:00:18,444 --> 00:00:24,387
+Then we run five sanity checks and load the real GPT-2 weights into our own code.
+
+4
+00:00:24,387 --> 00:00:41,481
+And that's where my run of the notebook turned up the most interesting bug in the series so far: the loaded model produces garbage, and I'll show you exactly why, and the two line fix that makes it match GPT-2 to four decimal places.
+
+5
+00:00:42,331 --> 00:00:47,962
+We built embeddings in chapter nine and the transformer block in chapter ten.
+
+6
+00:00:47,962 --> 00:00:54,105
+Today we stack the blocks into a complete model and load real GPT-2 weights into it.
+
+7
+00:00:54,105 --> 00:00:56,664
+Next chapter we train it ourselves.
+
+8
+00:00:56,664 --> 00:01:00,101
+Everything follows the chapter eleven notebook.
+
+9
+00:01:00,951 --> 00:01:02,175
+Here's the plan.
+
+10
+00:01:02,175 --> 00:01:04,546
+What a single block is missing.
+
+11
+00:01:04,546 --> 00:01:06,534
+The configuration pattern.
+
+12
+00:01:06,534 --> 00:01:08,140
+The full model class.
+
+13
+00:01:08,140 --> 00:01:09,135
+Weight tying.
+
+14
+00:01:09,135 --> 00:01:10,588
+Five sanity checks.
+
+15
+00:01:10,588 --> 00:01:13,264
+A forward pass with random weights.
+
+16
+00:01:13,264 --> 00:01:16,706
+Loading GPT-2, including the bug and the fix.
+
+17
+00:01:16,706 --> 00:01:21,218
+Then training versus evaluation mode, exercises and review.
+
+18
+00:01:22,068 --> 00:01:22,908
+A few terms.
+
+19
+00:01:22,908 --> 00:01:30,672
+The language modelling head maps a seven sixty eight hidden state to a score for each of fifty thousand tokens.
+
+20
+00:01:30,672 --> 00:01:32,631
+Those raw scores are logits.
+
+21
+00:01:32,631 --> 00:01:36,479
+Weight tying reuses the embedding matrix for that head.
+
+22
+00:01:36,479 --> 00:01:39,836
+Module list registers a list of layers properly.
+
+23
+00:01:39,836 --> 00:01:42,844
+A config object holds every hyperparameter.
+
+24
+00:01:42,844 --> 00:01:46,132
+And greedy decoding always picks the top token.
+
+25
+00:01:46,982 --> 00:01:47,580
+Part one.
+
+26
+00:01:47,580 --> 00:01:49,969
+From a single block to a full model.
+
+27
+00:01:50,819 --> 00:01:52,423
+Here's the whole model.
+
+28
+00:01:52,423 --> 00:01:59,328
+Token IDs go into the token and position embeddings, giving batch by sequence by seven sixty eight.
+
+29
+00:01:59,328 --> 00:02:07,907
+Then twelve identical blocks, each with layer norm, attention and a residual, then layer norm, feed forward and a residual.
+
+30
+00:02:07,907 --> 00:02:11,046
+The shape stays the same all the way through.
+
+31
+00:02:11,046 --> 00:02:18,927
+A final layer norm, and then the head projects to fifty thousand two hundred and fifty seven scores per position.
+
+32
+00:02:18,927 --> 00:02:23,879
+The dashed arrow is weight tying: the head reuses the embedding matrix.
+
+33
+00:02:24,730 --> 00:02:26,491
+Why stack identical blocks?
+
+34
+00:02:26,491 --> 00:02:34,384
+Every block has the same architecture but its own learned weights, and each one adds a refinement to the residual stream.
+
+35
+00:02:34,384 --> 00:02:45,017
+Research that probes trained models finds a rough trend: earlier layers capture more local and syntactic patterns, later ones more semantic and task specific ones.
+
+36
+00:02:45,017 --> 00:02:48,214
+The book uses a team of detectives as an analogy.
+
+37
+00:02:48,214 --> 00:02:52,911
+It's a helpful picture, but the real division of labour is much messier.
+
+38
+00:02:53,761 --> 00:02:54,438
+Part two.
+
+39
+00:02:54,438 --> 00:02:56,321
+The configuration object.
+
+40
+00:02:57,171 --> 00:03:02,743
+All seven hyperparameters live in one dataclass, with GPT-2 small as the default.
+
+41
+00:03:02,743 --> 00:03:10,860
+Post init runs right after construction and checks that the embedding dimension divides evenly by the number of heads.
+
+42
+00:03:10,860 --> 00:03:15,400
+A tiny model for experiments is just a different set of arguments.
+
+43
+00:03:15,400 --> 00:03:23,518
+And because it's a dataclass, a typo in a field name is an error, not a silently created new key as with a dictionary.
+
+44
+00:03:24,367 --> 00:03:25,355
+Part three.
+
+45
+00:03:25,355 --> 00:03:26,970
+The MiniGPT class.
+
+46
+00:03:27,820 --> 00:03:41,567
+The constructor has the two embedding tables and dropout, a module list of transformer blocks, the final layer norm, and the head, a linear layer from seven sixty eight to the vocabulary with no bias.
+
+47
+00:03:41,567 --> 00:03:48,577
+The last line ties the weights: the head's weight becomes the very same tensor as the token embedding.
+
+48
+00:03:49,427 --> 00:03:50,614
+Why a module list?
+
+49
+00:03:50,614 --> 00:03:53,909
+A plain Python list hides the blocks from PyTorch.
+
+50
+00:03:53,909 --> 00:04:01,752
+They don't appear in model dot parameters, they don't move with dot to device, and they aren't saved in the state dict.
+
+51
+00:04:01,752 --> 00:04:08,343
+The optimizer would never update them, so training would appear to run while the blocks stay random.
+
+52
+00:04:08,343 --> 00:04:10,057
+It's a classic silent bug.
+
+53
+00:04:10,907 --> 00:04:12,101
+The forward pass.
+
+54
+00:04:12,101 --> 00:04:18,565
+Embed tokens and positions and add them; the position embeddings broadcast across the batch.
+
+55
+00:04:18,565 --> 00:04:21,165
+Build a lower triangular causal mask.
+
+56
+00:04:21,165 --> 00:04:24,537
+Run every block, final layer norm, and the head.
+
+57
+00:04:24,537 --> 00:04:34,373
+The output is batch by sequence by vocabulary: a full set of next token scores at every position, which is what makes training so efficient.
+
+58
+00:04:35,223 --> 00:04:39,322
+Logits are a raw score for every token at every position.
+
+59
+00:04:39,322 --> 00:04:42,054
+Softmax turns them into probabilities.
+
+60
+00:04:42,054 --> 00:04:50,250
+During training, every position predicts its own next token, so one sequence gives many training examples at once.
+
+61
+00:04:50,250 --> 00:04:54,061
+During generation, we only look at the last position.
+
+62
+00:04:54,911 --> 00:04:55,699
+Part four.
+
+63
+00:04:55,699 --> 00:04:56,724
+Weight tying.
+
+64
+00:04:57,574 --> 00:05:00,594
+The embedding matrix maps an ID to a vector.
+
+65
+00:05:00,594 --> 00:05:07,251
+The head maps a vector to scores by multiplying with the transpose of a matrix of the same shape.
+
+66
+00:05:07,251 --> 00:05:14,526
+Tie them, and you save thirty eight point six million parameters, about thirty one percent of GPT-2 small.
+
+67
+00:05:14,526 --> 00:05:23,174
+In PyTorch, assigning the weight attribute makes both modules point at one tensor; an update through either path changes both.
+
+68
+00:05:24,024 --> 00:05:25,852
+The book lists four gotchas.
+
+69
+00:05:25,852 --> 00:05:26,896
+Three are right.
+
+70
+00:05:26,896 --> 00:05:31,530
+But it says lm head dot weight shouldn't appear in the state dict keys.
+
+71
+00:05:31,530 --> 00:05:34,859
+In my run, it does: the state dict lists both keys.
+
+72
+00:05:34,859 --> 00:05:41,386
+They share storage, so torch dot save writes the data only once and the file doesn't double in size.
+
+73
+00:05:41,386 --> 00:05:50,328
+Also remember to tie only after both layers exist, and if you ever replace the tensor rather than copying into it, you have to tie again.
+
+74
+00:05:51,178 --> 00:05:51,901
+Part five.
+
+75
+00:05:51,901 --> 00:05:54,720
+Five sanity checks before any training.
+
+76
+00:05:55,569 --> 00:05:58,083
+The five checks all passed on my CPU.
+
+77
+00:05:58,083 --> 00:06:04,945
+Shape: two by sixteen IDs become two by sixteen by fifty thousand two hundred and fifty seven logits.
+
+78
+00:06:04,945 --> 00:06:06,032
+Parameter count.
+
+79
+00:06:06,032 --> 00:06:12,417
+Causal masking: changing only the last token leaves the logits at earlier positions identical.
+
+80
+00:06:12,417 --> 00:06:16,494
+Weight tying: the two weights are literally the same object.
+
+81
+00:06:16,494 --> 00:06:20,230
+And gradient flow: every parameter receives a gradient.
+
+82
+00:06:20,230 --> 00:06:23,559
+Keep an eye on that parameter count; it's a clue.
+
+83
+00:06:24,409 --> 00:06:26,544
+The causal test is my favourite.
+
+84
+00:06:26,544 --> 00:06:29,613
+Two inputs that differ only in the last token.
+
+85
+00:06:29,613 --> 00:06:37,553
+Positions zero to two must produce identical logits, because they can't see the future, and position three must differ.
+
+86
+00:06:37,553 --> 00:06:46,894
+If the mask were broken, the model could peek at the answer during training: the loss would look fantastic, and generation would be useless.
+
+87
+00:06:47,744 --> 00:07:00,692
+Here's where GPT-2 small's parameters live, from my own count, which matches Hugging Face exactly at one hundred and twenty four million four hundred and thirty nine thousand eight hundred and eight.
+
+88
+00:07:00,692 --> 00:07:05,117
+The feed forward layers are the biggest share at forty five percent.
+
+89
+00:07:05,117 --> 00:07:12,469
+The tied embedding is thirty one percent, attention twenty three percent, and positions and layer norms are tiny.
+
+90
+00:07:13,319 --> 00:07:14,599
+And here's the clue.
+
+91
+00:07:14,599 --> 00:07:23,366
+The book prints one hundred and twenty four million four hundred and thirty nine thousand eight hundred and eight, the real GPT-2 number.
+
+92
+00:07:23,366 --> 00:07:29,445
+But the notebook's model has thirty six thousand eight hundred and sixty four fewer parameters.
+
+93
+00:07:29,445 --> 00:07:39,876
+That's exactly twelve layers times two thousand three hundred and four plus seven hundred and sixty eight: the query key value bias and the output projection bias.
+
+94
+00:07:39,876 --> 00:07:45,059
+The notebook's attention is built without biases, but GPT-2's attention has them.
+
+95
+00:07:45,059 --> 00:07:46,211
+Keep that in mind.
+
+96
+00:07:46,211 --> 00:07:57,858
+As a small aside, the book's rough formula evaluates to one hundred and twenty four million three hundred and fifty six thousand eight hundred and sixty four, not the number printed.
+
+97
+00:07:58,707 --> 00:07:59,327
+Part six.
+
+98
+00:07:59,327 --> 00:08:02,355
+Our first forward pass, with random weights.
+
+99
+00:08:03,205 --> 00:08:17,045
+With random weights, the four token prompt gives a one by four by fifty thousand logits tensor, and the top predictions are random junk like RC and Abel, each with probability about one in ten thousand.
+
+100
+00:08:17,045 --> 00:08:21,567
+An untrained model is close to uniform over fifty thousand tokens.
+
+101
+00:08:21,567 --> 00:08:31,090
+That gives a useful number for chapter twelve: the starting loss should be about the natural log of fifty thousand, around ten point eight.
+
+102
+00:08:31,090 --> 00:08:34,858
+If your first loss is far from that, something's wrong.
+
+103
+00:08:35,708 --> 00:08:36,556
+Part seven.
+
+104
+00:08:36,556 --> 00:08:40,103
+Loading GPT-2's weights, the bug, and the fix.
+
+105
+00:08:40,953 --> 00:08:52,117
+To load GPT-2, we map names: w t e to token embed, h dot i dot l n one to our layer norms, c attn to our combined query key value projection, and so on.
+
+106
+00:08:52,117 --> 00:09:04,163
+The projection weights must be transposed, because GPT-2's original code uses a Conv1D layer that stores weights as in by out, while nn dot Linear stores out by in.
+
+107
+00:09:04,163 --> 00:09:09,966
+Notice what's missing from this table: there's no row for the attention biases.
+
+108
+00:09:10,816 --> 00:09:14,948
+Here's what the notebook actually generated after loading GPT-2.
+
+109
+00:09:14,948 --> 00:09:16,755
+The quick brown foxeseseses.
+
+110
+00:09:16,755 --> 00:09:19,918
+Artificial intelligence will be used to to to to.
+
+111
+00:09:19,918 --> 00:09:22,565
+The capital of France is France is is is.
+
+112
+00:09:22,565 --> 00:09:28,310
+The book shows a fluent continuation about the lazy dog, but this code cannot produce it.
+
+113
+00:09:28,310 --> 00:09:34,830
+And notice: the weights loaded without errors, the shapes all matched, and every sanity check passed.
+
+114
+00:09:34,830 --> 00:09:36,508
+The model is still broken.
+
+115
+00:09:36,508 --> 00:09:38,187
+That's a lesson in itself.
+
+116
+00:09:39,037 --> 00:09:45,320
+To debug, I compared our model's logits with Hugging Face's GPT-2 on the same input.
+
+117
+00:09:45,320 --> 00:09:51,603
+The largest difference was fifty eight, which is not rounding; something is missing.
+
+118
+00:09:51,603 --> 00:09:59,606
+Step two: I added the attention biases that the loader was silently dropping, and copied in GPT-2's values.
+
+119
+00:09:59,606 --> 00:10:02,224
+The error fell to seven hundredths.
+
+120
+00:10:02,224 --> 00:10:09,480
+Step three: GPT-2 uses the tanh approximation of GELU, while the notebook uses the exact version.
+
+121
+00:10:09,480 --> 00:10:14,341
+Switching that brought the error down to six hundred thousandths.
+
+122
+00:10:14,341 --> 00:10:18,156
+Now our model computes exactly what GPT-2 computes.
+
+123
+00:10:19,006 --> 00:10:22,417
+Here's the patch, my own code on top of the notebook.
+
+124
+00:10:22,417 --> 00:10:25,312
+Keep the biases in the attention projections.
+
+125
+00:10:25,312 --> 00:10:26,856
+Copy them in the loader.
+
+126
+00:10:26,856 --> 00:10:28,272
+And use the tanh GELU.
+
+127
+00:10:28,272 --> 00:10:38,825
+With that, the parameter count becomes one hundred and twenty four million four hundred and thirty nine thousand eight hundred and eight, identical to Hugging Face.
+
+128
+00:10:39,675 --> 00:10:43,514
+After the fix, the same model with the same weights is fluent.
+
+129
+00:10:43,514 --> 00:10:47,725
+Foxes are a great way to get a little bit of a kick out of your dog.
+
+130
+00:10:47,725 --> 00:10:52,245
+Once upon a time, the world was a place of great beauty and great danger.
+
+131
+00:10:52,245 --> 00:11:00,481
+It still repeats itself, but that's greedy decoding, which always picks the top token, not a bug; sampling comes in chapter fourteen.
+
+132
+00:11:00,481 --> 00:11:07,664
+On my CPU, thirty tokens took about ten seconds, because this simple loop recomputes the whole prefix at every step.
+
+133
+00:11:08,514 --> 00:11:10,856
+The lesson is bigger than this bug.
+
+134
+00:11:10,856 --> 00:11:14,938
+All five sanity checks passed, and the model was still wrong.
+
+135
+00:11:14,938 --> 00:11:17,748
+Those checks test wiring, not correctness.
+
+136
+00:11:17,748 --> 00:11:24,507
+When a reference implementation exists, compare the actual numbers, as a maximum absolute difference.
+
+137
+00:11:24,507 --> 00:11:32,001
+Typical silent mismatches are missing biases, the GELU variant, layer norm epsilon, transposes and tied weights.
+
+138
+00:11:32,001 --> 00:11:34,477
+I'd add this as a sixth sanity check.
+
+139
+00:11:35,327 --> 00:11:37,083
+A few practical details.
+
+140
+00:11:37,083 --> 00:11:43,084
+Train mode enables dropout, eval mode disables it, so call eval before generating.
+
+141
+00:11:43,084 --> 00:11:47,694
+Wrap generation in no grad to skip building the autograd graph.
+
+142
+00:11:47,694 --> 00:11:51,646
+Move both the model and the inputs to the same device.
+
+143
+00:11:51,646 --> 00:11:59,476
+And a preview of chapter twelve: weight decay is usually not applied to biases, layer norms and embeddings.
+
+144
+00:12:00,326 --> 00:12:01,140
+Part eight.
+
+145
+00:12:01,140 --> 00:12:02,694
+Exercises and review.
+
+146
+00:12:03,544 --> 00:12:04,765
+Exercise answers.
+
+147
+00:12:04,765 --> 00:12:22,360
+The tiny checkpoint model has one hundred and thirty two thousand six hundred and eight parameters, not about one hundred and fifty thousand as the book says, or one hundred and thirty three thousand one hundred and twenty with attention biases.
+
+148
+00:12:22,360 --> 00:12:27,889
+The full breakdown for GPT-2 small is on screen, with zero for the tied head.
+
+149
+00:12:27,889 --> 00:12:30,978
+The causal mask is always a lower triangle.
+
+150
+00:12:30,978 --> 00:12:37,656
+With the fixed model, def fibonacci produces return n in a loop: GPT-2 small is weak at code.
+
+151
+00:12:37,656 --> 00:12:42,109
+And temperature only matters if you sample; argmax ignores it.
+
+152
+00:12:42,959 --> 00:12:44,056
+Key takeaways.
+
+153
+00:12:44,056 --> 00:12:50,323
+A GPT is embeddings, a stack of identical blocks, a final layer norm and a head.
+
+154
+00:12:50,323 --> 00:12:56,982
+A config dataclass keeps experiments clean, and module list keeps parameters visible.
+
+155
+00:12:56,982 --> 00:13:00,742
+Weight tying saves about a third of GPT-2 small.
+
+156
+00:13:00,742 --> 00:13:06,383
+Sanity checks test wiring; comparing with a reference tests correctness.
+
+157
+00:13:06,383 --> 00:13:12,258
+Loading GPT-2 needs the transposes, the attention biases and the tanh GELU.
+
+158
+00:13:12,258 --> 00:13:16,724
+And a random model starts near a loss of ten point eight.
+
+159
+00:13:17,574 --> 00:13:20,144
+The notebook ran completely on my CPU.
+
+160
+00:13:20,144 --> 00:13:40,637
+The book checks: the loaded GPT-2 degenerates because of the missing attention biases and the GELU variant, which we fixed; the parameter count differs for the same reason; the lm head key does appear in the state dict; and the checkpoint model is about one hundred and thirty three thousand parameters.
+
+161
+00:13:40,637 --> 00:13:42,192
+All in the errata file.
+
+162
+00:13:43,042 --> 00:13:44,498
+Pause and try these.
+
+163
+00:13:44,498 --> 00:13:45,662
+The four pieces.
+
+164
+00:13:45,662 --> 00:13:46,827
+Why a dataclass.
+
+165
+00:13:46,827 --> 00:13:48,937
+The output shape of the head.
+
+166
+00:13:48,937 --> 00:13:50,611
+The savings from tying.
+
+167
+00:13:50,611 --> 00:13:54,905
+Why earlier positions must be unchanged in the causal test.
+
+168
+00:13:54,905 --> 00:13:56,142
+Why we transpose.
+
+169
+00:13:56,142 --> 00:14:01,965
+And the big one: why could every sanity check pass while generation was garbage?
+
+170
+00:14:02,815 --> 00:14:06,985
+To practise: run the notebook and reproduce the broken output.
+
+171
+00:14:06,985 --> 00:14:13,239
+Apply the three line fix and verify the difference with Hugging Face is under one thousandth.
+
+172
+00:14:13,239 --> 00:14:15,324
+Count parameters per component.
+
+173
+00:14:15,324 --> 00:14:18,687
+And swap greedy decoding for temperature sampling.
+
+174
+00:14:19,537 --> 00:14:22,280
+Next time, chapter twelve: training.
+
+175
+00:14:22,280 --> 00:14:31,654
+The full loop, cross entropy, warmup, gradient clipping and perplexity, training a small MiniGPT on Shakespeare, on my CPU.
+
+176
+00:14:32,504 --> 00:14:37,146
+This video is based on Build Your First LLM by Hasan Degismez.
+
+177
+00:14:37,146 --> 00:14:48,225
+The explanations and diagrams here are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+178
+00:14:48,225 --> 00:14:53,390
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+179
+00:14:53,390 --> 00:14:57,208
+Thanks for watching, and see you in chapter twelve.
+
