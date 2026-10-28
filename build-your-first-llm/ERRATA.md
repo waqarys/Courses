@@ -16,3 +16,21 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | ch07 | §7.11 worked example | Printed split shows Train 1 / Val 1 / Test 1 | The code shown (seed, 80/10/10 on 3 docs) yields 1 / 0 / 2; notebook confirms |
 | ch07 | String length example | `len('The bird flew over the house.')` given as 33 | It is 29 |
 | ch07 | SHA-1 collision odds | "1 in 2^160" | Birthday bound ≈2^80 for any collision; SHA-1 is practically broken (fine for dedup, not security) |
+| ch08 | §8.2.4 char tradeoff | "Tokenization is the first step…" = 54 chars, vocab 24 | 53 chars, vocab 22 (notebook) |
+| ch08 | §8.3.4 word vocab | `'mat.':5, 'on':6 … 'dog':9` | `'on':5, 'mat.':6 … 'was':9` — Counter ties go to first appearance (notebook) |
+| ch08 | §8.3.6 coverage | Vocab 10 → 3/5 unknown (40%) | 1/5 unknown (80%) |
+| ch08 | §8.3.7 comparison | char vocab 20, length 44; word vocab 13 | char vocab 28, length 43; word vocab 12 (notebook) |
+| ch08 | §8.4 "tokenization" | 13 characters (in 8.2) | 12 characters (book's own table says 12) |
+| ch08 | §8.5.5 Shakespeare BPE | 12 tokens, `question` whole, round trip True | 14 tokens (`que`,`st`,`ion`), decoded `'… be , that … que st ion .'`, round trip **False** (no decoder with Whitespace pre-tokenizer) |
+| ch08 | §8.5.5 modern text | "ChatGPT generates amazing responses" → 14 tokens | 18 tokens |
+| ch08 | §8.5.6 vocab order | IDs 4+ are most-frequent chars (e, t, o, a…) | Base alphabet is sorted (`!`, `$`, …, `A`…, `a`…); only merges are in learned order |
+| ch08 | §8.5.8 cl100k counts | Hamlet line 11 tokens; backprop sentence 8 (`propagation` whole) | 12; 9 (`back`,`prop`,`agation`) |
+| ch08 | §8.6.2 prompt counts | 6 / 14 / 9 tokens | 7 / 15 / 10 (notebook) |
+| ch08 | §8.7.3 emoji | 😀🚀👍 1 token each; 🔥🔥🔥 3; "Hello 😀 world" 4 | 2 / 3 / 3; 9; 3 (notebook) |
+| ch08 | §8.8 embedding | `nn.Embedding(vocab_size=…, embedding_dim=…)` | TypeError — parameter is `num_embeddings` |
+| ch09 | §9.1.1 example IDs | dog 4273, kitten 28387 | ` dog`=3290, ` kitten`=42143 (4273=` pet`, 28387=` WC`); 3797 is ` cat` with space (`cat`=9246) |
+| ch09 | §9.2.3 batch example | "I will help you" = [314, 588, 4695, 345] | Those IDs decode to " I like animals you"; "I will help you" = [40, 481, 1037, 345] |
+| ch09 | §9.4.3 pipeline | "mat" = 21547 | 2603 (notebook) |
+| ch09 | §9.5.2 similarity output | king → King, prince, Queen, kingdom…; happy → glad, pleased… | Notebook code gives king → 'ked','KING','kers'… because `encode("king")` is the no-space word-piece; with ' king' → kings, King, queen, prince, monarch |
+| ch09 | §9.5 analogy | king − man + woman ≈ queen (implied) | Notebook returns 'ked'; with space-prefixed tokens ' queen' is top (0.709) |
+| ch09 | §9.3.2 positions | "modern LLMs like GPT-2 prefer learned embeddings" | Most current open LLMs (LLaMA, Mistral, Qwen) use RoPE |
