@@ -1,0 +1,282 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 27.18,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 27.18,
+  "dur": 15.14,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 18 roadmap",
+  "start": 42.32,
+  "dur": 14.35,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 56.67,
+  "dur": 24.74,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 81.42,
+  "dur": 3.07,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "The journey",
+  "start": 84.48,
+  "dur": 23.74,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Part by part",
+  "start": 108.23,
+  "dur": 20.03,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Skills checklist",
+  "start": 128.25,
+  "dur": 17.79,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "These are the real skills",
+  "start": 146.04,
+  "dur": 13.2,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Part 2",
+  "start": 159.24,
+  "dur": 3.03,
+  "divider": true
+ },
+ {
+  "slide": 11,
+  "title": "Responsibility is good engineering",
+  "start": 162.27,
+  "dur": 16.15,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Questions to ask every time",
+  "start": 178.42,
+  "dur": 20.33,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Where we practised this",
+  "start": 198.74,
+  "dur": 25.13,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Your next system *will* fail sometimes",
+  "start": 223.87,
+  "dur": 24.4,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Part 3",
+  "start": 248.27,
+  "dur": 2.77,
+  "divider": true
+ },
+ {
+  "slide": 16,
+  "title": "Pick a direction for 6\u201312 months",
+  "start": 251.04,
+  "dur": 10.6,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Path 1 \u00b7 Deeper technical (research)",
+  "start": 261.64,
+  "dur": 27.86,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Path 2 \u00b7 Product and applications (builder)",
+  "start": 289.5,
+  "dur": 23.48,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Path 3 \u00b7 Production and infrastructure (systems)",
+  "start": 312.99,
+  "dur": 18.96,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "Combine them",
+  "start": 331.95,
+  "dur": 10.19,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Part 4",
+  "start": 342.14,
+  "dur": 3.47,
+  "divider": true
+ },
+ {
+  "slide": 22,
+  "title": "Three capstones",
+  "start": 345.62,
+  "dur": 11.52,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Capstone 1 \u00b7 RAG with citations",
+  "start": 357.13,
+  "dur": 24.96,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Capstone 2 \u00b7 Fine-tuned domain assistant",
+  "start": 382.09,
+  "dur": 24.06,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Capstone 3 \u00b7 Single-tool agent",
+  "start": 406.15,
+  "dur": 22.55,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "How to choose",
+  "start": 428.7,
+  "dur": 13.16,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "A four-weekend plan (any capstone)",
+  "start": 441.85,
+  "dur": 20.28,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Measure it like Ch 15",
+  "start": 462.14,
+  "dur": 18.77,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Make it portfolio-ready",
+  "start": 480.91,
+  "dur": 17.11,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Part 5",
+  "start": 498.02,
+  "dur": 3.37,
+  "divider": true
+ },
+ {
+  "slide": 31,
+  "title": "Where to keep learning",
+  "start": 501.38,
+  "dur": 22.82,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "How to read an ML paper",
+  "start": 524.21,
+  "dur": 14.4,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "Part 6",
+  "start": 538.6,
+  "dur": 4.07,
+  "divider": true
+ },
+ {
+  "slide": 34,
+  "title": "Run the code, and read your logs",
+  "start": 542.67,
+  "dur": 38.07,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Where your MiniGPT sits",
+  "start": 580.74,
+  "dur": 33.95,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "The series by the numbers",
+  "start": 614.7,
+  "dur": 26.26,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "What I'd do next",
+  "start": 640.96,
+  "dur": 20.95,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Review questions: my answers",
+  "start": 661.9,
+  "dur": 25.49,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Final checklist",
+  "start": 687.39,
+  "dur": 21.82,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Credits and thank you",
+  "start": 709.21,
+  "dur": 30.59,
+  "divider": false
+ }
+]

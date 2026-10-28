@@ -33,7 +33,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 15 | Building Applications | [slides](ch15-building-applications/slides.md) | [notes](ch15-building-applications/notes.md) | [ch15](https://github.com/FirstLLM/code/blob/main/notebooks/ch15.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch15.ipynb) | ✅ |
 | 16 | Preparing for Production | [slides](ch16-preparing-for-production/slides.md) | [notes](ch16-preparing-for-production/notes.md) | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | ✅ |
 | 17 | Deployment Options | [slides](ch17-deployment-options/slides.md) | [notes](ch17-deployment-options/notes.md) | [ch17](https://github.com/FirstLLM/code/blob/main/notebooks/ch17.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch17.ipynb) | ✅ |
-| 18 | What's Next | | | [ch18](https://github.com/FirstLLM/code/blob/main/notebooks/ch18.ipynb) | planned |
+| 18 | What's Next | [slides](ch18-whats-next/slides.md) | [notes](ch18-whats-next/notes.md) | [ch18](https://github.com/FirstLLM/code/blob/main/notebooks/ch18.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch18.ipynb) | ✅ |
 
 ## Errata
 Book mistakes found while verifying the code: [ERRATA.md](ERRATA.md)

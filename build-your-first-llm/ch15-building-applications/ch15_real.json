@@ -1,0 +1,96 @@
+{
+ "chunks": 3,
+ "cases": [
+  {
+   "q": "How many vacation days do employees get?",
+   "scores": [
+    0.791,
+    0.36
+   ],
+   "sources": [
+    "vacation_policy.txt",
+    "remote_work_policy.txt"
+   ],
+   "answer": "According to source [1], Employees receive 15 days of paid vacation per year.",
+   "res": {
+    "cites_source": true,
+    "contains_keywords": true,
+    "not_refusal": true
+   },
+   "sec": 6
+  },
+  {
+   "q": "What is the expense reimbursement process?",
+   "scores": [
+    0.55
+   ],
+   "sources": [
+    "expense_policy.txt"
+   ],
+   "answer": "According to the provided sources, the expense reimbursement process is as follows:\n\n- Business expenses must be submitted within 30 days of the expense date.\n- All expenses over $50 require a receipt.\n- Meals during business travel are reimbursed up to $75 per day.\n- Submit expense reports through the finance portal with appropriate documentation.\n- Manager approval is required for expenses over $500.\n\nThere is no specific information provided on the exact process of submitting expenses, but it is mentioned that expense reports should be submitted through the finance portal with proper documentation.",
+   "res": {
+    "cites_source": false,
+    "contains_keywords": true,
+    "min_words": true
+   },
+   "sec": 37
+  },
+  {
+   "q": "What is the meaning of life?",
+   "scores": [],
+   "sources": [],
+   "answer": "The question of the meaning of life is a complex and debated topic across various disciplines, including philosophy, religion, and psychology.\n\nAccording to the ancient Greek philosopher Aristotle, the meaning of life is to achieve eudaimonia, often translated as happiness or flourishing, through living a virtuous and fulfilling life (Aristotle, 350 BCE). [1]\n\nIn contrast, the existentialist philosopher Jean-Paul Sartre argued that life has no inherent meaning, and it is up to each individual to create their own purpose and meaning (Sartre, 1943). [2]\n\nFrom a psychological perspective, psychologist Abraham Maslow proposed that the meaning of life is to fulfill one's inherent needs and desires, with the ultimate goal of achieving self-actualization (Maslow, 1943). [3]\n\nIn many religions, the meaning of life is often seen as serving a higher power or achieving spiritual enlightenment. For example, in Buddhism, the meaning of life is to attain nir",
+   "res": {
+    "cites_source": false,
+    "not_refusal": false
+   },
+   "sec": 56
+  },
+  {
+   "q": "Can I work from home?",
+   "scores": [
+    0.42
+   ],
+   "sources": [
+    "remote_work_policy.txt"
+   ],
+   "answer": "According to the provided source, yes, you can work from home, but with certain conditions. [1]\n\nEmployees may work remotely up to 3 days per week with manager approval."
+  },
+  {
+   "q": "How many vacation days can I carry over?",
+   "scores": [
+    0.668
+   ],
+   "sources": [
+    "vacation_policy.txt"
+   ],
+   "answer": "According to the provided source, employees can carry over up to 5 unused vacation days to the next year."
+  }
+ ],
+ "tools": [
+  {
+   "q": "What is 15% of 847?",
+   "first": "calculate 15% of 847",
+   "tool": null,
+   "arg": null,
+   "result": null,
+   "final": "calculate 15% of 847"
+  },
+  {
+   "q": "What's today's date?",
+   "first": "<get_date> </get_date>",
+   "tool": null,
+   "arg": null,
+   "result": null,
+   "final": "<get_date> </get_date>"
+  },
+  {
+   "q": "What is the capital of France?",
+   "first": "I don't have a specific tool for this question. However, I can tell you that the capital of France is Paris.",
+   "tool": null,
+   "arg": null,
+   "result": null,
+   "final": "I don't have a specific tool for this question. However, I can tell you that the capital of France is Paris."
+  }
+ ]
+}

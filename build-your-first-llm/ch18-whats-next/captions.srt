@@ -1,0 +1,708 @@
+1
+00:00:00,250 --> 00:00:05,931
+Welcome to the final chapter of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:05,931 --> 00:00:07,888
+There's no new model code here.
+
+3
+00:00:07,888 --> 00:00:18,431
+Instead we look back at what we built, talk about building responsibly, and map out three paths and three concrete capstone projects for the next six to twelve months.
+
+4
+00:00:18,431 --> 00:00:26,575
+I'll also share what this series taught me from running every notebook on a plain CPU, including the bugs we found along the way.
+
+5
+00:00:27,425 --> 00:00:31,438
+We've gone from what is AI all the way to a deployed API.
+
+6
+00:00:31,438 --> 00:00:35,029
+Today we consolidate and choose what to build next.
+
+7
+00:00:35,029 --> 00:00:41,718
+The chapter eighteen notebook is a skills checklist, a learning plan and two starter templates.
+
+8
+00:00:42,568 --> 00:00:43,198
+The plan.
+
+9
+00:00:43,198 --> 00:00:45,017
+The journey in five parts.
+
+10
+00:00:45,017 --> 00:00:46,346
+A skills checklist.
+
+11
+00:00:46,346 --> 00:00:47,816
+Responsible building.
+
+12
+00:00:47,816 --> 00:00:48,655
+Three paths.
+
+13
+00:00:48,655 --> 00:00:49,775
+Three capstones.
+
+14
+00:00:49,775 --> 00:00:52,294
+Communities and how to read a paper.
+
+15
+00:00:52,294 --> 00:00:54,533
+My own lessons from this series.
+
+16
+00:00:54,533 --> 00:00:56,072
+And a final checklist.
+
+17
+00:00:56,922 --> 00:00:58,709
+Some terms for the road.
+
+18
+00:00:58,709 --> 00:01:02,505
+MLOps and LLMOps mean running models in production.
+
+19
+00:01:02,505 --> 00:01:05,780
+Quantization stores weights with fewer bits.
+
+20
+00:01:05,780 --> 00:01:09,353
+Structured outputs force JSON or function calls.
+
+21
+00:01:09,353 --> 00:01:12,330
+Sparse attention skips most token pairs.
+
+22
+00:01:12,330 --> 00:01:16,647
+Mixture of experts routes each token to a few specialists.
+
+23
+00:01:16,647 --> 00:01:20,816
+And interpretability asks why the model did what it did.
+
+24
+00:01:21,665 --> 00:01:22,271
+Part one.
+
+25
+00:01:22,271 --> 00:01:23,884
+Look how far we've come.
+
+26
+00:01:24,734 --> 00:01:27,767
+Here's the journey, redrawn in five parts.
+
+27
+00:01:27,767 --> 00:01:30,511
+Understanding in chapters one to four.
+
+28
+00:01:30,511 --> 00:01:33,038
+Python and tensors in five and six.
+
+29
+00:01:33,038 --> 00:01:39,393
+Data, tokenizer, embeddings, attention, the transformer and training in seven to twelve.
+
+30
+00:01:39,393 --> 00:01:43,942
+Fine tuning, prompting and applications in thirteen to fifteen.
+
+31
+00:01:43,942 --> 00:01:47,625
+Production and deployment in sixteen and seventeen.
+
+32
+00:01:48,475 --> 00:01:50,440
+Part one gave us the why.
+
+33
+00:01:50,440 --> 00:01:51,933
+Part two the tools.
+
+34
+00:01:51,933 --> 00:01:56,807
+Part three the model itself, built piece by piece and trained.
+
+35
+00:01:56,807 --> 00:02:02,073
+Part four made it useful with LoRA, prompting, retrieval and tools.
+
+36
+00:02:02,073 --> 00:02:07,653
+And part five shipped it behind a validated, logged API on a cloud GPU.
+
+37
+00:02:08,504 --> 00:02:12,788
+The checklist, in three columns: theory, building and production.
+
+38
+00:02:12,788 --> 00:02:18,522
+The notebook starts you at zero out of fourteen and asks you to flip each one honestly.
+
+39
+00:02:18,522 --> 00:02:21,883
+If you followed the exercises, most should be true.
+
+40
+00:02:21,883 --> 00:02:25,442
+If one isn't, that tells you which chapter to revisit.
+
+41
+00:02:26,292 --> 00:02:27,861
+These aren't toy skills.
+
+42
+00:02:27,861 --> 00:02:31,978
+Frontier labs use the same fundamentals at a much bigger scale.
+
+43
+00:02:31,978 --> 00:02:35,050
+And you understand them because you built them.
+
+44
+00:02:35,050 --> 00:02:38,644
+Sometimes you fixed them too, as we'll see in a moment.
+
+45
+00:02:39,494 --> 00:02:40,147
+Part two.
+
+46
+00:02:40,147 --> 00:02:41,670
+Building responsibly.
+
+47
+00:02:42,520 --> 00:02:46,967
+The author frames responsibility as good engineering, and I agree.
+
+48
+00:02:46,967 --> 00:02:52,358
+Asking what could go wrong before you deploy is the same habit as writing tests.
+
+49
+00:02:52,358 --> 00:02:57,816
+There are three areas to question: your data, your outputs and your transparency.
+
+50
+00:02:58,666 --> 00:03:00,267
+Here they are as a grid.
+
+51
+00:03:00,267 --> 00:03:05,336
+For data: where did it come from, is it licensed, what biases does it carry.
+
+52
+00:03:05,336 --> 00:03:12,674
+For outputs: could it cause harm, what if someone believes a hallucination, are you validating and moderating.
+
+53
+00:03:12,674 --> 00:03:18,144
+For transparency: do users know it's AI, are you logging, can you trace a failure.
+
+54
+00:03:18,994 --> 00:03:21,283
+We practised these along the way.
+
+55
+00:03:21,283 --> 00:03:23,433
+Data sourcing in chapter seven.
+
+56
+00:03:23,433 --> 00:03:24,959
+Guardrails in fifteen.
+
+57
+00:03:24,959 --> 00:03:28,219
+Validation, logging and rate limits in sixteen.
+
+58
+00:03:28,219 --> 00:03:30,300
+Secrets and keys in seventeen.
+
+59
+00:03:30,300 --> 00:03:35,710
+The book says ethics is a practice you maintain, not a checklist you complete.
+
+60
+00:03:35,710 --> 00:03:43,271
+One small correction: it credits chapter seventeen with audit trails, but logging was really chapter sixteen.
+
+61
+00:03:44,121 --> 00:03:47,411
+Whatever you build next will fail sometimes.
+
+62
+00:03:47,411 --> 00:03:50,252
+Retrieval will grab the wrong passage.
+
+63
+00:03:50,252 --> 00:03:52,420
+Fine tunes will inherit bias.
+
+64
+00:03:52,420 --> 00:03:54,813
+Agents will call the wrong tool.
+
+65
+00:03:54,813 --> 00:04:04,159
+So set expectations, add guardrails, log everything, test on diverse inputs and let users report problems or override the AI.
+
+66
+00:04:04,159 --> 00:04:07,673
+The goal is failing gracefully, not perfection.
+
+67
+00:04:08,523 --> 00:04:09,163
+Part three.
+
+68
+00:04:09,163 --> 00:04:10,443
+Where to go from here.
+
+69
+00:04:11,293 --> 00:04:14,586
+Three directions for the next six to twelve months.
+
+70
+00:04:14,586 --> 00:04:16,523
+Research, builder and systems.
+
+71
+00:04:16,523 --> 00:04:21,042
+It's not a permanent career choice, and many people move between them.
+
+72
+00:04:21,892 --> 00:04:23,321
+Path one is research.
+
+73
+00:04:23,321 --> 00:04:33,797
+Learn evaluation beyond loss and perplexity, architecture variants like sparse attention, mixture of experts and state space models, and interpretability.
+
+74
+00:04:33,797 --> 00:04:39,444
+The book says this builds on chapter six, but six is the NumPy and PyTorch chapter.
+
+75
+00:04:39,444 --> 00:04:43,798
+Training is chapter twelve and evaluation is in chapter fifteen.
+
+76
+00:04:43,798 --> 00:04:48,900
+Start with the original transformer paper, which you can now actually read.
+
+77
+00:04:49,750 --> 00:04:51,475
+Path two is the builder.
+
+78
+00:04:51,475 --> 00:05:01,822
+Reliable JSON and function calls, better retrieval with hybrid search and re ranking, and the user experience of streaming and graceful failure.
+
+79
+00:05:01,822 --> 00:05:06,564
+The book points to chapter fourteen for RAG and fifteen for tools.
+
+80
+00:05:06,564 --> 00:05:12,385
+In fact, both RAG and tool use are in chapter fifteen, and fourteen is prompting.
+
+81
+00:05:13,235 --> 00:05:14,767
+Path three is systems.
+
+82
+00:05:14,767 --> 00:05:19,017
+Make inference cheap with quantization, caching and batching.
+
+83
+00:05:19,017 --> 00:05:22,291
+Make it observable with dashboards and tracing.
+
+84
+00:05:22,291 --> 00:05:28,142
+And run it like software with prompt versioning, A B tests and evaluation pipelines.
+
+85
+00:05:28,142 --> 00:05:31,347
+This builds on chapters sixteen and seventeen.
+
+86
+00:05:32,197 --> 00:05:37,631
+Real projects need all three: technical depth, product sense and production skill.
+
+87
+00:05:37,631 --> 00:05:41,541
+Pick one to go deep on and stay competent in the other two.
+
+88
+00:05:42,391 --> 00:05:43,064
+Part four.
+
+89
+00:05:43,064 --> 00:05:45,015
+Stop reading, start building.
+
+90
+00:05:45,865 --> 00:05:50,806
+The book offers three capstones, each sized for a few weekends.
+
+91
+00:05:50,806 --> 00:05:52,296
+RAG with citations.
+
+92
+00:05:52,296 --> 00:05:54,649
+A fine tuned domain assistant.
+
+93
+00:05:54,649 --> 00:05:56,532
+And a single tool agent.
+
+94
+00:05:57,382 --> 00:06:01,322
+Capstone one: a RAG system over your own documents.
+
+95
+00:06:01,322 --> 00:06:15,307
+Collect a corpus, chunk and embed it using chapter fifteen's RAG section, which the book labels chapter fourteen, return sources with every answer, wrap it in the API and deploy it.
+
+96
+00:06:15,307 --> 00:06:18,089
+Then grade twenty questions by hand.
+
+97
+00:06:18,089 --> 00:06:21,488
+The stretch goal is hybrid search with BM25.
+
+98
+00:06:22,338 --> 00:06:24,825
+Capstone two: a domain assistant.
+
+99
+00:06:24,825 --> 00:06:40,123
+Curate five hundred to a thousand clean examples, QLoRA tune a seven billion model using chapter thirteen's ideas with the PEFT library, test on twenty questions the base model fails, compare and deploy.
+
+100
+00:06:40,123 --> 00:06:45,549
+The stretch is DPO, which learns from preferred versus rejected answers.
+
+101
+00:06:46,399 --> 00:06:49,626
+Capstone three: an agent with exactly one tool.
+
+102
+00:06:49,626 --> 00:06:56,217
+Define its schema, decide with structured outputs, and test twenty cases, half needing the tool.
+
+103
+00:06:56,217 --> 00:06:58,345
+Aim for nineteen out of twenty.
+
+104
+00:06:58,345 --> 00:07:04,593
+One warning from the notebook's own starter: its calculator uses eval with empty built ins.
+
+105
+00:07:04,593 --> 00:07:08,095
+That still isn't safe, so use a proper math parser.
+
+106
+00:07:08,945 --> 00:07:09,904
+How to pick.
+
+107
+00:07:09,904 --> 00:07:12,622
+To consolidate, do the RAG system.
+
+108
+00:07:12,622 --> 00:07:15,739
+To learn something new, do fine tuning.
+
+109
+00:07:15,739 --> 00:07:17,737
+For fun, build the agent.
+
+110
+00:07:17,737 --> 00:07:21,254
+The only wrong choice is analysis paralysis.
+
+111
+00:07:22,104 --> 00:07:25,121
+Here's a plan I'd use for any of the three.
+
+112
+00:07:25,121 --> 00:07:30,664
+Weekend one: data and a twenty question test set, so you have a baseline score.
+
+113
+00:07:30,664 --> 00:07:34,382
+Weekend two: the core pipeline, beating the baseline.
+
+114
+00:07:34,382 --> 00:07:37,680
+Weekend three: the API, logging and guardrails.
+
+115
+00:07:37,680 --> 00:07:41,539
+Weekend four: deploy and write it up with real numbers.
+
+116
+00:07:42,389 --> 00:07:45,352
+Measure it the way chapter fifteen taught.
+
+117
+00:07:45,352 --> 00:07:47,751
+Freeze the test set before tuning.
+
+118
+00:07:47,751 --> 00:07:53,254
+Report accuracy, citation correctness, latency and cost per thousand requests.
+
+119
+00:07:53,254 --> 00:07:56,217
+Keep a log of every failure and its cause.
+
+120
+00:07:56,217 --> 00:08:00,309
+And always compare against a baseline without the feature.
+
+121
+00:08:01,159 --> 00:08:02,893
+Make it portfolio ready.
+
+122
+00:08:02,893 --> 00:08:07,950
+A README that goes from problem to approach to numbers to limitations.
+
+123
+00:08:07,950 --> 00:08:09,323
+A short demo video.
+
+124
+00:08:09,323 --> 00:08:11,418
+A live URL with a budget cap.
+
+125
+00:08:11,418 --> 00:08:17,415
+And an honest section on what didn't work, which is often the most impressive part.
+
+126
+00:08:18,265 --> 00:08:18,894
+Part five.
+
+127
+00:08:18,894 --> 00:08:20,782
+You don't have to learn alone.
+
+128
+00:08:21,632 --> 00:08:23,729
+Resources by comfort level.
+
+129
+00:08:23,729 --> 00:08:28,775
+Start with the Hugging Face course and the local LLaMA community.
+
+130
+00:08:28,775 --> 00:08:33,745
+When you're confident, Stanford's CS324 and the original papers.
+
+131
+00:08:33,745 --> 00:08:43,605
+Then join the Hugging Face Discord or MLOps community, and contribute small things to open source: docs, bug reports, examples.
+
+132
+00:08:44,456 --> 00:08:47,136
+The book's method for reading papers.
+
+133
+00:08:47,136 --> 00:08:49,309
+Abstract and conclusion first.
+
+134
+00:08:49,309 --> 00:08:50,541
+Then the figures.
+
+135
+00:08:50,541 --> 00:08:52,714
+Skip the maths the first time.
+
+136
+00:08:52,714 --> 00:08:56,046
+Focus on what the experiments actually tested.
+
+137
+00:08:56,046 --> 00:08:58,002
+And read related work last.
+
+138
+00:08:58,852 --> 00:08:59,469
+Part six.
+
+139
+00:08:59,469 --> 00:09:02,074
+What running every notebook taught me.
+
+140
+00:09:02,923 --> 00:09:07,076
+My biggest lesson: run the code and read your own logs.
+
+141
+00:09:07,076 --> 00:09:15,305
+In chapter eleven, loaded GPT-2 wrote foxes es es es, because of missing attention biases and the wrong GELU.
+
+142
+00:09:15,305 --> 00:09:21,043
+In chapter twelve, the loss ignored the exclamation mark instead of padding.
+
+143
+00:09:21,043 --> 00:09:25,724
+In thirteen, the LoRA counts and naming didn't match the code.
+
+144
+00:09:25,724 --> 00:09:29,046
+In seventeen, a T4 can't run bfloat sixteen.
+
+145
+00:09:29,046 --> 00:09:33,425
+Every one of these is in the errata file in my repository.
+
+146
+00:09:33,425 --> 00:09:36,143
+None of it takes away from the book.
+
+147
+00:09:36,143 --> 00:09:40,144
+Finding these is how I actually learned the material.
+
+148
+00:09:40,994 --> 00:09:43,312
+Here's where our own model sits.
+
+149
+00:09:43,312 --> 00:09:52,222
+Our sixteen million parameter MiniGPT, trained on a third of a million Shakespeare tokens, writes Shakespeare shaped noise.
+
+150
+00:09:52,222 --> 00:09:57,510
+GPT-2 small, which we loaded in chapter eleven, is fluent but unreliable.
+
+151
+00:09:57,510 --> 00:10:08,447
+Llama three point two, three billion parameters, which we ran locally through Ollama for chapters fourteen to sixteen, is a genuinely useful assistant.
+
+152
+00:10:08,447 --> 00:10:11,128
+It's the same family of architecture.
+
+153
+00:10:11,128 --> 00:10:14,097
+The difference is scale, data and tuning.
+
+154
+00:10:14,947 --> 00:10:16,668
+The series by the numbers.
+
+155
+00:10:16,668 --> 00:10:20,969
+Eighteen chapters, and fourteen notebooks run on an ordinary CPU.
+
+156
+00:10:20,969 --> 00:10:25,733
+The first seventeen videos add up to about five hours and fifty minutes.
+
+157
+00:10:25,733 --> 00:10:30,827
+Along the way I logged sixty seven errata, every one checked by running code.
+
+158
+00:10:30,827 --> 00:10:40,355
+That's not a criticism of the book: checking a book against running code is the best way to learn from it, and I'd encourage you to do the same.
+
+159
+00:10:41,206 --> 00:10:43,112
+What I'd do next myself.
+
+160
+00:10:43,112 --> 00:10:51,929
+Retrain MiniGPT with the chapter twelve fixes on a bigger corpus such as TinyStories, for about an hour of GPU.
+
+161
+00:10:51,929 --> 00:10:57,568
+LoRA tune Llama three point two on my own FAQ and evaluate it properly.
+
+162
+00:10:57,568 --> 00:11:01,302
+And deploy it on an L4 with a small budget cap.
+
+163
+00:11:02,152 --> 00:11:04,872
+My answers to the review questions.
+
+164
+00:11:04,872 --> 00:11:08,758
+The three paths are research, builder and systems.
+
+165
+00:11:08,758 --> 00:11:14,044
+Responsibility is ongoing because data, users and models all change.
+
+166
+00:11:14,044 --> 00:11:16,376
+My capstone is the RAG system.
+
+167
+00:11:16,376 --> 00:11:20,884
+My next reads are the LoRA paper and vLLM's documentation.
+
+168
+00:11:20,884 --> 00:11:26,791
+And what surprised me most is how much behaviour hides in a single argument.
+
+169
+00:11:27,642 --> 00:11:37,582
+Before you close the book: score the fourteen skills, choose one capstone and start this week, bookmark one resource, and share your deployed URL.
+
+170
+00:11:37,582 --> 00:11:40,101
+The author ends with a personal note.
+
+171
+00:11:40,101 --> 00:11:48,612
+He's a backend developer who wrote the book to teach himself how LLMs work, and his closing line is "now go build something".
+
+172
+00:11:49,462 --> 00:11:53,881
+This series is based on Build Your First LLM by Hasan Degismez.
+
+173
+00:11:53,881 --> 00:12:04,331
+The explanations and diagrams are my own, but the book is the real thing, so please support the author and buy it at leanpub dot com slash First LLM.
+
+174
+00:12:04,331 --> 00:12:09,171
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+175
+00:12:09,171 --> 00:12:14,782
+All my slides, notes and the errata for the series are in my Courses repository.
+
+176
+00:12:14,782 --> 00:12:17,588
+Thank you for watching the whole series.
+
+177
+00:12:17,588 --> 00:12:19,201
+Now go build something.
+
