@@ -1,0 +1,436 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 39.35,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 39.35,
+  "dur": 34.98,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 2 roadmap",
+  "start": 74.33,
+  "dur": 43.19,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 117.52,
+  "dur": 46.2,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 163.72,
+  "dur": 2.92,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Teaching someone who only speaks numbers",
+  "start": 166.64,
+  "dur": 27.62,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Attempt 1: ASCII codes",
+  "start": 194.26,
+  "dur": 38.26,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Why ASCII fails",
+  "start": 232.52,
+  "dur": 23.57,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Attempt 2: one ID per word",
+  "start": 256.09,
+  "dur": 16.15,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Why word IDs fail",
+  "start": 272.24,
+  "dur": 38.11,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Part 2",
+  "start": 310.35,
+  "dur": 3.18,
+  "divider": true
+ },
+ {
+  "slide": 12,
+  "title": "The key insight: a position, not a number",
+  "start": 313.53,
+  "dur": 23.89,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "A toy word space (my redraw)",
+  "start": 337.42,
+  "dur": 45.28,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Vectors and distance",
+  "start": 382.7,
+  "dur": 41.33,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Cosine similarity: compare directions",
+  "start": 424.03,
+  "dur": 49.4,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Two dimensions aren't enough",
+  "start": 473.43,
+  "dur": 21.5,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Add a third axis: royalty (my redraw)",
+  "start": 494.93,
+  "dur": 29.8,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 3",
+  "start": 524.73,
+  "dur": 3.2,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "What an embedding is",
+  "start": 527.93,
+  "dur": 27.6,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "Real vectors: GloVe-100 (my experiment)",
+  "start": 555.53,
+  "dur": 23.93,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Cosine similarity on real vectors",
+  "start": 579.46,
+  "dur": 41.4,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Why more dimensions help",
+  "start": 620.86,
+  "dur": 50.1,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Why is it called an \"embedding\"?",
+  "start": 670.96,
+  "dur": 28.99,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Did you know? Across languages",
+  "start": 699.95,
+  "dur": 39.24,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Part 4",
+  "start": 739.19,
+  "dur": 3.03,
+  "divider": true
+ },
+ {
+  "slide": 26,
+  "title": "king \u2212 man + woman = ?",
+  "start": 742.22,
+  "dur": 23.48,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Real GloVe result (my experiment)",
+  "start": 765.7,
+  "dur": 38.37,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Parallel relationships (my redraw)",
+  "start": 804.07,
+  "dur": 25.4,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "What this reveals",
+  "start": 829.48,
+  "dur": 25.64,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "The book's examples, tested on GloVe-100",
+  "start": 855.12,
+  "dur": 42.59,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Why analogies miss",
+  "start": 897.71,
+  "dur": 39.29,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Connection: lossy compression (Ch 1)",
+  "start": 937.0,
+  "dur": 23.53,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "Part 5",
+  "start": 960.52,
+  "dur": 3.32,
+  "divider": true
+ },
+ {
+  "slide": 34,
+  "title": "\"You shall know a word by the company it keeps\"",
+  "start": 963.85,
+  "dur": 34.1,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Learning from prediction (Word2Vec idea)",
+  "start": 997.95,
+  "dur": 34.42,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "What the system ends up learning",
+  "start": 1032.37,
+  "dur": 34.66,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "The beauty of self-supervision",
+  "start": 1067.03,
+  "dur": 25.77,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Static vs contextual embeddings",
+  "start": 1092.8,
+  "dur": 40.5,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Static embeddings and \"apple\"",
+  "start": 1133.3,
+  "dur": 27.11,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Part 6",
+  "start": 1160.41,
+  "dur": 3.5,
+  "divider": true
+ },
+ {
+  "slide": 41,
+  "title": "The naive approach: average the vectors",
+  "start": 1163.91,
+  "dur": 22.55,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Order matters!",
+  "start": 1186.45,
+  "dur": 26.51,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "What averaging throws away",
+  "start": 1212.97,
+  "dur": 21.56,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "What we need \u2192 attention (Ch 3)",
+  "start": 1234.53,
+  "dur": 26.98,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "Part 7",
+  "start": 1261.51,
+  "dur": 3.0,
+  "divider": true
+ },
+ {
+  "slide": 46,
+  "title": "Online tools to explore",
+  "start": 1264.52,
+  "dur": 24.42,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "Exercise 1: find clusters (my GloVe answers)",
+  "start": 1288.94,
+  "dur": 35.55,
+  "divider": false
+ },
+ {
+  "slide": 48,
+  "title": "Exercise 2: word arithmetic (my GloVe answers)",
+  "start": 1324.5,
+  "dur": 28.69,
+  "divider": false
+ },
+ {
+  "slide": 49,
+  "title": "Exercise 3: the \"apple\" puzzle",
+  "start": 1353.19,
+  "dur": 23.72,
+  "divider": false
+ },
+ {
+  "slide": 50,
+  "title": "Part 8",
+  "start": 1376.91,
+  "dur": 3.28,
+  "divider": true
+ },
+ {
+  "slide": 51,
+  "title": "Build a 3-D animal embedding (20\u201330 min)",
+  "start": 1380.19,
+  "dur": 28.69,
+  "divider": false
+ },
+ {
+  "slide": 52,
+  "title": "The book's example table, computed (my analysis)",
+  "start": 1408.88,
+  "dur": 37.26,
+  "divider": false
+ },
+ {
+  "slide": 53,
+  "title": "What the checkpoint teaches",
+  "start": 1446.14,
+  "dur": 27.5,
+  "divider": false
+ },
+ {
+  "slide": 54,
+  "title": "Part 9",
+  "start": 1473.63,
+  "dur": 2.49,
+  "divider": true
+ },
+ {
+  "slide": 55,
+  "title": "The embedding pipeline",
+  "start": 1476.13,
+  "dur": 25.83,
+  "divider": false
+ },
+ {
+  "slide": 56,
+  "title": "Key takeaways",
+  "start": 1501.96,
+  "dur": 35.68,
+  "divider": false
+ },
+ {
+  "slide": 57,
+  "title": "Notes on the book (checked)",
+  "start": 1537.64,
+  "dur": 36.64,
+  "divider": false
+ },
+ {
+  "slide": 58,
+  "title": "Review questions 1",
+  "start": 1574.28,
+  "dur": 41.61,
+  "divider": false
+ },
+ {
+  "slide": 59,
+  "title": "Review questions 2",
+  "start": 1615.89,
+  "dur": 45.45,
+  "divider": false
+ },
+ {
+  "slide": 60,
+  "title": "Practice this",
+  "start": 1661.34,
+  "dur": 39.61,
+  "divider": false
+ },
+ {
+  "slide": 61,
+  "title": "Up next: Chapter 3",
+  "start": 1700.95,
+  "dur": 22.35,
+  "divider": false
+ },
+ {
+  "slide": 62,
+  "title": "Credits",
+  "start": 1723.3,
+  "dur": 29.95,
+  "divider": true
+ }
+]

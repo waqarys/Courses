@@ -1,6 +1,12 @@
 import json,sys,os
 ch,num,title,blurb,nb=sys.argv[1:6]
 T=json.load(open(f'{ch}/timings.json'))
+import re
+_sl=open(f'{ch}/slides.md').read().split('\n---\n')[1:]
+for t in T:
+    if t['divider'] and t['slide']-1 < len(_sl):
+        m=re.search(r'^##\s+(.+)$',_sl[t['slide']-1],re.M)
+        if m and t['title'].startswith('Part'): t['title']=t['title']+' — '+m.group(1).strip()
 def f(s): s=int(s); return f'{s//3600}:{s%3600//60:02d}:{s%60:02d}' if s>=3600 else f'{s//60}:{s%60:02d}'
 stamps=[('0:00','Intro & roadmap')]
 for t in T[1:]:

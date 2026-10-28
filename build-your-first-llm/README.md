@@ -17,7 +17,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | # | Chapter | Slides | Notes | Notebook | Status |
 |---|---|---|---|---|---|
 | 1 | What is AI, Really? | [slides](ch01-what-is-ai/slides.md) | [notes](ch01-what-is-ai/notes.md) | — (no notebook) | ✅ pilot |
-| 2 | How Computers "Understand" Words | | | — | planned |
+| 2 | How Computers "Understand" Words | [slides](ch02-how-computers-understand-words/slides.md) | [notes](ch02-how-computers-understand-words/notes.md) | — | ✅ |
 | 3 | The Attention Mechanism | | | — | planned |
 | 4 | The Transformer Architecture | | | — | planned |
 | 5 | Your First Python Program | | | [ch05](https://github.com/FirstLLM/code/blob/main/notebooks/ch05.ipynb) | planned |
@@ -34,6 +34,9 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 16 | Preparing for Production | | | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | planned |
 | 17 | Deployment Options | | | [ch17](https://github.com/FirstLLM/code/blob/main/notebooks/ch17.ipynb) | planned |
 | 18 | What's Next | | | [ch18](https://github.com/FirstLLM/code/blob/main/notebooks/ch18.ipynb) | planned |
+
+## Errata
+Book mistakes found while verifying the code: [ERRATA.md](ERRATA.md)
 
 ## Rebuilding a video
 `_pipeline/` holds the build: Marp CLI renders slides to PNG, Kokoro TTS (voice `am_michael`) reads the `say:` notes in each slide, ffmpeg assembles a 1920×1080 30 fps H.264/AAC MP4 and writes `captions.srt` + `timings.json`.

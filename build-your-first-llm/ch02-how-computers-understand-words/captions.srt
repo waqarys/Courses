@@ -1,0 +1,1444 @@
+1
+00:00:00,250 --> 00:00:05,374
+Welcome back to my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:05,374 --> 00:00:10,290
+In chapter one we learned that a language model predicts the next word.
+
+3
+00:00:10,290 --> 00:00:13,060
+But a computer only understands numbers.
+
+4
+00:00:13,060 --> 00:00:23,308
+So in this chapter we answer a deceptively simple question: how do you turn a word into numbers in a way that actually captures what the word means?
+
+5
+00:00:23,308 --> 00:00:28,779
+The answer is embeddings, and it is one of the most elegant ideas in all of AI.
+
+6
+00:00:28,779 --> 00:00:38,750
+I've also run real experiments with real word vectors for this video, so you'll see the ideas working, and occasionally failing, on actual data.
+
+7
+00:00:39,600 --> 00:00:40,985
+A quick orientation.
+
+8
+00:00:40,985 --> 00:00:48,184
+Chapter one gave us the big picture: a model is a big pile of numbers trained to predict the next token.
+
+9
+00:00:48,184 --> 00:00:53,999
+Today we zoom in on the very first step of that machine, turning words into numbers.
+
+10
+00:00:53,999 --> 00:00:59,744
+Chapter three adds attention, and chapter four puts the whole transformer together.
+
+11
+00:00:59,744 --> 00:01:04,798
+These four chapters are conceptual, so the book has no notebook for them.
+
+12
+00:01:04,798 --> 00:01:13,727
+The small code snippets you'll see today are my own illustrations, clearly labelled, run with the open source GloVe word vectors.
+
+13
+00:01:14,578 --> 00:01:15,648
+Here's the plan.
+
+14
+00:01:15,648 --> 00:01:21,668
+We start with two naive ways of turning words into numbers, and see exactly why they fail.
+
+15
+00:01:21,668 --> 00:01:29,026
+Then we introduce the key idea: give each word a position in a space, so distance means difference in meaning.
+
+16
+00:01:29,026 --> 00:01:38,925
+We'll see why that space needs hundreds of dimensions, and then look at the famous king minus man plus woman equals queen result, with real numbers.
+
+17
+00:01:38,925 --> 00:01:45,079
+After that, we'll see where embeddings come from: context, learned without any human labels.
+
+18
+00:01:45,079 --> 00:01:56,918
+We'll separate static from contextual embeddings, see why simply averaging word vectors loses meaning, and finish with exercises, the checkpoint, takeaways and review questions.
+
+19
+00:01:57,768 --> 00:01:59,740
+Let's set up the vocabulary.
+
+20
+00:01:59,740 --> 00:02:05,514
+A vector is just a list of numbers, which you can think of as a position in space.
+
+21
+00:02:05,514 --> 00:02:08,190
+A dimension is one axis of that space.
+
+22
+00:02:08,190 --> 00:02:14,105
+An embedding is a word's vector, arranged so that its position reflects its meaning.
+
+23
+00:02:14,105 --> 00:02:18,119
+The space where all those vectors live is the word space.
+
+24
+00:02:18,119 --> 00:02:24,668
+The distributional hypothesis says that words used in similar contexts have similar meanings.
+
+25
+00:02:24,668 --> 00:02:31,216
+Cosine similarity measures how similar two vectors are by their angle, from minus one to one.
+
+26
+00:02:31,216 --> 00:02:35,723
+Word2Vec is the 2013 system that made learned embeddings famous.
+
+27
+00:02:35,723 --> 00:02:43,117
+And self-supervised learning means the training signal comes from the data itself, not from human labels.
+
+28
+00:02:43,967 --> 00:02:44,549
+Part one.
+
+29
+00:02:44,549 --> 00:02:46,036
+The computer's dilemma.
+
+30
+00:02:46,886 --> 00:02:51,800
+Imagine explaining the idea of a cat to a friend who only understands numbers.
+
+31
+00:02:51,800 --> 00:02:55,202
+That is exactly the position we're in with a computer.
+
+32
+00:02:55,202 --> 00:02:56,903
+It can't read the word cat.
+
+33
+00:02:56,903 --> 00:02:59,485
+It can only store and manipulate numbers.
+
+34
+00:02:59,485 --> 00:03:02,383
+So we need some mapping from words to numbers.
+
+35
+00:03:02,383 --> 00:03:03,958
+Making a mapping is easy.
+
+36
+00:03:03,958 --> 00:03:11,203
+The hard part is making one where the numbers themselves carry meaning, so that the model can compute with meaning.
+
+37
+00:03:11,203 --> 00:03:13,659
+Let's try the obvious approaches first.
+
+38
+00:03:14,509 --> 00:03:19,306
+The first instinct is to use the codes computers already use for text.
+
+39
+00:03:19,306 --> 00:03:28,145
+In ASCII, c is ninety nine, a is ninety seven and t is one hundred and sixteen, so cat is ninety nine, ninety seven, one sixteen.
+
+40
+00:03:28,145 --> 00:03:31,366
+Car is ninety nine, ninety seven, one fourteen.
+
+41
+00:03:31,366 --> 00:03:36,231
+Those are almost identical, but a cat and a car have nothing in common.
+
+42
+00:03:36,231 --> 00:03:45,002
+Meanwhile kitten and feline, which mean essentially the same creature, get completely different numbers, even different lengths.
+
+43
+00:03:45,002 --> 00:03:51,922
+In the chart you can see cat and car almost on top of each other, while kitten and feline wander off.
+
+44
+00:03:52,772 --> 00:03:58,934
+The core problem is that ASCII captures spelling, and spelling is mostly an accident of history.
+
+45
+00:03:58,934 --> 00:04:02,207
+There's nothing cat-like about the letters c, a, t.
+
+46
+00:04:02,207 --> 00:04:10,871
+Words that look alike, like cat, car, cart and cut, have unrelated meanings, and words that mean the same thing can look nothing alike.
+
+47
+00:04:10,871 --> 00:04:15,492
+So whatever numbers we pick, they have to reflect meaning, not spelling.
+
+48
+00:04:16,342 --> 00:04:17,461
+Second attempt.
+
+49
+00:04:17,461 --> 00:04:21,491
+Forget letters, and give every word its own ID number.
+
+50
+00:04:21,491 --> 00:04:27,460
+Cat is one, dog is two, fish is three, feline four, kitten five, automobile six.
+
+51
+00:04:27,460 --> 00:04:30,519
+Now cat and car are definitely different.
+
+52
+00:04:30,519 --> 00:04:31,638
+Problem solved?
+
+53
+00:04:32,488 --> 00:04:33,266
+Not really.
+
+54
+00:04:33,266 --> 00:04:34,680
+IDs are just labels.
+
+55
+00:04:34,680 --> 00:04:37,367
+The gap between two IDs means nothing.
+
+56
+00:04:37,367 --> 00:04:46,488
+Cat is one and kitten is five, while automobile is six, so by these numbers a kitten is almost as unrelated to a cat as a car is.
+
+57
+00:04:46,488 --> 00:04:51,367
+And arithmetic is nonsense: cat plus dog equals three, which is fish.
+
+58
+00:04:51,367 --> 00:04:53,842
+So we can write down our wish list.
+
+59
+00:04:53,842 --> 00:04:56,741
+Similar words should get similar numbers.
+
+60
+00:04:56,741 --> 00:04:59,923
+Unrelated words should get different numbers.
+
+61
+00:04:59,923 --> 00:05:03,600
+And relationships between words should be preserved.
+
+62
+00:05:03,600 --> 00:05:09,752
+It turns out we can have all three, but only if we stop using a single number per word.
+
+63
+00:05:10,602 --> 00:05:11,349
+Part two.
+
+64
+00:05:11,349 --> 00:05:12,927
+Words as locations.
+
+65
+00:05:13,777 --> 00:05:15,313
+Here's the key insight.
+
+66
+00:05:15,313 --> 00:05:19,253
+Instead of giving each word one number, give it a position.
+
+67
+00:05:19,253 --> 00:05:20,589
+Think of a city map.
+
+68
+00:05:20,589 --> 00:05:22,459
+Every place has coordinates.
+
+69
+00:05:22,459 --> 00:05:31,007
+Two cafés next to each other have similar coordinates, and a café and a park on opposite sides of town have very different ones.
+
+70
+00:05:31,007 --> 00:05:36,817
+What if words had coordinates too, arranged so that nearby words have similar meanings?
+
+71
+00:05:37,667 --> 00:05:41,654
+Here's a toy two dimensional word space that I've drawn.
+
+72
+00:05:41,654 --> 00:05:48,347
+The horizontal axis is a made up gender axis, masculine on the left and feminine on the right.
+
+73
+00:05:48,347 --> 00:05:52,976
+The vertical axis is age, young at the bottom and old at the top.
+
+74
+00:05:52,976 --> 00:05:58,458
+Boy sits at one comma two, man at one comma seven, woman at nine comma seven.
+
+75
+00:05:58,458 --> 00:06:04,368
+Boy and girl share a height because they're the same age, and differ left to right.
+
+76
+00:06:04,368 --> 00:06:06,932
+Man and woman show the same pattern.
+
+77
+00:06:06,932 --> 00:06:17,327
+Notice the distances: boy to man is exactly five, boy to woman is the square root of eight squared plus five squared, about nine point four three.
+
+78
+00:06:17,327 --> 00:06:22,098
+So boy is closer to man than to woman, which matches our intuition.
+
+79
+00:06:22,948 --> 00:06:27,092
+In this picture each word is a vector, a list of two numbers.
+
+80
+00:06:27,092 --> 00:06:35,175
+The straight line distance between two vectors is the square root of the sum of squared differences in each coordinate.
+
+81
+00:06:35,175 --> 00:06:39,590
+Boy to man differs only in age, by five, so the distance is five.
+
+82
+00:06:39,590 --> 00:06:48,013
+Boy to woman differs by eight in gender and five in age, giving the square root of eighty nine, about nine point four three.
+
+83
+00:06:48,013 --> 00:06:54,263
+One important warning that the book also makes: these neat named axes are just for teaching.
+
+84
+00:06:54,263 --> 00:07:03,433
+In real embeddings the dimensions are learned automatically, and they almost never line up with tidy human concepts like gender or age.
+
+85
+00:07:04,283 --> 00:07:13,390
+In high dimensional embeddings the standard measure is not distance but cosine similarity, which looks at the angle between two vectors.
+
+86
+00:07:13,390 --> 00:07:20,086
+You take the dot product, multiply matching coordinates and add them up, and divide by both lengths.
+
+87
+00:07:20,086 --> 00:07:24,305
+In my example, a is four comma three and b is three comma four.
+
+88
+00:07:24,305 --> 00:07:34,149
+Their dot product is twelve plus twelve, twenty four, and each has length five, so the cosine is twenty four over twenty five, zero point nine six.
+
+89
+00:07:34,149 --> 00:07:35,756
+Very similar directions.
+
+90
+00:07:35,756 --> 00:07:41,515
+Vector c points elsewhere, and its cosine with a is about minus zero point five seven.
+
+91
+00:07:41,515 --> 00:07:47,274
+Cosine runs from one, same direction, through zero, unrelated, to minus one, opposite.
+
+92
+00:07:47,274 --> 00:07:52,831
+Because it ignores length, it compares what a vector points at, not how long it is.
+
+93
+00:07:53,682 --> 00:07:56,296
+Two dimensions quickly run out of room.
+
+94
+00:07:56,296 --> 00:07:59,917
+A king is similar to a queen because both are royalty.
+
+95
+00:07:59,917 --> 00:08:03,202
+A king is similar to a man because both are male.
+
+96
+00:08:03,202 --> 00:08:07,359
+And a king is similar to a president because both are leaders.
+
+97
+00:08:07,359 --> 00:08:14,332
+Each of those is a different kind of similarity, and to represent all of them at once we need more axes.
+
+98
+00:08:15,182 --> 00:08:21,525
+Here's the same idea in three dimensions, again with illustrative axes: gender, age, and now royalty.
+
+99
+00:08:21,525 --> 00:08:26,423
+The commoners, boy, girl, man and woman, sit on the floor of the cube in blue.
+
+100
+00:08:26,423 --> 00:08:30,881
+The royals, prince, princess, king and queen, float above them in gold.
+
+101
+00:08:30,881 --> 00:08:36,345
+Prince is now closer to king than to boy, and princess is closer to queen than to girl.
+
+102
+00:08:36,345 --> 00:08:38,731
+And that's with just three dimensions.
+
+103
+00:08:38,731 --> 00:08:44,132
+We can't draw seven hundred and sixty eight, but the maths works exactly the same way.
+
+104
+00:08:44,982 --> 00:08:45,719
+Part three.
+
+105
+00:08:45,719 --> 00:08:47,328
+The magic of embeddings.
+
+106
+00:08:48,178 --> 00:08:54,002
+This list of numbers that places a word in a high dimensional space is called an embedding.
+
+107
+00:08:54,002 --> 00:09:01,938
+The book shows a stylised example: king and queen have similar numbers in each position, and banana has very different ones.
+
+108
+00:09:01,938 --> 00:09:03,922
+Those numbers are illustrative.
+
+109
+00:09:03,922 --> 00:09:14,930
+On the next slides I'll show you the real thing, using GloVe, a set of one hundred dimensional word vectors trained on Wikipedia and newswire text that anyone can download.
+
+110
+00:09:15,780 --> 00:09:17,955
+Here's the tiny program I used.
+
+111
+00:09:17,955 --> 00:09:26,374
+It loads the GloVe vectors through the gensim library, about four hundred thousand words, each with one hundred numbers.
+
+112
+00:09:26,374 --> 00:09:35,004
+Then it prints part of a vector, computes a cosine similarity, and asks for the nearest words to king minus man plus woman.
+
+113
+00:09:35,004 --> 00:09:38,863
+This is my own snippet, not from the book's repository.
+
+114
+00:09:39,713 --> 00:09:42,798
+And here are the real cosine similarities.
+
+115
+00:09:42,798 --> 00:09:45,443
+Cat and dog: zero point eight eight.
+
+116
+00:09:45,443 --> 00:09:48,234
+King and queen: zero point seven five.
+
+117
+00:09:48,234 --> 00:10:01,162
+Cat and kitten: zero point five six, and cat and feline: zero point four nine, lower than you might expect, because feline appears in more formal, scientific contexts than cat.
+
+118
+00:10:01,162 --> 00:10:06,745
+Cat and car, despite the near identical spelling: only zero point three one.
+
+119
+00:10:06,745 --> 00:10:09,684
+And king and banana: zero point one six.
+
+120
+00:10:09,684 --> 00:10:12,548
+The ordering is broadly what we wanted.
+
+121
+00:10:12,548 --> 00:10:20,262
+Notice that these vectors capture how words are used, which is not always the same as dictionary meaning.
+
+122
+00:10:21,112 --> 00:10:22,670
+Why so many dimensions?
+
+123
+00:10:22,670 --> 00:10:24,837
+Think about describing a person.
+
+124
+00:10:24,837 --> 00:10:27,953
+With just height you can tell tall from short.
+
+125
+00:10:27,953 --> 00:10:32,153
+Add weight and you can tell tall and thin from tall and heavy.
+
+126
+00:10:32,153 --> 00:10:36,895
+Add age, hair and eye colour, and descriptions get much more specific.
+
+127
+00:10:36,895 --> 00:10:38,182
+Words are the same.
+
+128
+00:10:38,182 --> 00:10:53,626
+Two dimensions give crude groupings, around a hundred can separate mammals from reptiles and pets from wild animals, and seven hundred and sixty eight can capture the difference between a leisurely stroll and a deliberate march.
+
+129
+00:10:53,626 --> 00:11:03,923
+Seven sixty eight is common because GPT-2 small and BERT base used it, and very large models go to twelve thousand two hundred and eighty eight or more.
+
+130
+00:11:03,923 --> 00:11:07,852
+Importantly, no single dimension means something nameable.
+
+131
+00:11:07,852 --> 00:11:10,358
+Meaning is spread across all of them.
+
+132
+00:11:11,208 --> 00:11:12,621
+Why the name embedding?
+
+133
+00:11:12,621 --> 00:11:19,011
+In mathematics, an embedding maps objects from one space into another while keeping important structure.
+
+134
+00:11:19,011 --> 00:11:28,227
+Here we take discrete symbols, where cat and car have no inherent relationship, and place them into a continuous space where position encodes meaning.
+
+135
+00:11:28,227 --> 00:11:36,213
+Once they're in that space, we can do all the things computers are good at: measure distances, find neighbours, and do arithmetic.
+
+136
+00:11:36,213 --> 00:11:39,347
+That's what makes language processing mathematical.
+
+137
+00:11:40,197 --> 00:11:42,488
+Here's a nice fact from the book.
+
+138
+00:11:42,488 --> 00:11:52,555
+In models trained on many languages, the English word dog and the German word Hund end up as neighbours, because they appear in similar contexts.
+
+139
+00:11:52,555 --> 00:11:55,610
+Nobody tells the model they're translations.
+
+140
+00:11:55,610 --> 00:12:05,747
+I tested this with GloVe, which is trained on English only, and the cosine between dog and hund is basically zero, minus zero point zero zero six.
+
+141
+00:12:05,747 --> 00:12:08,454
+That's not a contradiction of the book.
+
+142
+00:12:08,454 --> 00:12:14,633
+It's a useful lesson: the cross language alignment comes from multilingual training data.
+
+143
+00:12:14,633 --> 00:12:18,591
+An embedding only knows what its training text showed it.
+
+144
+00:12:19,441 --> 00:12:20,166
+Part four.
+
+145
+00:12:20,166 --> 00:12:21,617
+The famous equation.
+
+146
+00:12:22,467 --> 00:12:28,026
+In 2013, researchers at Google found that you could do arithmetic with word vectors.
+
+147
+00:12:28,026 --> 00:12:33,586
+Take the vector for king, subtract the vector for man, and add the vector for woman.
+
+148
+00:12:33,586 --> 00:12:38,020
+The result is a point in space that doesn't exactly match any word.
+
+149
+00:12:38,020 --> 00:12:45,102
+But when you look for the nearest word in the vocabulary, leaving out the three input words, you get queen.
+
+150
+00:12:45,952 --> 00:12:52,877
+Here's what that looks like with real GloVe vectors, projected down to two dimensions so we can see it.
+
+151
+00:12:52,877 --> 00:12:59,332
+The arrow from man to woman, and the arrow from king to the computed point, are the same vector.
+
+152
+00:12:59,332 --> 00:13:03,501
+The computed point, the gold cross, lands right next to queen.
+
+153
+00:13:03,501 --> 00:13:07,871
+Its cosine similarity with queen is about zero point seven eight.
+
+154
+00:13:07,871 --> 00:13:14,259
+The top three results from gensim are queen at zero point seven seven, then monarch and throne.
+
+155
+00:13:14,259 --> 00:13:23,471
+Remember that a two dimensional projection is a squashed view of a hundred dimensions, so distances in this picture are only approximate.
+
+156
+00:13:24,321 --> 00:13:26,852
+This chart shows why the trick works.
+
+157
+00:13:26,852 --> 00:13:31,434
+I took ten real GloVe vectors and projected them to two dimensions.
+
+158
+00:13:31,434 --> 00:13:38,547
+The gold arrows go from man to woman, king to queen, boy to girl, uncle to aunt, and prince to princess.
+
+159
+00:13:38,547 --> 00:13:41,762
+They're roughly parallel and of similar length.
+
+160
+00:13:41,762 --> 00:13:48,876
+The embedding has learned something like a consistent gender direction, without anybody defining gender.
+
+161
+00:13:49,726 --> 00:13:53,857
+So embeddings do more than put similar words near each other.
+
+162
+00:13:53,857 --> 00:14:00,156
+They organise words so relationships are consistent: the same offset means the same relation.
+
+163
+00:14:00,156 --> 00:14:04,965
+There's a gender direction, man to woman, king to queen, uncle to aunt.
+
+164
+00:14:04,965 --> 00:14:09,774
+There's a capital of direction, from France to Paris and Italy to Rome.
+
+165
+00:14:09,774 --> 00:14:11,806
+Nobody programmed any of this.
+
+166
+00:14:11,806 --> 00:14:14,515
+It emerged purely from patterns in text.
+
+167
+00:14:15,365 --> 00:14:23,714
+The book lists several analogy examples, and it's honest that these only work around forty to seventy percent of the time.
+
+168
+00:14:23,714 --> 00:14:24,672
+So I ran them.
+
+169
+00:14:24,672 --> 00:14:27,477
+Paris minus France plus Italy gives Rome.
+
+170
+00:14:27,477 --> 00:14:30,488
+Walking minus walk plus swim gives swimming.
+
+171
+00:14:30,488 --> 00:14:33,089
+Uncle minus man plus woman gives aunt.
+
+172
+00:14:33,089 --> 00:14:35,347
+But three missed at the top spot.
+
+173
+00:14:35,347 --> 00:14:40,890
+Tokyo minus Japan plus Germany gives Frankfurt first, with Berlin a close second.
+
+174
+00:14:40,890 --> 00:14:45,269
+Bigger minus big plus small gives larger, just ahead of smaller.
+
+175
+00:14:45,269 --> 00:14:50,060
+And brother minus man plus woman gives daughter, then wife and mother.
+
+176
+00:14:50,060 --> 00:14:52,113
+Sister isn't in the top three.
+
+177
+00:14:52,113 --> 00:14:57,108
+Four out of seven, which fits the book's forty to seventy percent nicely.
+
+178
+00:14:57,958 --> 00:14:59,109
+Why do they miss?
+
+179
+00:14:59,109 --> 00:15:07,161
+Often the right offset lands near the starting word's own neighbourhood, so bigger plus a little nudge lands on larger.
+
+180
+00:15:07,161 --> 00:15:16,026
+Words that are frequent in similar contexts compete: in newswire text, Frankfurt shows up constantly as Germany's financial centre.
+
+181
+00:15:16,026 --> 00:15:19,477
+Different training data produces different answers.
+
+182
+00:15:19,477 --> 00:15:26,515
+And training data carries biases, which show up as directions in the space too, which is a real concern.
+
+183
+00:15:26,515 --> 00:15:28,545
+The arithmetic is approximate.
+
+184
+00:15:28,545 --> 00:15:33,756
+But the fact that it works at all shows embeddings capture genuine structure.
+
+185
+00:15:33,756 --> 00:15:36,395
+They are a map of meaning, a fuzzy one.
+
+186
+00:15:37,245 --> 00:15:40,744
+This connects to chapter one's lossy compression idea.
+
+187
+00:15:40,744 --> 00:15:50,268
+Embeddings are the first stage of compressing the endless variety of language into fixed size vectors, and the rest of the model keeps compressing.
+
+188
+00:15:50,268 --> 00:15:59,922
+That's why a model can reason about combinations it's never seen exactly, and it's also why it sometimes fills gaps with plausible but wrong details.
+
+189
+00:16:00,772 --> 00:16:01,441
+Part five.
+
+190
+00:16:01,441 --> 00:16:03,247
+How are embeddings learned?
+
+191
+00:16:04,097 --> 00:16:06,388
+Where do these numbers come from?
+
+192
+00:16:06,388 --> 00:16:09,303
+The answer is beautifully simple: context.
+
+193
+00:16:09,303 --> 00:16:10,345
+The linguist J.
+
+194
+00:16:10,345 --> 00:16:10,484
+R.
+
+195
+00:16:10,484 --> 00:16:14,441
+Firth said you shall know a word by the company it keeps.
+
+196
+00:16:14,441 --> 00:16:19,439
+Fill in the blank: the blank sat on the mat, the blank chased the mouse.
+
+197
+00:16:19,439 --> 00:16:21,799
+Cat, dog, kitten or puppy all fit.
+
+198
+00:16:21,799 --> 00:16:25,409
+These words share contexts, so they must be related.
+
+199
+00:16:25,409 --> 00:16:29,852
+Now: I deposited money at the blank, the blank approved my loan.
+
+200
+00:16:29,852 --> 00:16:32,074
+That's bank, the financial kind.
+
+201
+00:16:32,074 --> 00:16:34,712
+Different contexts, different cluster.
+
+202
+00:16:34,712 --> 00:16:37,349
+This is the distributional hypothesis.
+
+203
+00:16:38,200 --> 00:16:40,896
+Here's how Word2Vec style systems learn.
+
+204
+00:16:40,896 --> 00:16:42,716
+Take a huge amount of text.
+
+205
+00:16:42,716 --> 00:16:44,806
+Slide a small window across it.
+
+206
+00:16:44,806 --> 00:16:58,087
+For each position, either predict the middle word from the words around it, which is called continuous bag of words, or predict the surrounding words from the middle one, which is called skip gram.
+
+207
+00:16:58,087 --> 00:17:04,154
+Every time the prediction is wrong, nudge the vectors a little so the prediction improves.
+
+208
+00:17:04,154 --> 00:17:11,772
+After billions of these tiny updates, words that keep showing up in similar contexts end up with similar vectors.
+
+209
+00:17:12,622 --> 00:17:13,670
+What comes out?
+
+210
+00:17:13,670 --> 00:17:20,236
+Cat and dog share so many contexts that GloVe puts them at a cosine of zero point eight eight.
+
+211
+00:17:20,236 --> 00:17:26,662
+King appears near royalty, rulers and male words, so its vector encodes all of that at once.
+
+212
+00:17:26,662 --> 00:17:32,739
+And bank appears both near river and near money, so it gets a single compromise vector.
+
+213
+00:17:32,739 --> 00:17:41,680
+In GloVe, which is trained largely on news text, bank's nearest neighbours are banks, banking, credit, investment and financial.
+
+214
+00:17:41,680 --> 00:17:46,430
+The money sense completely dominates, and the river sense is buried.
+
+215
+00:17:47,279 --> 00:17:51,088
+What's remarkable is that none of this needed human labels.
+
+216
+00:17:51,088 --> 00:17:53,670
+Nobody marked cat and kitten as related.
+
+217
+00:17:53,670 --> 00:17:57,866
+The thing to predict is simply a word that's already in the text.
+
+218
+00:17:57,866 --> 00:18:03,030
+That's self-supervised learning, and it's why we can train on billions of words.
+
+219
+00:18:03,030 --> 00:18:06,129
+Labelling that much by hand would be impossible.
+
+220
+00:18:06,129 --> 00:18:12,197
+And it's exactly the same principle that trains large language models: predict the next token.
+
+221
+00:18:13,047 --> 00:18:15,050
+Now an important distinction.
+
+222
+00:18:15,050 --> 00:18:21,337
+Word2Vec and GloVe give static embeddings: one fixed vector per word, whatever the context.
+
+223
+00:18:21,337 --> 00:18:25,689
+So bank gets the same vector in river bank and in bank account.
+
+224
+00:18:25,689 --> 00:18:29,350
+Modern language models produce contextual embeddings.
+
+225
+00:18:29,350 --> 00:18:43,028
+They start from a lookup table too, but then the attention layers modify each vector based on the surrounding words, so bank in river bank ends up somewhere very different from bank in bank account.
+
+226
+00:18:43,028 --> 00:18:45,860
+Static embeddings are the stepping stone.
+
+227
+00:18:45,860 --> 00:18:52,699
+Contextual ones are what LLMs actually use, and attention, our next chapter, is how they get there.
+
+228
+00:18:53,549 --> 00:18:56,639
+Here's a striking example from my GloVe run.
+
+229
+00:18:56,639 --> 00:19:03,661
+The nearest neighbours of apple are Microsoft, IBM, Intel, software, Dell, PC, Macintosh and iPhone.
+
+230
+00:19:03,661 --> 00:19:06,189
+Not a single fruit in the top eight.
+
+231
+00:19:06,189 --> 00:19:14,123
+In news text, the company is mentioned far more than the fruit, and a single static vector can only lean one way.
+
+232
+00:19:14,123 --> 00:19:19,811
+A contextual model would treat apple pie and Apple shares completely differently.
+
+233
+00:19:20,661 --> 00:19:21,382
+Part six.
+
+234
+00:19:21,382 --> 00:19:23,306
+From words to sentences.
+
+235
+00:19:24,156 --> 00:19:26,536
+We can now represent single words.
+
+236
+00:19:26,536 --> 00:19:29,755
+But language comes in sentences and documents.
+
+237
+00:19:29,755 --> 00:19:35,004
+The simplest idea is to average the vectors of all the words in a sentence.
+
+238
+00:19:35,004 --> 00:19:44,102
+That gives one fixed size vector for any sentence, and for some tasks, like finding similar documents, it works surprisingly well.
+
+239
+00:19:44,102 --> 00:19:45,852
+But there's a fatal flaw.
+
+240
+00:19:46,702 --> 00:19:48,967
+Dog bites man, and man bites dog.
+
+241
+00:19:48,967 --> 00:19:52,123
+Same three words, so exactly the same average.
+
+242
+00:19:52,123 --> 00:19:57,613
+I checked with the real vectors, and the two averages are identical, cosine one.
+
+243
+00:19:57,613 --> 00:20:01,867
+But one is a boring Tuesday, and the other is front page news.
+
+244
+00:20:01,867 --> 00:20:06,465
+Or take the movie was not good, versus the movie was good, not bad.
+
+245
+00:20:06,465 --> 00:20:09,621
+Very similar bags of words, opposite meanings.
+
+246
+00:20:09,621 --> 00:20:12,366
+Averaging just can't see the difference.
+
+247
+00:20:13,216 --> 00:20:15,858
+Let's list what averaging throws away.
+
+248
+00:20:15,858 --> 00:20:16,622
+Word order.
+
+249
+00:20:16,622 --> 00:20:21,975
+Long range relationships, like linking was back to cat across a whole clause.
+
+250
+00:20:21,975 --> 00:20:25,381
+Modifiers, like not flipping the meaning of good.
+
+251
+00:20:25,381 --> 00:20:28,439
+And disambiguation, like which bank we mean.
+
+252
+00:20:28,439 --> 00:20:33,931
+All of that depends on how words relate to each other, and averaging erases it.
+
+253
+00:20:34,781 --> 00:20:36,261
+So here's what we need.
+
+254
+00:20:36,261 --> 00:20:39,480
+Process words in sequence and keep track of order.
+
+255
+00:20:39,480 --> 00:20:42,119
+Let words influence each other's meaning.
+
+256
+00:20:42,119 --> 00:20:44,887
+Handle relationships across long distances.
+
+257
+00:20:44,887 --> 00:20:49,457
+And give the same word different representations in different contexts.
+
+258
+00:20:49,457 --> 00:20:54,220
+That is exactly what the attention mechanism does, and it's chapter three.
+
+259
+00:20:54,220 --> 00:21:00,914
+Static embeddings are necessary, they give us a mathematical starting point, but they aren't sufficient.
+
+260
+00:21:01,764 --> 00:21:02,554
+Part seven.
+
+261
+00:21:02,554 --> 00:21:03,919
+Let's get hands on.
+
+262
+00:21:04,769 --> 00:21:07,280
+You can explore embeddings yourself.
+
+263
+00:21:07,280 --> 00:21:14,951
+The TensorFlow Embedding Projector at projector dot tensorflow dot org shows word vectors in three dimensions.
+
+264
+00:21:14,951 --> 00:21:19,136
+Search for a word, see its neighbours, and rotate the cloud.
+
+265
+00:21:19,136 --> 00:21:22,553
+There are also many word arithmetic demos online.
+
+266
+00:21:22,553 --> 00:21:28,342
+Or run my five line gensim snippet from the notes, on your own machine or in Colab.
+
+267
+00:21:29,192 --> 00:21:34,279
+Exercise one asks you to look at the neighbours of happy, doctor and red.
+
+268
+00:21:34,279 --> 00:21:36,091
+Here's what GloVe gave me.
+
+269
+00:21:36,091 --> 00:21:38,460
+Red is perfect: the other colours.
+
+270
+00:21:38,460 --> 00:21:43,478
+Doctor: physician, nurse, doctors, surgeon, hospital, the medical world.
+
+271
+00:21:43,478 --> 00:21:45,220
+But happy is interesting.
+
+272
+00:21:45,220 --> 00:21:49,610
+Its neighbours are fragments like I'm, feel, you're and really.
+
+273
+00:21:49,610 --> 00:21:59,575
+That's because happy appears in phrases like I'm really happy, so this model learned the grammatical company it keeps more than other emotions.
+
+274
+00:21:59,575 --> 00:22:03,895
+That's the distributional hypothesis in action, warts and all.
+
+275
+00:22:04,745 --> 00:22:06,949
+Exercise two has three analogies.
+
+276
+00:22:06,949 --> 00:22:11,355
+France minus Paris plus London gives Britain, with England second.
+
+277
+00:22:11,355 --> 00:22:13,959
+Good minus better plus worse gives bad.
+
+278
+00:22:13,959 --> 00:22:22,438
+And dog minus puppy plus kitten gives cat, though at a cosine of only zero point six nine, with dogs and monkey not far behind.
+
+279
+00:22:22,438 --> 00:22:32,586
+Try them yourself, and when they miss, ask why: is the answer a rare word, an ambiguous word, or a word used in different contexts in the training text?
+
+280
+00:22:33,435 --> 00:22:35,783
+Exercise three is the apple puzzle.
+
+281
+00:22:35,783 --> 00:22:40,209
+You might expect two clusters around apple, fruits and technology.
+
+282
+00:22:40,209 --> 00:22:43,026
+In GloVe, technology completely dominates.
+
+283
+00:22:43,026 --> 00:22:50,202
+Try it in the embedding projector, which uses a different dataset, and see whether the fruit sense appears.
+
+284
+00:22:50,202 --> 00:22:56,305
+Either way, the lesson is that a static vector ends up wherever the training text pulls it.
+
+285
+00:22:57,155 --> 00:22:57,919
+Part eight.
+
+286
+00:22:57,919 --> 00:22:59,587
+The checkpoint exercise.
+
+287
+00:23:00,437 --> 00:23:07,613
+The checkpoint asks you to build your own three dimensional embedding for ten animals, on paper or in a spreadsheet.
+
+288
+00:23:07,613 --> 00:23:12,253
+Choose three properties, for example size, how domestic, and how dangerous.
+
+289
+00:23:12,253 --> 00:23:14,975
+Rate each animal from minus one to plus one.
+
+290
+00:23:14,975 --> 00:23:16,089
+Then compare them.
+
+291
+00:23:16,089 --> 00:23:17,698
+Which animals are closest?
+
+292
+00:23:17,698 --> 00:23:24,565
+Do cat and lion cluster because they're both felines, or do cat and hamster cluster because they're small pets?
+
+293
+00:23:24,565 --> 00:23:28,277
+And what does that tell you about your choice of dimensions?
+
+294
+00:23:29,127 --> 00:23:35,513
+I took the example ratings from the book and computed every pairwise cosine similarity.
+
+295
+00:23:35,513 --> 00:23:37,202
+The answer is dramatic.
+
+296
+00:23:37,202 --> 00:23:43,221
+Cat and lion have a cosine of minus zero point nine nine: they're almost opposite.
+
+297
+00:23:43,221 --> 00:23:49,828
+Cat and hamster are at zero point nine seven, and cat and rabbit at zero point nine seven.
+
+298
+00:23:49,828 --> 00:23:54,673
+Lion and shark are nearly identical at zero point nine nine eight.
+
+299
+00:23:54,673 --> 00:24:02,894
+With these three dimensions, the space sorts animals into small, safe pets versus large, dangerous wild animals.
+
+300
+00:24:02,894 --> 00:24:05,537
+Biology doesn't come into it at all.
+
+301
+00:24:06,387 --> 00:24:07,537
+That's the lesson.
+
+302
+00:24:07,537 --> 00:24:11,243
+The dimensions you choose decide which similarities exist.
+
+303
+00:24:11,243 --> 00:24:19,230
+With size, domestic and dangerous, a goldfish is almost the same as a hamster, even though one is a fish and one is a mammal.
+
+304
+00:24:19,230 --> 00:24:24,789
+Add a feline dimension, or water dwelling, or number of legs, and new groupings appear.
+
+305
+00:24:24,789 --> 00:24:27,281
+Real models don't hand pick dimensions.
+
+306
+00:24:27,281 --> 00:24:33,032
+They learn hundreds of them from data, so many kinds of grouping can coexist in one space.
+
+307
+00:24:33,882 --> 00:24:34,629
+Part nine.
+
+308
+00:24:34,629 --> 00:24:35,525
+Wrapping up.
+
+309
+00:24:36,375 --> 00:24:39,136
+Here's the whole pipeline in one picture.
+
+310
+00:24:39,136 --> 00:24:45,532
+A word, like king, is looked up in a big table, so its embedding is just one row of that table.
+
+311
+00:24:45,532 --> 00:24:50,111
+The result is a vector, maybe seven hundred and sixty eight numbers.
+
+312
+00:24:50,111 --> 00:24:55,363
+And its position in the semantic space puts it near queen and far from banana.
+
+313
+00:24:55,363 --> 00:25:01,356
+In chapter five you'll build exactly this lookup table in PyTorch, with nn dot Embedding.
+
+314
+00:25:02,206 --> 00:25:03,510
+The key takeaways.
+
+315
+00:25:03,510 --> 00:25:06,551
+One: ASCII captures spelling, not meaning.
+
+316
+00:25:06,551 --> 00:25:11,837
+Two: embeddings represent words as positions in a high dimensional space.
+
+317
+00:25:11,837 --> 00:25:17,124
+Three: similar words cluster together, and unrelated words are far apart.
+
+318
+00:25:17,124 --> 00:25:23,930
+Four: word arithmetic works, approximately, like king minus man plus woman landing near queen.
+
+319
+00:25:23,930 --> 00:25:27,986
+Five: context teaches meaning, without any human labels.
+
+320
+00:25:27,986 --> 00:25:35,010
+And six: static embeddings, especially when averaged, lose word order, so we need something more.
+
+321
+00:25:35,010 --> 00:25:37,038
+That something is attention.
+
+322
+00:25:37,887 --> 00:25:42,130
+A quick note on accuracy, since I'm checking the book as I go.
+
+323
+00:25:42,130 --> 00:25:53,012
+I tested the chapter's examples against real vectors, and everything behaves as the book says, including its warning that analogies only work some of the time.
+
+324
+00:25:53,012 --> 00:26:02,319
+A few of its listed examples don't come out first in GloVe, but the book presents them as typical relationships, not guaranteed outputs.
+
+325
+00:26:02,319 --> 00:26:10,805
+The embedding numbers for king, queen and banana are illustrative, which the book itself signals by calling them simplified.
+
+326
+00:26:10,805 --> 00:26:13,679
+I found no factual errors in this chapter.
+
+327
+00:26:14,529 --> 00:26:16,801
+Review questions, with my answers.
+
+328
+00:26:16,801 --> 00:26:19,073
+Question one: why not ASCII codes?
+
+329
+00:26:19,073 --> 00:26:27,292
+Because they encode spelling, which is arbitrary, so cat and car look almost identical while cat and kitten look unrelated.
+
+330
+00:26:27,292 --> 00:26:30,900
+Question two: what is an embedding, and why that name?
+
+331
+00:26:30,900 --> 00:26:35,712
+It's a word's vector in a learned space where position reflects meaning.
+
+332
+00:26:35,712 --> 00:26:42,594
+The name comes from maths: mapping discrete symbols into a continuous space while preserving structure.
+
+333
+00:26:42,594 --> 00:26:45,468
+Question three: why hundreds of dimensions?
+
+334
+00:26:45,468 --> 00:26:55,291
+Because words are similar in many different ways at the same time, royalty, gender, leadership and so on, and each kind of relationship needs room.
+
+335
+00:26:56,141 --> 00:26:59,514
+Question four: explain king minus man plus woman.
+
+336
+00:26:59,514 --> 00:27:09,150
+Subtracting man and adding woman moves the king vector along a consistent gender direction, and the nearest word to where you land is queen.
+
+337
+00:27:09,150 --> 00:27:13,830
+It shows that embeddings encode relationships as consistent offsets.
+
+338
+00:27:13,830 --> 00:27:19,061
+Question five: what does you shall know a word by the company it keeps mean?
+
+339
+00:27:19,061 --> 00:27:21,264
+That meaning comes from context.
+
+340
+00:27:21,264 --> 00:27:30,143
+Embedding systems learn by predicting words from their neighbours, so words used in similar contexts end up with similar vectors.
+
+341
+00:27:30,143 --> 00:27:32,965
+Question six: why isn't averaging enough?
+
+342
+00:27:32,965 --> 00:27:36,131
+Because it throws away order and interactions.
+
+343
+00:27:36,131 --> 00:27:40,743
+Dog bites man and man bites dog average to exactly the same vector.
+
+344
+00:27:41,593 --> 00:27:43,376
+Here's your practice list.
+
+345
+00:27:43,376 --> 00:27:49,824
+Compute the boy, man and woman distances by hand, and the cosine of four three and three four.
+
+346
+00:27:49,824 --> 00:27:56,341
+Run the gensim snippet from the notes, try ten analogies of your own, and record your hit rate.
+
+347
+00:27:56,341 --> 00:28:00,731
+Explore the embedding projector and find a word with two senses.
+
+348
+00:28:00,731 --> 00:28:06,562
+Do the animal checkpoint, then add a fourth dimension and watch the groupings change.
+
+349
+00:28:06,562 --> 00:28:14,656
+And peek ahead at the book's companion repository on GitHub, where chapter five builds the embedding table in PyTorch.
+
+350
+00:28:14,656 --> 00:28:20,350
+The code in this video is my own illustration, since Part One has no book notebook.
+
+351
+00:28:21,199 --> 00:28:22,384
+That's chapter two.
+
+352
+00:28:22,384 --> 00:28:25,625
+We can turn words into vectors that capture meaning.
+
+353
+00:28:25,625 --> 00:28:27,807
+But meaning lives in relationships.
+
+354
+00:28:27,807 --> 00:28:34,538
+In the sentence the cat sat on the mat because it was tired, how does a computer know that it means the cat?
+
+355
+00:28:34,538 --> 00:28:38,964
+It has to look at the whole sentence and work out what relates to what.
+
+356
+00:28:38,964 --> 00:28:42,704
+That's the problem attention solves, and it's chapter three.
+
+357
+00:28:43,553 --> 00:28:48,680
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+358
+00:28:48,680 --> 00:28:57,995
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+359
+00:28:57,995 --> 00:29:04,493
+The companion code is at github dot com slash First LLM slash code, under the MIT license.
+
+360
+00:29:04,493 --> 00:29:09,042
+The word vectors I used are GloVe, from the Stanford NLP group.
+
+361
+00:29:09,042 --> 00:29:12,652
+Thanks for watching, and see you in chapter three.
+
