@@ -13,3 +13,6 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | 4 | §4.1.7 RoPE | "LLaMA, Mistral, and GPT-4 often use RoPE" | GPT-4's architecture is **not published** | — |
 | 5 | §5.4.1 Variables | `print(len(output))  # 68` | **71** (60 letters + 11 spaces); the book's own notebook prints 71 | ran notebook |
 | 6 | §6.12 Gotchas (embeddings) | "GPT-2 uses learned position embeddings; BERT uses sinusoidal (fixed)" | BERT uses **learned** absolute position embeddings (512×768); sinusoidal = 2017 Transformer | BERT config/paper |
+| ch07 | §7.11 worked example | Printed split shows Train 1 / Val 1 / Test 1 | The code shown (seed, 80/10/10 on 3 docs) yields 1 / 0 / 2; notebook confirms |
+| ch07 | String length example | `len('The bird flew over the house.')` given as 33 | It is 29 |
+| ch07 | SHA-1 collision odds | "1 in 2^160" | Birthday bound ≈2^80 for any collision; SHA-1 is practically broken (fine for dedup, not security) |

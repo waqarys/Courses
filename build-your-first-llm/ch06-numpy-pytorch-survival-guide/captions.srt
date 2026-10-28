@@ -1,0 +1,1028 @@
+1
+00:00:00,250 --> 00:00:06,368
+Welcome to chapter six of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,368 --> 00:00:09,136
+This is the survival guide to tensors.
+
+3
+00:00:09,136 --> 00:00:16,639
+Every number inside a language model lives in a tensor, and almost every bug you'll hit is a shape bug.
+
+4
+00:00:16,639 --> 00:00:32,081
+So today we learn to think in shapes: creating tensors, reshaping them, slicing, broadcasting, matrix multiplication, attention in four lines, autograd, nn dot Module, embeddings, and the five step training loop.
+
+5
+00:00:32,081 --> 00:00:41,332
+I ran the book's chapter six notebook on a CPU for this video, and I'll show the real outputs plus a few experiments of my own.
+
+6
+00:00:42,182 --> 00:00:45,905
+In chapter five we turned text into a list of token IDs.
+
+7
+00:00:45,905 --> 00:00:52,887
+Today those IDs become tensors, then embeddings, then we run attention on them and write a training loop.
+
+8
+00:00:52,887 --> 00:00:57,542
+From chapter seven, part three of the book, we build the model itself.
+
+9
+00:00:57,542 --> 00:01:02,661
+Everything today follows the chapter six notebook, linked in the description.
+
+10
+00:01:03,512 --> 00:01:04,621
+Here's the plan.
+
+11
+00:01:04,621 --> 00:01:08,713
+Why tensors, and what changes moving from NumPy to PyTorch.
+
+12
+00:01:08,713 --> 00:01:11,835
+Then building up dimensions from one to four.
+
+13
+00:01:11,835 --> 00:01:15,164
+Creating tensors, seeds, data types and devices.
+
+14
+00:01:15,164 --> 00:01:18,770
+Reshaping, including the view versus reshape puzzle.
+
+15
+00:01:18,770 --> 00:01:22,377
+Indexing, broadcasting and the essential operations.
+
+16
+00:01:22,377 --> 00:01:24,597
+Attention in four lines of code.
+
+17
+00:01:24,597 --> 00:01:27,648
+Then autograd, nn dot Module and embeddings.
+
+18
+00:01:27,648 --> 00:01:32,504
+And finally the five step training loop, the exercises and the review.
+
+19
+00:01:33,353 --> 00:01:34,410
+The vocabulary.
+
+20
+00:01:34,410 --> 00:01:39,127
+A tensor is a multi-dimensional array with a shape and a data type.
+
+21
+00:01:39,127 --> 00:01:43,774
+The shape lists its dimensions, like batch, sequence and features.
+
+22
+00:01:43,774 --> 00:01:48,703
+Broadcasting virtually expands a smaller tensor to match a bigger one.
+
+23
+00:01:48,703 --> 00:01:54,618
+The at sign is matrix multiplication, the core of attention and feed forward layers.
+
+24
+00:01:54,618 --> 00:02:03,771
+Autograd records operations and computes gradients, and a gradient tells you how much the loss changes when you nudge a parameter.
+
+25
+00:02:03,771 --> 00:02:09,967
+nn dot Module is PyTorch's building block that bundles parameters with a forward method.
+
+26
+00:02:09,967 --> 00:02:16,867
+The loss measures how wrong we are, and the device is where a tensor lives, on the CPU or the GPU.
+
+27
+00:02:17,717 --> 00:02:18,431
+Part one.
+
+28
+00:02:18,431 --> 00:02:19,381
+Why tensors?
+
+29
+00:02:20,231 --> 00:02:26,366
+Python lists are like loose pages on a desk: fine for scribbles, terrible for maths.
+
+30
+00:02:26,366 --> 00:02:31,551
+Tensors are organised stacks of numbers that the computer can optimise.
+
+31
+00:02:31,551 --> 00:02:34,326
+Every tensor is just how many of what.
+
+32
+00:02:34,326 --> 00:02:36,006
+A scalar is one number.
+
+33
+00:02:36,006 --> 00:02:38,124
+A vector is a row of numbers.
+
+34
+00:02:38,124 --> 00:02:40,169
+A matrix is rows by columns.
+
+35
+00:02:40,169 --> 00:02:47,764
+A three dimensional tensor is a stack of matrices, and a four dimensional tensor is a cabinet of stacks.
+
+36
+00:02:47,764 --> 00:03:01,420
+In LLM code you'll mostly see three shapes: token IDs as batch by sequence, embeddings as batch by sequence by model width, and attention scores as batch by heads by sequence by sequence.
+
+37
+00:03:02,270 --> 00:03:06,699
+The good news is that PyTorch feels like NumPy with extras.
+
+38
+00:03:06,699 --> 00:03:10,003
+Creating an array becomes creating a tensor.
+
+39
+00:03:10,003 --> 00:03:13,681
+Matrix multiplication is the at operator in both.
+
+40
+00:03:13,681 --> 00:03:21,789
+Changing type uses dot astype in NumPy and dot to in PyTorch, and dot to also moves tensors between devices.
+
+41
+00:03:21,789 --> 00:03:28,396
+Defaults differ: NumPy floats are float sixty four, PyTorch floats are float thirty two.
+
+42
+00:03:28,396 --> 00:03:29,522
+I checked both.
+
+43
+00:03:29,522 --> 00:03:35,528
+For deep learning float thirty two is what you want: half the memory and faster.
+
+44
+00:03:35,528 --> 00:03:40,558
+And PyTorch adds the two superpowers: GPUs and automatic gradients.
+
+45
+00:03:41,408 --> 00:03:43,003
+Two practical things.
+
+46
+00:03:43,003 --> 00:03:53,560
+Devices: you move a tensor to the GPU with dot to cuda, and you can't mix CPU and GPU tensors in one operation, or you get a runtime error.
+
+47
+00:03:53,560 --> 00:04:02,295
+GPUs are often ten to a hundred times faster for this kind of work, although everything in this video ran on a CPU.
+
+48
+00:04:02,295 --> 00:04:11,181
+And the zero copy bridge: torch dot from numpy shares memory with the NumPy array, so changing one changes the other.
+
+49
+00:04:11,181 --> 00:04:19,156
+I ran it: set element zero of the NumPy array to nine nine nine, and the tensor shows nine nine nine too.
+
+50
+00:04:19,156 --> 00:04:23,257
+If you want an independent copy, use torch dot tensor.
+
+51
+00:04:24,108 --> 00:04:24,720
+Part two.
+
+52
+00:04:24,720 --> 00:04:26,284
+Building up dimensions.
+
+53
+00:04:27,134 --> 00:04:29,194
+Let's connect to chapter five.
+
+54
+00:04:29,194 --> 00:04:35,102
+Our tokenizer gave us two, three, four, six: a one dimensional tensor with shape four.
+
+55
+00:04:35,102 --> 00:04:41,765
+Add a second sentence and we have a batch, a two by four matrix: two sentences, four tokens each.
+
+56
+00:04:41,765 --> 00:04:51,245
+Replace every ID with its seven sixty eight dimensional embedding and we get a three dimensional tensor, two by four by seven sixty eight.
+
+57
+00:04:51,245 --> 00:04:59,901
+The book's filing cabinet analogy fits well: the drawer is the sentence, the folder is the token, and the page is one feature.
+
+58
+00:04:59,901 --> 00:05:07,938
+And multi head attention adds a fourth dimension: two by eight by four by four, one four by four score grid per head.
+
+59
+00:05:08,788 --> 00:05:12,133
+Here's the notebook's real output for those steps.
+
+60
+00:05:12,133 --> 00:05:23,841
+Shape four, then two by four, then two by four by seven sixty eight, where a single token's embedding is seven sixty eight numbers, then the four dimensional attention tensor.
+
+61
+00:05:23,841 --> 00:05:33,876
+Get used to the names, because they're everywhere in transformer code: B for batch, S or L for sequence length, d model for features, and H for heads.
+
+62
+00:05:34,726 --> 00:05:35,455
+Part three.
+
+63
+00:05:35,455 --> 00:05:36,582
+Creating tensors.
+
+64
+00:05:37,432 --> 00:05:39,836
+There are four ways to fill a tensor.
+
+65
+00:05:39,836 --> 00:05:42,499
+From existing data with torch dot tensor.
+
+66
+00:05:42,499 --> 00:05:50,425
+With a fill rule: zeros, ones, uniform random with rand, normally distributed with randn, or random integers with randint.
+
+67
+00:05:50,425 --> 00:05:56,726
+As evenly spaced number lines, with arange and linspace, which are handy for positions and masks.
+
+68
+00:05:56,726 --> 00:06:02,638
+And by choosing the kind of number and where it lives, with the dtype and device arguments.
+
+69
+00:06:02,638 --> 00:06:06,211
+Set those deliberately rather than relying on defaults.
+
+70
+00:06:07,061 --> 00:06:09,804
+Computers don't make truly random numbers.
+
+71
+00:06:09,804 --> 00:06:13,526
+They run a formula from a starting point called the seed.
+
+72
+00:06:13,526 --> 00:06:21,493
+Set the same seed and you get exactly the same random numbers, which is essential for debugging and comparing experiments.
+
+73
+00:06:21,493 --> 00:06:24,040
+The notebook checks it and prints true.
+
+74
+00:06:24,040 --> 00:06:24,955
+Why forty two?
+
+75
+00:06:24,955 --> 00:06:28,285
+It's a nod to the Hitchhiker's Guide to the Galaxy.
+
+76
+00:06:28,285 --> 00:06:29,461
+Any integer works.
+
+77
+00:06:30,311 --> 00:06:31,033
+Part four.
+
+78
+00:06:31,033 --> 00:06:32,551
+Shapes and reshaping.
+
+79
+00:06:33,401 --> 00:06:37,679
+Shapes are contracts between your code and the operations you call.
+
+80
+00:06:37,679 --> 00:06:49,557
+Try to add a tensor ending in seven sixty eight to one ending in five twelve, and PyTorch refuses with a clear error: size seven sixty eight must match size five twelve at dimension two.
+
+81
+00:06:49,557 --> 00:06:57,475
+Read shapes from left to right like nested containers: two batches, each of four tokens, each of seven sixty eight features.
+
+82
+00:06:57,475 --> 00:06:59,391
+And print shapes all the time.
+
+83
+00:06:59,391 --> 00:07:02,009
+Half of all deep learning bugs live here.
+
+84
+00:07:02,859 --> 00:07:04,411
+The reshaping toolkit.
+
+85
+00:07:04,411 --> 00:07:14,215
+reshape rearranges the same numbers into a new shape, and the total must stay the same: twelve can be three by four, but not three by five.
+
+86
+00:07:14,215 --> 00:07:17,318
+Minus one means infer this dimension for me.
+
+87
+00:07:17,318 --> 00:07:24,019
+unsqueeze adds a dimension of size one, typically to make a single example into a batch of one.
+
+88
+00:07:24,019 --> 00:07:26,558
+squeeze removes size one dimensions.
+
+89
+00:07:26,558 --> 00:07:31,707
+And permute reorders dimensions, for example swapping heads and sequence.
+
+90
+00:07:31,707 --> 00:07:39,184
+Below is the notebook's real output, walking a tensor through view, reshape, squeeze, permute and flatten.
+
+91
+00:07:40,033 --> 00:07:42,096
+Why does view sometimes fail?
+
+92
+00:07:42,096 --> 00:07:45,155
+Think of memory as numbered boxes in a row.
+
+93
+00:07:45,155 --> 00:07:53,405
+A freshly created tensor is contiguous, stored in order, so view can just relabel the boxes without moving anything.
+
+94
+00:07:53,405 --> 00:08:00,803
+After a transpose or permute, the logical order jumps around memory: zero, four, eight, one, five, nine.
+
+95
+00:08:00,803 --> 00:08:04,075
+view refuses to move data and raises an error.
+
+96
+00:08:04,075 --> 00:08:08,485
+I triggered it on the permuted heads tensor from exercise two.
+
+97
+00:08:08,485 --> 00:08:11,970
+reshape is happy to make a copy when it needs to.
+
+98
+00:08:11,970 --> 00:08:15,526
+So the book's advice is right: default to reshape.
+
+99
+00:08:16,376 --> 00:08:17,077
+Part five.
+
+100
+00:08:17,077 --> 00:08:20,792
+Indexing, broadcasting, and the essential operations.
+
+101
+00:08:21,642 --> 00:08:25,589
+Indexing works like Python lists, one dimension at a time.
+
+102
+00:08:25,589 --> 00:08:27,563
+x zero takes the first batch.
+
+103
+00:08:27,563 --> 00:08:34,163
+A colon keeps a whole dimension, and colon minus one drops the last element, here the last token.
+
+104
+00:08:34,163 --> 00:08:38,314
+Three dots, the ellipsis, means all the remaining dimensions.
+
+105
+00:08:38,314 --> 00:08:44,439
+And torch dot tril, lower triangle, builds the causal mask from chapter three in one line.
+
+106
+00:08:44,439 --> 00:08:47,093
+The outputs here are from the notebook.
+
+107
+00:08:47,943 --> 00:08:52,614
+Broadcasting lets you combine tensors of different shapes without copying.
+
+108
+00:08:52,614 --> 00:08:55,643
+Add a three by four matrix and a vector of four.
+
+109
+00:08:55,643 --> 00:09:01,766
+PyTorch virtually repeats the vector for each row, the dashed cells, and adds element by element.
+
+110
+00:09:01,766 --> 00:09:05,300
+Eleven, twenty two, thirty three, forty four, and so on.
+
+111
+00:09:05,300 --> 00:09:14,200
+The rules, read from the right: two dimensions are compatible if they're equal or if one of them is one, and missing dimensions count as one.
+
+112
+00:09:14,200 --> 00:09:15,399
+Otherwise it fails.
+
+113
+00:09:16,249 --> 00:09:18,548
+Here's exercise one, which I ran.
+
+114
+00:09:18,548 --> 00:09:29,624
+A four by three by seven sixty eight tensor plus a bias of seven sixty eight broadcasts across batch and sequence: that's how every linear layer adds its bias.
+
+115
+00:09:29,624 --> 00:09:34,640
+The exercise asks what happens with a three by seven sixty eight tensor.
+
+116
+00:09:34,640 --> 00:09:35,546
+It works too.
+
+117
+00:09:35,546 --> 00:09:42,791
+Aligning from the right, three matches three and the batch dimension is missing, so it's treated as one.
+
+118
+00:09:42,791 --> 00:09:48,086
+But four by seven sixty eight fails, because it lines up four against three.
+
+119
+00:09:48,086 --> 00:09:54,216
+And the causal mask, shape one by one by S by S, broadcasts across every batch and head.
+
+120
+00:09:55,066 --> 00:09:58,840
+The operations you'll use ninety percent of the time.
+
+121
+00:09:58,840 --> 00:10:02,828
+Star is element-wise, while at is matrix multiplication.
+
+122
+00:10:02,828 --> 00:10:12,155
+A thirty two by ten by sixty four tensor times a sixty four by one twenty eight matrix gives thirty two by ten by one twenty eight.
+
+123
+00:10:12,155 --> 00:10:16,357
+That's how a linear layer mixes features at every position.
+
+124
+00:10:16,357 --> 00:10:23,620
+Reductions like sum and mean take a dim argument, and keepdim keeps the reduced dimension as size one.
+
+125
+00:10:23,620 --> 00:10:28,533
+cat joins along an existing dimension, while stack creates a new one.
+
+126
+00:10:28,533 --> 00:10:32,164
+And softmax with dim minus one normalises each row.
+
+127
+00:10:32,164 --> 00:10:38,858
+The two classic bugs are confusing star with at, and running softmax over the wrong dimension.
+
+128
+00:10:39,708 --> 00:10:40,452
+Part six.
+
+129
+00:10:40,452 --> 00:10:42,438
+Attention in four lines.
+
+130
+00:10:43,288 --> 00:10:48,191
+Here's chapter three's attention as real code, from the notebook.
+
+131
+00:10:48,191 --> 00:10:52,415
+Q, K and V are random two by five by sixty four tensors.
+
+132
+00:10:52,415 --> 00:11:00,109
+Step one: Q times K transposed over the last two dimensions gives a five by five score grid per batch.
+
+133
+00:11:00,109 --> 00:11:05,088
+Step two: divide by the square root of sixty four, which is eight.
+
+134
+00:11:05,088 --> 00:11:10,293
+Step three: softmax over the last dimension, so each row sums to one.
+
+135
+00:11:10,293 --> 00:11:13,687
+Step four: multiply by V to blend the values.
+
+136
+00:11:13,687 --> 00:11:16,931
+The output has the same shape as the input.
+
+137
+00:11:16,931 --> 00:11:22,664
+In my run, token two put seventy six percent of its attention on token zero.
+
+138
+00:11:23,514 --> 00:11:24,934
+Add the causal mask.
+
+139
+00:11:24,934 --> 00:11:36,013
+The notebook builds an upper triangle of trues above the diagonal, the future, and fills those scores with minus infinity, which becomes zero after softmax.
+
+140
+00:11:36,013 --> 00:11:41,907
+Token two's weights now end in two zeros: it can only see tokens zero, one and two.
+
+141
+00:11:41,907 --> 00:11:50,003
+In practice, PyTorch does all of this in one call: F dot scaled dot product attention, with is causal equals true.
+
+142
+00:11:50,003 --> 00:11:55,117
+I checked that my manual version and the one liner give the same result.
+
+143
+00:11:55,117 --> 00:12:08,539
+And I timed them on my CPU, with four sequences, twelve heads, five hundred and twelve tokens: the manual version took a hundred and sixty six milliseconds and the fused one under fourteen.
+
+144
+00:12:08,539 --> 00:12:11,806
+About twelve times faster, even without a GPU.
+
+145
+00:12:12,656 --> 00:12:13,549
+Part seven.
+
+146
+00:12:13,549 --> 00:12:16,795
+Autograd, nn dot Module, and embeddings.
+
+147
+00:12:17,645 --> 00:12:22,997
+A gradient tells you how much the output changes when you nudge an input.
+
+148
+00:12:22,997 --> 00:12:27,910
+Mark x as requires grad, and PyTorch records every operation on it.
+
+149
+00:12:27,910 --> 00:12:32,382
+Here y is x squared and z is the sum of y, which is thirteen.
+
+150
+00:12:32,382 --> 00:12:38,541
+Call z dot backward, and PyTorch walks the graph in reverse and fills in x dot grad.
+
+151
+00:12:38,541 --> 00:12:44,260
+The derivative of x squared is two x, so at two and three we get four and six.
+
+152
+00:12:44,260 --> 00:12:46,679
+The notebook prints exactly that.
+
+153
+00:12:46,679 --> 00:12:55,697
+To stop tracking, for example during inference, use torch dot no grad for a whole block, or dot detach for a single tensor.
+
+154
+00:12:56,547 --> 00:13:00,426
+Every network in PyTorch inherits from nn dot Module.
+
+155
+00:13:00,426 --> 00:13:07,231
+You define layers in init, after calling super init, and you define the data flow in forward.
+
+156
+00:13:07,231 --> 00:13:09,573
+Calling model of x runs forward.
+
+157
+00:13:09,573 --> 00:13:17,622
+The module automatically tracks every parameter, moves them all to a device at once, and saves and loads them.
+
+158
+00:13:17,622 --> 00:13:28,672
+This is the book's example MLP, condensed onto one line in forward, with GPT-2's feed forward shapes: seven sixty eight to three oh seven two and back.
+
+159
+00:13:28,672 --> 00:13:36,648
+I counted its parameters: four million seven hundred and twenty eight thousand, five hundred and seventy six.
+
+160
+00:13:37,498 --> 00:13:42,598
+An embedding layer is just a lookup table: row i is the vector for token i.
+
+161
+00:13:42,598 --> 00:13:50,894
+GPT-2 has fifty thousand two hundred and fifty seven rows of seven sixty eight, thirty eight point six million parameters.
+
+162
+00:13:50,894 --> 00:13:57,014
+Position embeddings are a second table, one thousand and twenty four by seven sixty eight.
+
+163
+00:13:57,014 --> 00:14:04,291
+Position IDs are just arange of the sequence length, given a batch dimension and expanded across the batch.
+
+164
+00:14:04,291 --> 00:14:09,391
+Add the two lookups, and that's what goes into the first transformer block.
+
+165
+00:14:09,391 --> 00:14:17,551
+The notebook confirms the totals: thirty nine million, three hundred and eighty three thousand, eight hundred and eight.
+
+166
+00:14:17,551 --> 00:14:25,983
+Token embeddings are about thirty one percent of GPT-2 small, which is why vocabulary size matters so much for small models.
+
+167
+00:14:26,833 --> 00:14:27,966
+One correction.
+
+168
+00:14:27,966 --> 00:14:36,200
+A gotcha box in the book says GPT-2 uses learned position embeddings, while BERT uses sinusoidal, fixed ones.
+
+169
+00:14:36,200 --> 00:14:38,013
+The GPT-2 part is right.
+
+170
+00:14:38,013 --> 00:14:47,305
+But BERT also uses learned absolute position embeddings, a five hundred and twelve by seven sixty eight table in BERT base.
+
+171
+00:14:47,305 --> 00:14:51,913
+Sinusoidal encodings belong to the original 2017 transformer.
+
+172
+00:14:51,913 --> 00:14:53,499
+That's in the errata.
+
+173
+00:14:54,349 --> 00:14:55,013
+Part eight.
+
+174
+00:14:55,013 --> 00:14:56,099
+The training loop.
+
+175
+00:14:56,949 --> 00:14:59,520
+Training is always the same five steps.
+
+176
+00:14:59,520 --> 00:15:04,992
+One: zero the gradients, because PyTorch adds new gradients to old ones by default.
+
+177
+00:15:04,992 --> 00:15:07,761
+Two: the forward pass, to get predictions.
+
+178
+00:15:07,761 --> 00:15:09,343
+Three: compute the loss.
+
+179
+00:15:09,343 --> 00:15:13,298
+Four: the backward pass, to fill every parameter's gradient.
+
+180
+00:15:13,298 --> 00:15:19,298
+For LLMs, clip the gradients here, between backward and step, to prevent explosive updates.
+
+181
+00:15:19,298 --> 00:15:21,671
+A max norm of one is a safe default.
+
+182
+00:15:21,671 --> 00:15:24,638
+Five: the optimizer step updates the weights.
+
+183
+00:15:24,638 --> 00:15:25,429
+Then repeat.
+
+184
+00:15:26,279 --> 00:15:29,078
+Here's the notebook's loop, condensed.
+
+185
+00:15:29,078 --> 00:15:36,664
+A small MLP, the Adam optimizer, cross entropy loss, and sixty four random examples with random labels.
+
+186
+00:15:36,664 --> 00:15:42,556
+Each epoch: train mode, zero the gradients, forward, loss, backward, clip, step.
+
+187
+00:15:42,556 --> 00:15:46,459
+Then evaluation mode and no grad to measure accuracy.
+
+188
+00:15:46,459 --> 00:15:55,887
+My run printed losses of point six nine five, point six nine two and point six eight nine, and an accuracy of fifty six percent.
+
+189
+00:15:55,887 --> 00:16:01,558
+Basically chance, because the labels are random and we only took three steps.
+
+190
+00:16:02,408 --> 00:16:08,638
+I wondered what happens if you keep going, so I ran the same loop for three hundred steps.
+
+191
+00:16:08,638 --> 00:16:16,459
+The loss falls from point six nine two to point zero five eight, and training accuracy reaches a hundred percent.
+
+192
+00:16:16,459 --> 00:16:17,636
+On random labels!
+
+193
+00:16:17,636 --> 00:16:23,658
+There's nothing to learn, so the model has simply memorised sixty four random examples.
+
+194
+00:16:23,658 --> 00:16:29,265
+That's a powerful lesson for later: a falling training loss alone proves nothing.
+
+195
+00:16:29,265 --> 00:16:34,871
+You always need a separate validation set, which we'll use when we train our LLM.
+
+196
+00:16:35,721 --> 00:16:38,232
+A few switches that confuse everybody.
+
+197
+00:16:38,232 --> 00:16:44,443
+model dot train turns dropout on, and model dot eval turns it off for deterministic behaviour.
+
+198
+00:16:44,443 --> 00:16:51,910
+torch dot no grad stops building the computation graph for a whole block of code, saving memory during inference.
+
+199
+00:16:51,910 --> 00:16:55,148
+dot detach cuts a single tensor out of the graph.
+
+200
+00:16:55,148 --> 00:17:04,927
+And zero grad with set to none equals true sets the gradients to None instead of filling them with zeros, which saves memory and is slightly faster.
+
+201
+00:17:05,777 --> 00:17:06,536
+Part nine.
+
+202
+00:17:06,536 --> 00:17:09,041
+The exercises, with my solutions.
+
+203
+00:17:09,891 --> 00:17:13,677
+Exercise two simulates splitting into attention heads.
+
+204
+00:17:13,677 --> 00:17:26,296
+Take a two by five by five twelve tensor, reshape the last dimension into eight heads of sixty four, then permute so heads come before sequence: two by eight by five by sixty four.
+
+205
+00:17:26,296 --> 00:17:35,199
+Now a batched matmul with its own transpose gives scores of two by eight by five by five, one score grid per head, as expected.
+
+206
+00:17:35,199 --> 00:17:40,527
+And note that after permute the tensor isn't contiguous, so view would fail.
+
+207
+00:17:40,527 --> 00:17:48,519
+This exact reshape and permute is how multi head attention splits the model width, which we'll see in chapter ten.
+
+208
+00:17:49,369 --> 00:17:53,010
+Exercise three: one training step on a tiny network.
+
+209
+00:17:53,010 --> 00:18:02,112
+My loss went from one point six seven seven to one point six oh eight after a single step, with a learning rate of point zero one.
+
+210
+00:18:02,112 --> 00:18:07,713
+For the bonus question, how do you know whether gradients were actually clipped?
+
+211
+00:18:07,713 --> 00:18:12,123
+clip grad norm returns the total gradient norm before clipping.
+
+212
+00:18:12,123 --> 00:18:19,124
+Mine was point five five five, which is below the max norm of one, so nothing was clipped this time.
+
+213
+00:18:19,124 --> 00:18:21,785
+Log that number in real training runs.
+
+214
+00:18:21,785 --> 00:18:25,075
+It's one of the best early warnings of trouble.
+
+215
+00:18:25,925 --> 00:18:26,620
+Part ten.
+
+216
+00:18:26,620 --> 00:18:27,547
+Wrapping up.
+
+217
+00:18:28,397 --> 00:18:29,775
+The key takeaways.
+
+218
+00:18:29,775 --> 00:18:34,600
+One: tensors are arrays with shapes, so think how many of what.
+
+219
+00:18:34,600 --> 00:18:40,727
+Two: PyTorch is NumPy plus GPUs plus autograd, with float thirty two by default.
+
+220
+00:18:40,727 --> 00:18:50,530
+Three: the LLM shapes go from batch by sequence, to batch by sequence by model width, to batch by heads by sequence by sequence.
+
+221
+00:18:50,530 --> 00:18:58,035
+Four: broadcasting aligns shapes from the right, expanding dimensions of size one or missing ones.
+
+222
+00:18:58,035 --> 00:19:05,847
+Five: matrix multiplication combines features, and attention is four lines of code, or one fused call.
+
+223
+00:19:05,847 --> 00:19:11,591
+Six: the training recipe is zero grad, forward, loss, backward, clip, step.
+
+224
+00:19:12,441 --> 00:19:14,709
+My notebook run and book check.
+
+225
+00:19:14,709 --> 00:19:26,194
+The chapter six notebook ran end to end on a CPU, all nineteen code cells, with no errors, and the shapes, parameter counts and gradients all match the book.
+
+226
+00:19:26,194 --> 00:19:33,729
+My own checks of the default data types, zero copy sharing and fused attention all agree with the text.
+
+227
+00:19:33,729 --> 00:19:38,264
+One erratum: BERT uses learned positions, not sinusoidal ones.
+
+228
+00:19:38,264 --> 00:19:44,336
+And a note: the book's two to four times speed-up refers to FlashAttention on GPUs.
+
+229
+00:19:44,336 --> 00:19:53,992
+On my CPU, the fused call was about twelve times faster than the manual version, mostly from avoiding all those separate operations.
+
+230
+00:19:54,842 --> 00:19:57,174
+Review questions, with my answers.
+
+231
+00:19:57,174 --> 00:19:59,780
+One: why the different default floats?
+
+232
+00:19:59,780 --> 00:20:03,552
+NumPy targets scientific precision, so sixty four bits.
+
+233
+00:20:03,552 --> 00:20:07,186
+PyTorch targets speed and memory, so thirty two bits.
+
+234
+00:20:07,186 --> 00:20:14,455
+It matters when you mix them, which can cause dtype errors, and for calculations that need high precision.
+
+235
+00:20:14,455 --> 00:20:22,410
+Two: view needs contiguous memory, while reshape copies when needed, so prefer reshape after a transpose or permute.
+
+236
+00:20:22,410 --> 00:20:31,737
+Three: broadcasting aligns shapes from the right, and each pair must be equal or contain a one, with missing dimensions counting as one.
+
+237
+00:20:31,737 --> 00:20:37,498
+Four: the dim in softmax is the axis that sums to one, usually minus one for logits.
+
+238
+00:20:37,498 --> 00:20:44,287
+Pick the wrong one and you normalise across the batch or across positions, and it's silently wrong.
+
+239
+00:20:45,137 --> 00:20:53,962
+Five: torch dot no grad disables gradient tracking for a whole block, while detach returns a single tensor with no history.
+
+240
+00:20:53,962 --> 00:20:56,401
+Six: why zero the gradients first?
+
+241
+00:20:56,401 --> 00:21:04,222
+Because gradients accumulate, so without clearing them each step would add the old gradients to the new ones.
+
+242
+00:21:04,222 --> 00:21:06,374
+Set to none also saves memory.
+
+243
+00:21:06,374 --> 00:21:17,280
+Seven: switching from train to eval turns off dropout and changes batch norm to use stored statistics, so evaluation and inference become deterministic.
+
+244
+00:21:18,130 --> 00:21:19,399
+Your practice list.
+
+245
+00:21:19,399 --> 00:21:24,744
+Run the chapter six notebook in Colab, and try a GPU runtime to compare timings.
+
+246
+00:21:24,744 --> 00:21:28,418
+Print the shape after every line of the attention cell.
+
+247
+00:21:28,418 --> 00:21:32,427
+Break broadcasting on purpose, and read the error carefully.
+
+248
+00:21:32,427 --> 00:21:37,371
+Run the training loop for three hundred steps and watch it memorise noise.
+
+249
+00:21:37,371 --> 00:21:40,978
+And solve the three exercises plus the clipping bonus.
+
+250
+00:21:41,828 --> 00:21:43,243
+That's chapter six.
+
+251
+00:21:43,243 --> 00:21:48,904
+You can now read and write the tensor code at the heart of every modern LLM.
+
+252
+00:21:48,904 --> 00:21:56,948
+Next, part three begins: we wire these pieces into a real data pipeline and start building the model itself.
+
+253
+00:21:56,948 --> 00:21:59,257
+Same maths, aimed at real text.
+
+254
+00:22:00,107 --> 00:22:05,321
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+255
+00:22:05,321 --> 00:22:14,792
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+256
+00:22:14,792 --> 00:22:23,530
+The code shown comes from the companion repository at github dot com slash First LLM slash code, under the MIT license.
+
+257
+00:22:23,530 --> 00:22:27,201
+Thanks for watching, and see you in chapter seven.
+

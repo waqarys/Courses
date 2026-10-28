@@ -1,0 +1,331 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 41.93,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 41.93,
+  "dur": 21.33,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 6 roadmap",
+  "start": 63.26,
+  "dur": 29.84,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 93.1,
+  "dur": 44.36,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 137.47,
+  "dur": 2.51,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Shapes: \"how many of what\" (my redraw)",
+  "start": 139.98,
+  "dur": 42.04,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "NumPy \u2192 PyTorch: what changes",
+  "start": 182.02,
+  "dur": 39.14,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Devices and the zero-copy bridge",
+  "start": 221.16,
+  "dur": 42.7,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Part 2",
+  "start": 263.86,
+  "dur": 3.03,
+  "divider": true
+ },
+ {
+  "slide": 10,
+  "title": "From token IDs to 4-D (my redraw)",
+  "start": 266.88,
+  "dur": 41.65,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "The notebook confirms each step",
+  "start": 308.54,
+  "dur": 25.94,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Part 3",
+  "start": 334.48,
+  "dur": 2.71,
+  "divider": true
+ },
+ {
+  "slide": 13,
+  "title": "Four ways to fill the box",
+  "start": 337.18,
+  "dur": 29.63,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Seeds: reproducible randomness",
+  "start": 366.81,
+  "dur": 23.25,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Part 4",
+  "start": 390.06,
+  "dur": 3.09,
+  "divider": true
+ },
+ {
+  "slide": 16,
+  "title": "Shapes are contracts",
+  "start": 393.15,
+  "dur": 29.46,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "reshape, -1, squeeze, unsqueeze, permute",
+  "start": 422.61,
+  "dur": 37.17,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "view vs reshape: contiguity (my redraw)",
+  "start": 459.78,
+  "dur": 36.34,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Part 5",
+  "start": 496.13,
+  "dur": 5.27,
+  "divider": true
+ },
+ {
+  "slide": 20,
+  "title": "Indexing & slicing a 4-D tensor (notebook)",
+  "start": 501.39,
+  "dur": 26.3,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Broadcasting (my redraw)",
+  "start": 527.69,
+  "dur": 28.31,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Broadcasting in LLMs (my Exercise 1 run)",
+  "start": 556.0,
+  "dur": 38.82,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Essential operations",
+  "start": 594.82,
+  "dur": 44.64,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Part 6",
+  "start": 639.46,
+  "dur": 3.58,
+  "divider": true
+ },
+ {
+  "slide": 25,
+  "title": "Scaled dot-product attention (notebook cell 16)",
+  "start": 643.04,
+  "dur": 40.23,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "+ causal mask, then the one-liner",
+  "start": 683.26,
+  "dur": 49.14,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Part 7",
+  "start": 732.41,
+  "dur": 4.99,
+  "divider": true
+ },
+ {
+  "slide": 28,
+  "title": "Autograd (my redraw + notebook cell 30)",
+  "start": 737.4,
+  "dur": 38.9,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "nn.Module: the building block",
+  "start": 776.3,
+  "dur": 40.95,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Token + position embeddings (notebook cell 18)",
+  "start": 817.25,
+  "dur": 49.33,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "\u26a0\ufe0f Book check: \"BERT uses sinusoidal (fixed)\"",
+  "start": 866.58,
+  "dur": 27.52,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Part 8",
+  "start": 894.1,
+  "dur": 2.6,
+  "divider": true
+ },
+ {
+  "slide": 33,
+  "title": "The 5-step recipe (my redraw)",
+  "start": 896.7,
+  "dur": 29.33,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "The loop in code (notebook cell 19, condensed)",
+  "start": 926.03,
+  "dur": 36.13,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "What happens if we keep going? (my experiment)",
+  "start": 962.16,
+  "dur": 33.31,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "train() vs eval(), no_grad vs detach",
+  "start": 995.47,
+  "dur": 30.06,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Part 9",
+  "start": 1025.53,
+  "dur": 4.11,
+  "divider": true
+ },
+ {
+  "slide": 38,
+  "title": "Exercise 2: split into heads (my run)",
+  "start": 1029.64,
+  "dur": 39.48,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Exercise 3: one step + clipping (my run)",
+  "start": 1069.12,
+  "dur": 36.56,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Part 10",
+  "start": 1105.68,
+  "dur": 2.47,
+  "divider": true
+ },
+ {
+  "slide": 41,
+  "title": "Key takeaways",
+  "start": 1108.15,
+  "dur": 44.04,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Notebook run & book check",
+  "start": 1152.19,
+  "dur": 42.4,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "Review questions 1",
+  "start": 1194.59,
+  "dur": 50.29,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "Review questions 2",
+  "start": 1244.89,
+  "dur": 32.99,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "Practice this",
+  "start": 1277.88,
+  "dur": 23.7,
+  "divider": false
+ },
+ {
+  "slide": 46,
+  "title": "Up next: Chapter 7 \u2014 Part III begins",
+  "start": 1301.58,
+  "dur": 18.28,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "Credits",
+  "start": 1319.86,
+  "dur": 27.94,
+  "divider": true
+ }
+]

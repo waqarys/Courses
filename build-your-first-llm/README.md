@@ -21,7 +21,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 3 | The Attention Mechanism | [slides](ch03-the-attention-mechanism/slides.md) | [notes](ch03-the-attention-mechanism/notes.md) | — | ✅ |
 | 4 | The Transformer Architecture | [slides](ch04-the-transformer-architecture/slides.md) | [notes](ch04-the-transformer-architecture/notes.md) | — | ✅ |
 | 5 | Your First Python Program | [slides](ch05-your-first-python-program/slides.md) | [notes](ch05-your-first-python-program/notes.md) | [ch05](https://github.com/FirstLLM/code/blob/main/notebooks/ch05.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch05.ipynb) | ✅ |
-| 6 | NumPy & PyTorch Survival Guide | | | [ch06](https://github.com/FirstLLM/code/blob/main/notebooks/ch06.ipynb) | planned |
+| 6 | NumPy & PyTorch Survival Guide | [slides](ch06-numpy-pytorch-survival-guide/slides.md) | [notes](ch06-numpy-pytorch-survival-guide/notes.md) | [ch06](https://github.com/FirstLLM/code/blob/main/notebooks/ch06.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch06.ipynb) | ✅ |
 | 7 | Preparing Your Data | | | [ch07](https://github.com/FirstLLM/code/blob/main/notebooks/ch07.ipynb) | planned |
 | 8 | Building the Tokenizer | | | [ch08](https://github.com/FirstLLM/code/blob/main/notebooks/ch08.ipynb) | planned |
 | 9 | The Embedding Layer | | | [ch09](https://github.com/FirstLLM/code/blob/main/notebooks/ch09.ipynb) | planned |
