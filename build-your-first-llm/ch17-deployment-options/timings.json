@@ -1,0 +1,282 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 29.67,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 29.67,
+  "dur": 19.22,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 17 roadmap",
+  "start": 48.89,
+  "dur": 20.24,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 69.13,
+  "dur": 25.45,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 94.58,
+  "dur": 3.09,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Owning a car vs taking a taxi",
+  "start": 97.67,
+  "dur": 16.53,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "The cost picture (list prices, Oct 2026)",
+  "start": 114.2,
+  "dur": 34.27,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Getting set up",
+  "start": 148.47,
+  "dur": 13.07,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Part 2",
+  "start": 161.55,
+  "dur": 3.26,
+  "divider": true
+ },
+ {
+  "slide": 10,
+  "title": "Hello Modal",
+  "start": 164.81,
+  "dur": 15.51,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "What actually happened",
+  "start": 180.31,
+  "dur": 20.01,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "One parameter for a GPU",
+  "start": 200.32,
+  "dur": 15.57,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Defining the container image",
+  "start": 215.89,
+  "dur": 15.83,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Part 3",
+  "start": 231.72,
+  "dur": 3.18,
+  "divider": true
+ },
+ {
+  "slide": 15,
+  "title": "FastAPI on Modal",
+  "start": 234.89,
+  "dur": 17.58,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "`run` vs `deploy`",
+  "start": 252.47,
+  "dur": 14.87,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "The deploy flow",
+  "start": 267.33,
+  "dur": 19.9,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 4",
+  "start": 287.23,
+  "dur": 4.14,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "The image and the model loader",
+  "start": 291.37,
+  "dur": 18.39,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "The endpoints",
+  "start": 309.75,
+  "dur": 15.98,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "The function decorators",
+  "start": 325.73,
+  "dur": 18.66,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Fix 1: T4 can't do bfloat16",
+  "start": 344.39,
+  "dur": 38.67,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Fix 2: prompts need the chat template",
+  "start": 383.06,
+  "dur": 18.34,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Testing the deployment",
+  "start": 401.4,
+  "dur": 13.52,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Part 5",
+  "start": 414.93,
+  "dur": 2.92,
+  "divider": true
+ },
+ {
+  "slide": 26,
+  "title": "Secrets: never hard-code keys",
+  "start": 417.85,
+  "dur": 19.24,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Volumes: cache the weights",
+  "start": 437.09,
+  "dur": 13.93,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Part 6",
+  "start": 451.01,
+  "dur": 3.13,
+  "divider": true
+ },
+ {
+  "slide": 29,
+  "title": "Choosing a GPU",
+  "start": 454.15,
+  "dur": 24.94,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Cold starts",
+  "start": 479.08,
+  "dur": 22.25,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Logs, updates, cost control",
+  "start": 501.33,
+  "dur": 26.51,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Part 7",
+  "start": 527.84,
+  "dur": 3.45,
+  "divider": true
+ },
+ {
+  "slide": 33,
+  "title": "The API-key check, and a subtle bug",
+  "start": 531.29,
+  "dur": 21.69,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "The rest of the checklist",
+  "start": 552.99,
+  "dur": 22.18,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Not Modal? Other routes",
+  "start": 575.17,
+  "dur": 25.15,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Part 8",
+  "start": 600.32,
+  "dur": 2.17,
+  "divider": true
+ },
+ {
+  "slide": 37,
+  "title": "Review questions: short answers",
+  "start": 602.49,
+  "dur": 21.78,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Checkpoint exercise, my version",
+  "start": 624.27,
+  "dur": 19.6,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Practice this",
+  "start": 643.87,
+  "dur": 15.55,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Credits",
+  "start": 659.42,
+  "dur": 25.49,
+  "divider": false
+ }
+]

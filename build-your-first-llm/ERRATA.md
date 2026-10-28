@@ -39,3 +39,10 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | ch11 | §11.6.4 generation | "The quick brown fox jumps over the lazy dog. The dog is…" | Notebook: "The quick brown foxeseseses…"; with fixed loader: "…foxes are a great way to get a little bit of a kick out of your dog." |
 | ch11 | Weight-tying gotcha 4 | `lm_head.weight` shouldn't appear in `state_dict()` keys | It does appear (both keys, shared storage); `torch.save` stores the storage once |
 | ch11 | §11.12 checkpoint | "Parameter count: ~150,000" | 132,608 with the book's config (133,120 with attention biases) |
+| ch17 | §17.3.1 llm_service.py | Qwen2.5-1.5B-Instruct on `gpu="T4"` with vLLM 0.6.4 | T4 (cc 7.5) has no bfloat16; vLLM 0.6.x refuses bf16 models on it (vllm issue #9990). Add `dtype="half"` or use L4/A10 |
+| ch17 | §17.5.4 API key | `x_api_key: str = Header()`, check skipped if no API_KEY | Header is required: missing header → 422 even with no key configured (tested). Use `Header(default=None)` |
+| ch17 | §17.1.2 free tier | "you will get an email warning before any charges" | Modal pricing: Starter usage beyond the $30 included is pay-as-you-go; set a workspace budget to cap spend |
+| ch18 | §18.3.1 Path 1 | "build on: Chapter 6 (training and evaluation)" | Ch 6 is NumPy & PyTorch; training is Ch 12, evaluation is in Ch 15 |
+| ch18 | §18.3.2, §18.4.1 (+ notebook cell 8/14) | RAG = "Chapter 14" | Ch 14 is Prompt Engineering; RAG and tool use are both Ch 15 (Building Applications) |
+| ch18 | §18.4.2 Capstone 2 | "Revisit … Ch6 (evaluation)" | Evaluation material is Ch 15 (and Ch 12 for val loss/perplexity) |
+| ch18 | §18.2.1 | "In Chapter 17, you set up audit trails" | Ch 17 has no audit-trail section; JSONL logging is Ch 16 |
