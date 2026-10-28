@@ -58,7 +58,7 @@ Weights in fp16 take about 2 bytes per parameter: a 1.5B model is ~3 GB, a 7B ~1
 Docker on a VPS (full control, 24/7 cost), Hugging Face Spaces / Inference Endpoints, or a local Ollama plus a tunnel. The FastAPI app stays the same in every case.
 
 ## 7. Book checks (errata)
-See ERRATA.md, ch17 rows: vLLM + T4 + bf16, the required API-key header and the "email warning before any charges" claim.
+See ERRATA.md, ch17 rows: vLLM + T4 + bf16, the required API-key header, the "email warning before any charges" claim, and the references to a Ch 16 env-var/API-key pattern that Ch 16 doesn't contain.
 
 ## 8. Review questions (my answers)
 1. Serverless: per-second billing and scale-to-zero fit spiky, low-volume LLM traffic.

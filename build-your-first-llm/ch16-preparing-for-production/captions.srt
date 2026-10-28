@@ -1,0 +1,584 @@
+1
+00:00:00,250 --> 00:00:06,771
+Welcome to chapter sixteen of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,771 --> 00:00:20,035
+Today we turn a working notebook into software other people can use: a versioned config, a FastAPI service, JSON lines logging, metrics, input validation, rate limiting and tests.
+
+3
+00:00:20,035 --> 00:00:31,818
+I ran the notebook, and then I ran the book's complete app against a real local Llama 3.2 through Ollama, with all four of the book's tests plus two of my own.
+
+4
+00:00:31,818 --> 00:00:36,190
+One of mine found a false positive in the injection filter.
+
+5
+00:00:37,040 --> 00:00:41,170
+Chapter fifteen gave us an app that works when we're watching.
+
+6
+00:00:41,170 --> 00:00:46,099
+Today we make it reliable for other people, and next chapter we deploy it.
+
+7
+00:00:46,099 --> 00:00:51,760
+The chapter sixteen notebook uses a mock chat function, so it runs without any model.
+
+8
+00:00:52,610 --> 00:00:53,303
+The plan.
+
+9
+00:00:53,303 --> 00:00:55,382
+What changes in production.
+
+10
+00:00:55,382 --> 00:00:56,152
+Packaging.
+
+11
+00:00:56,152 --> 00:00:57,770
+Serving with FastAPI.
+
+12
+00:00:57,770 --> 00:00:59,079
+Logs and metrics.
+
+13
+00:00:59,079 --> 00:01:01,158
+Validation and rate limits.
+
+14
+00:01:01,158 --> 00:01:01,774
+Testing.
+
+15
+00:01:01,774 --> 00:01:06,086
+Then the complete app, which I ran against a real model.
+
+16
+00:01:06,086 --> 00:01:07,010
+Then review.
+
+17
+00:01:07,860 --> 00:01:08,606
+Key terms.
+
+18
+00:01:08,606 --> 00:01:13,302
+Production is code running for real users without you watching.
+
+19
+00:01:13,302 --> 00:01:15,688
+An endpoint is a URL and method.
+
+20
+00:01:15,688 --> 00:01:18,968
+A health check reports whether you're alive.
+
+21
+00:01:18,968 --> 00:01:21,876
+Rate limiting caps requests per client.
+
+22
+00:01:21,876 --> 00:01:25,231
+Graceful degradation means failing helpfully.
+
+23
+00:01:25,231 --> 00:01:28,511
+And JSON lines logs are one object per line.
+
+24
+00:01:29,361 --> 00:01:29,937
+Part one.
+
+25
+00:01:29,937 --> 00:01:31,089
+A different world.
+
+26
+00:01:31,939 --> 00:01:39,096
+In development you are the only user, errors are lessons, you debug with print and you can rerun a cell.
+
+27
+00:01:39,096 --> 00:01:49,624
+In production many people use it at once, errors mean frustrated users, you debug by reading last night's logs, and the system has to recover on its own.
+
+28
+00:01:50,474 --> 00:01:52,841
+The book lists the classic failures.
+
+29
+00:01:52,841 --> 00:02:00,794
+A huge prompt, a sudden crowd, a prompt injection, a failure at night with no logs, and a fix that breaks something else.
+
+30
+00:02:00,794 --> 00:02:02,832
+The principle: fail gracefully.
+
+31
+00:02:02,832 --> 00:02:08,288
+Don't crash, tell the user something useful, log it and keep serving everyone else.
+
+32
+00:02:09,138 --> 00:02:09,719
+Part two.
+
+33
+00:02:09,719 --> 00:02:11,591
+What exactly are we shipping?
+
+34
+00:02:12,441 --> 00:02:19,551
+For an Ollama based app, the model is really the model tag plus your system prompt and settings.
+
+35
+00:02:19,551 --> 00:02:24,143
+The book saves them as a versioned JSON file with a timestamp.
+
+36
+00:02:24,143 --> 00:02:29,550
+My run wrote config version one point zero point zero exactly as printed.
+
+37
+00:02:30,400 --> 00:02:32,066
+Use semantic versioning.
+
+38
+00:02:32,066 --> 00:02:39,907
+A bug fix bumps the patch number, a compatible feature the minor number, and a behaviour change the major number.
+
+39
+00:02:39,907 --> 00:02:48,235
+My opinion: changing the system prompt or the model is a behaviour change, so version it like code and keep a changelog.
+
+40
+00:02:49,085 --> 00:02:53,145
+Why does a three billion parameter model fit on a laptop?
+
+41
+00:02:53,145 --> 00:02:54,071
+Quantization.
+
+42
+00:02:54,071 --> 00:03:01,409
+The copy I use is a four bit build of about two gigabytes, against about six point four in sixteen bit.
+
+43
+00:03:01,409 --> 00:03:05,042
+You lose a little quality and gain a lot of memory.
+
+44
+00:03:05,892 --> 00:03:06,848
+Part three.
+
+45
+00:03:06,848 --> 00:03:09,455
+Making it reachable over HTTP.
+
+46
+00:03:10,305 --> 00:03:11,681
+HTTP in one slide.
+
+47
+00:03:11,681 --> 00:03:13,669
+An endpoint plus a method.
+
+48
+00:03:13,669 --> 00:03:15,733
+Get reads, post sends data.
+
+49
+00:03:15,733 --> 00:03:29,419
+Every response has a status code: two hundred OK, four hundred bad request, four twenty two failed the schema, four twenty nine too many requests, and five hundred means we broke.
+
+50
+00:03:30,269 --> 00:03:32,258
+Here's the minimal service.
+
+51
+00:03:32,258 --> 00:03:41,756
+A Pydantic request model with a validator that rejects empty messages, a response model, and a chat endpoint that times the call.
+
+52
+00:03:41,756 --> 00:03:47,720
+FastAPI validates both directions automatically and generates docs at slash docs.
+
+53
+00:03:48,570 --> 00:03:51,983
+A good health check also checks its dependencies.
+
+54
+00:03:51,983 --> 00:03:55,397
+The book's version calls the model with "say OK".
+
+55
+00:03:55,397 --> 00:04:02,084
+My caution: that's a full generation every time a monitor polls, which can be every few seconds.
+
+56
+00:04:02,084 --> 00:04:05,566
+On my CPU one generation took over twenty seconds.
+
+57
+00:04:05,566 --> 00:04:10,373
+Cheaper: ask Ollama for its model list, and cache the result briefly.
+
+58
+00:04:11,223 --> 00:04:18,113
+Run it with uvicorn, then call it with curl, with Python requests, or from the interactive docs page.
+
+59
+00:04:18,963 --> 00:04:21,671
+Here's my redrawing of the request path.
+
+60
+00:04:21,671 --> 00:04:35,614
+Each stage can stop a bad request with its own status code: the rate limiter with four twenty nine, Pydantic with four twenty two, our validator with four hundred, and a failed generation with five hundred.
+
+61
+00:04:35,614 --> 00:04:37,780
+Everything is logged at the end.
+
+62
+00:04:38,629 --> 00:04:39,257
+Part four.
+
+63
+00:04:39,257 --> 00:04:40,763
+Knowing what it's doing.
+
+64
+00:04:41,613 --> 00:04:43,578
+Logs are a flight recorder.
+
+65
+00:04:43,578 --> 00:04:51,146
+The book logs metadata only: lengths, latency, success and errors, never the prompt itself, for privacy.
+
+66
+00:04:51,146 --> 00:05:00,898
+Here's a real line from my run: a twenty eight character prompt, a four character answer, twenty six seconds of latency on a busy CPU.
+
+67
+00:05:01,748 --> 00:05:09,070
+For metrics, a dictionary is enough to start: requests, errors and latency, exposed at slash metrics.
+
+68
+00:05:09,070 --> 00:05:12,259
+It resets on restart and counts per process.
+
+69
+00:05:12,259 --> 00:05:16,609
+Real dashboards add percentiles, because averages hide pain.
+
+70
+00:05:16,609 --> 00:05:23,060
+One thirty second request in a hundred barely moves the mean, but P ninety nine shows it.
+
+71
+00:05:23,910 --> 00:05:30,393
+LLMs generate one token per forward pass, so a hundred tokens means a hundred passes.
+
+72
+00:05:30,393 --> 00:05:34,359
+The book estimates five to fifteen seconds on a CPU.
+
+73
+00:05:34,359 --> 00:05:39,241
+On my busy eight core box a short reply took twenty six seconds.
+
+74
+00:05:39,241 --> 00:05:44,198
+So set generous timeouts, show progress, and stream when you can.
+
+75
+00:05:45,048 --> 00:05:45,886
+Part five.
+
+76
+00:05:45,886 --> 00:05:47,309
+Expect bad input.
+
+77
+00:05:48,159 --> 00:05:57,617
+The validator rejects long inputs and a few injection phrases with regular expressions, returns a generic error and logs the attempt.
+
+78
+00:05:57,617 --> 00:06:06,933
+One small inconsistency: the comment says the limit is in tokens, roughly, but the code compares string length, so it's characters.
+
+79
+00:06:07,783 --> 00:06:09,780
+Here's what my own test found.
+
+80
+00:06:09,780 --> 00:06:15,104
+The complete app shortens one pattern to just "act as", with no word boundaries.
+
+81
+00:06:15,104 --> 00:06:18,632
+I sent: in fact as a beginner, how do I learn Python?
+
+82
+00:06:18,632 --> 00:06:24,489
+It was rejected with four hundred, because the letters "act as" appear inside "fact as".
+
+83
+00:06:24,489 --> 00:06:27,751
+Contact as soon as possible would be blocked too.
+
+84
+00:06:27,751 --> 00:06:32,743
+Add word boundaries, and remember keyword filters only stop casual attacks.
+
+85
+00:06:33,593 --> 00:06:41,033
+The rate limiter keeps a list of recent timestamps per IP and returns four twenty nine past twenty a minute.
+
+86
+00:06:41,033 --> 00:06:42,479
+My test confirmed it.
+
+87
+00:06:42,479 --> 00:06:43,306
+Two caveats.
+
+88
+00:06:43,306 --> 00:06:45,579
+It lives in one process's memory.
+
+89
+00:06:45,579 --> 00:06:56,739
+And behind a proxy or a cloud platform, the client host may be the proxy's address, so every user shares one limit unless you read the forwarded header carefully.
+
+90
+00:06:57,589 --> 00:06:58,408
+Part six.
+
+91
+00:06:58,408 --> 00:06:59,317
+Insurance.
+
+92
+00:07:00,167 --> 00:07:04,951
+FastAPI's test client calls your app in process, no server needed.
+
+93
+00:07:04,951 --> 00:07:12,924
+Test the happy path, but also the error paths: empty input gets four twenty two, long input gets four hundred.
+
+94
+00:07:12,924 --> 00:07:17,853
+Add unicode, the rate limit and what happens when the model is down.
+
+95
+00:07:18,703 --> 00:07:19,473
+My results.
+
+96
+00:07:19,473 --> 00:07:22,346
+The notebook's three mock tests all pass.
+
+97
+00:07:22,346 --> 00:07:30,263
+Against the real model, the book's four tests pass, including the long input test, which the notebook leaves out.
+
+98
+00:07:30,263 --> 00:07:32,084
+My rate limit test passes.
+
+99
+00:07:32,084 --> 00:07:36,708
+My false positive test fails, which is exactly what tests are for.
+
+100
+00:07:37,558 --> 00:07:44,437
+Canary deployments send a new version to a small slice of traffic first, then ramp up or roll back.
+
+101
+00:07:44,437 --> 00:07:52,984
+The book says chapter seventeen builds the infrastructure for this, but chapter seventeen only uses Modal's rolling deploy.
+
+102
+00:07:52,984 --> 00:07:54,582
+There's no canary step.
+
+103
+00:07:55,432 --> 00:07:57,699
+Graceful degradation in practice.
+
+104
+00:07:57,699 --> 00:08:03,402
+Give every model call a timeout, so a stuck generation can't hold a worker forever.
+
+105
+00:08:03,402 --> 00:08:08,692
+On timeout return a five oh three with a friendly message, not a stack trace.
+
+106
+00:08:08,692 --> 00:08:12,745
+Optionally fall back to a smaller model or a cached answer.
+
+107
+00:08:12,745 --> 00:08:16,936
+Keep the user message generic and put the details in the log.
+
+108
+00:08:17,786 --> 00:08:19,063
+One thing I'd add.
+
+109
+00:08:19,063 --> 00:08:27,077
+Read settings like the model name, rate limit and any API key from environment variables, never from code in git.
+
+110
+00:08:27,077 --> 00:08:38,778
+The book's chapter seventeen refers back to chapter sixteen's environment variable and API key pattern, but chapter sixteen doesn't actually cover it, so here it is.
+
+111
+00:08:39,628 --> 00:08:40,349
+Part seven.
+
+112
+00:08:40,349 --> 00:08:41,463
+The complete app.
+
+113
+00:08:42,313 --> 00:08:49,500
+The complete app puts it all together: config, logger, rate limiter, validator, models and three endpoints.
+
+114
+00:08:49,500 --> 00:08:54,000
+Chat goes rate limit, validate, call the model, then log and count.
+
+115
+00:08:54,000 --> 00:09:00,851
+And around it all sits the production loop: detect, diagnose, fix with a regression test, and monitor.
+
+116
+00:09:01,701 --> 00:09:03,117
+Small fixes I'd make.
+
+117
+00:09:03,117 --> 00:09:04,196
+Word boundaries.
+
+118
+00:09:04,196 --> 00:09:05,611
+A cheap health check.
+
+119
+00:09:05,611 --> 00:09:12,825
+Count rejected requests in the metrics too, because right now validation failures never reach the counters.
+
+120
+00:09:12,825 --> 00:09:14,982
+Say characters, or count tokens.
+
+121
+00:09:14,982 --> 00:09:20,442
+Use the forwarded header for the rate limit key, but only from a proxy you trust.
+
+122
+00:09:20,442 --> 00:09:25,296
+And for the bonus cache, include the model and system prompt in the key.
+
+123
+00:09:26,146 --> 00:09:28,102
+My checklist before sharing.
+
+124
+00:09:28,102 --> 00:09:31,106
+Tests are green, including the error paths.
+
+125
+00:09:31,106 --> 00:09:36,205
+Logs exist, you can read them, and they hold no prompts or personal data.
+
+126
+00:09:36,205 --> 00:09:39,138
+Health is cheap and metrics count rejects.
+
+127
+00:09:39,138 --> 00:09:43,190
+Every limit is set: length, rate, max tokens and timeouts.
+
+128
+00:09:43,190 --> 00:09:47,032
+And the version in slash health matches your changelog.
+
+129
+00:09:47,881 --> 00:09:48,690
+Part eight.
+
+130
+00:09:48,690 --> 00:09:49,204
+Review.
+
+131
+00:09:50,054 --> 00:09:51,002
+Short answers.
+
+132
+00:09:51,002 --> 00:09:54,859
+Development is you, production is many users without you.
+
+133
+00:09:54,859 --> 00:09:58,987
+Health proves liveness and should check dependencies cheaply.
+
+134
+00:09:58,987 --> 00:10:00,746
+Log metadata, not content.
+
+135
+00:10:00,746 --> 00:10:03,859
+Rate limiting protects capacity and your bill.
+
+136
+00:10:03,859 --> 00:10:08,529
+And test error paths, because that's where production actually lives.
+
+137
+00:10:09,379 --> 00:10:19,121
+The checkpoint: health and chat endpoints, validation with word boundaries, content free logs, a metrics endpoint and at least four tests.
+
+138
+00:10:19,121 --> 00:10:21,027
+Add my false positive test.
+
+139
+00:10:21,027 --> 00:10:24,909
+The bonus is a five minute cache for identical prompts.
+
+140
+00:10:25,759 --> 00:10:29,815
+Practice: run the complete app against Ollama with pytest.
+
+141
+00:10:29,815 --> 00:10:35,969
+Add my false positive test, watch it fail, fix the regular expression and watch it pass.
+
+142
+00:10:35,969 --> 00:10:42,122
+Then plot latency from your log and compare the median with the ninety ninth percentile.
+
+143
+00:10:42,972 --> 00:10:47,650
+This video is based on Build Your First LLM by Hasan Degismez.
+
+144
+00:10:47,650 --> 00:10:58,439
+The explanations and diagrams are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+145
+00:10:58,439 --> 00:11:03,645
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+146
+00:11:03,645 --> 00:11:07,719
+Thanks for watching, and see you in chapter seventeen.
+

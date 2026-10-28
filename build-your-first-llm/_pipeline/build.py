@@ -58,5 +58,5 @@ with open(B+'/list.txt','w') as f:
 with open(f'{ch}/captions.srt','w') as f:
     for i,(a,b,x) in enumerate(srt,1): f.write(f'{i}\n{ts(a)} --> {ts(b)}\n{x}\n\n')
 json.dump(tim,open(f'{ch}/timings.json','w'),indent=1)
-subprocess.run(['ffmpeg','-y','-loglevel','error','-f','concat','-safe','0','-i',B+'/list.txt','-i',B+'/audio.wav','-vf','fps=30,format=yuv420p,scale=1920:1080','-c:v','libx264','-preset','medium','-tune','stillimage','-crf','23','-c:a','aac','-b:a','128k','-ar','48000','-shortest','-movflags','+faststart',f'{ch}/video.mp4'],check=True,cwd=B)
+subprocess.run(['ffmpeg','-y','-loglevel','error','-f','concat','-safe','0','-i',B+'/list.txt','-i',B+'/audio.wav','-vf','fps=30,format=yuv420p,scale=1920:1080','-c:v','libx264','-threads','3','-preset','medium','-tune','stillimage','-crf','23','-c:a','aac','-b:a','128k','-ar','48000','-shortest','-movflags','+faststart',f'{ch}/video.mp4'],check=True,cwd=B)
 print('\nTOTAL',round(t0,1),'s')

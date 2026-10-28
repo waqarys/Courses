@@ -46,3 +46,21 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | ch18 | §18.3.2, §18.4.1 (+ notebook cell 8/14) | RAG = "Chapter 14" | Ch 14 is Prompt Engineering; RAG and tool use are both Ch 15 (Building Applications) |
 | ch18 | §18.4.2 Capstone 2 | "Revisit … Ch6 (evaluation)" | Evaluation material is Ch 15 (and Ch 12 for val loss/perplexity) |
 | ch18 | §18.2.1 | "In Chapter 17, you set up audit trails" | Ch 17 has no audit-trail section; JSONL logging is Ch 16 |
+| ch12 | §12.4.5 train_epoch / §12.5.1 evaluate | `ignore_index=0  # Ignore padding (token ID 0)` | GPT-2 token 0 is "!" (0.62% of tokens); pad = eos = 50256 is *not* ignored (22% of target positions in padded batches, my count). Mask with `attention_mask` → -100 |
+| ch12 | §12.2.3 create_lm_labels | default `pad_token_id=0` | Same issue: GPT-2 has no id-0 pad; use `tokenizer.pad_token_id` (50256 here) |
+| ch12 | §12.3.4 / §12.7 output | "312 batches" per epoch | Notebook (256-char chunks): 3,921 train chunks → 123 batches/epoch, 369 steps total |
+| ch12 | §12.7 output | "Parameters: 10,789,121" | 16,054,016 with the chapter's config (embed 256, 4 layers, vocab 50,257) |
+| ch12 | §12.7 output | Val 4.22 → 3.89 → 3.75, perplexity 42.3 | My unchanged CPU run: val 6.22 → 5.66 → 5.51, perplexity 504.9 → 287.1 → 246.2 |
+| ch12 | §12.8.3 output | "The king is a man of great virtue and honour…" | Actual 3-epoch output: "The king'd / proto imports, theolute. / Buteb: …" (play-shaped, not sentences) |
+| ch17 | §17.3.3, §17.5.4 | "same pattern as Chapter 16's environment variables" / "API Keys: Use the pattern from Chapter 16" | Ch 16 covers no environment variables, .env files or API keys |
+| ch16 | §16.7 complete app.py | `SUSPICIOUS_PATTERNS = [..., r"act as"]` | No word boundary: "In fact as a beginner, how do I learn Python?" → 400 Invalid input (tested). Use `r"\bact as\b"` |
+| ch16 | §16.5.1 | `MAX_PROMPT_LENGTH = 4000  # Maximum prompt length (tokens, roughly)` | The check is `len(text)` → characters, as the error message itself says |
+| ch16 | §16.3.3, §16.6.4 | Kubernetes restarts "more on this in Chapter 17"; canary "infrastructure we build in Chapter 17" | Ch 17 covers neither (Modal deploy is a rolling update) |
+| ch13 | §13.2.2 / notebook | "80 examples for training and 20 for evaluation" | Notebook `FAQ_DATA` has 69 examples; `train_data = FAQ_DATA[:80]` takes all 69 → test set empty → ZeroDivisionError (cell 27), NameError (cell 28) |
+| ch13 | §13.4.4–13.4.5 LoRA naming | B is the (in, r) "down" matrix (random init), A the (r, out) "up" matrix (zeros) | Reversed vs the LoRA paper / PEFT: A is the down projection (random), B the up projection (zeros). Maths still works, but names won't match PEFT checkpoints |
+| ch13 | §13.4.4 / §13.7 "48× efficiency" | 768×768 layer: 12,288 vs 589,824 | True only for a hypothetical 768×768 layer. MiniGPT's `qkv_proj` is 256→768: 196,608 vs 8,192 = 24× (notebook demo on 256×256: 65,536 vs 4,096 = 16×) |
+| ch13 | §13.4.7 output | "Trainable: 24,576 / 10,789,121 (0.23%)" | Notebook: 32,768 / 16,086,784 (0.20%): 4 layers × (256×8 + 8×768) |
+| ch13 | §13.4.7 | LoRA on combined `qkv_proj` "primarily affects Q and V" | A LoRA on the fused projection adapts Q, K and V alike; targeting only Q and V needs separate layers or a sliced update |
+| ch13 | §13.5.2–13.5.3 | `model.generate(input_ids, max_new_tokens=50, do_sample=False)` | MiniGPT has no `.generate()` with these kwargs; the notebook needs its own greedy loop |
+| ch13 | §13.6.1 output | LoRA 0.10 MB vs full 41.2 MB, "400× smaller" | Notebook: 131.6 KB vs 61.4 MB (478×) |
+| ch13 | §13.11 checkpoint | "Exact match accuracy improves from ~0% to 50%+" | Notebook base is randomly initialised (no Ch 12 weights loaded): loss 10.86 → 10.74, outputs gibberish before and after |

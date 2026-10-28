@@ -31,7 +31,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 | 13 | Fine-Tuning | | | [ch13](https://github.com/FirstLLM/code/blob/main/notebooks/ch13.ipynb) | planned |
 | 14 | Prompt Engineering | | | [ch14](https://github.com/FirstLLM/code/blob/main/notebooks/ch14.ipynb) | planned |
 | 15 | Building Applications | | | [ch15](https://github.com/FirstLLM/code/blob/main/notebooks/ch15.ipynb) | planned |
-| 16 | Preparing for Production | | | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | planned |
+| 16 | Preparing for Production | [slides](ch16-preparing-for-production/slides.md) | [notes](ch16-preparing-for-production/notes.md) | [ch16](https://github.com/FirstLLM/code/blob/main/notebooks/ch16.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch16.ipynb) | ✅ |
 | 17 | Deployment Options | [slides](ch17-deployment-options/slides.md) | [notes](ch17-deployment-options/notes.md) | [ch17](https://github.com/FirstLLM/code/blob/main/notebooks/ch17.ipynb) · [Colab](https://colab.research.google.com/github/FirstLLM/code/blob/main/notebooks/ch17.ipynb) | ✅ |
 | 18 | What's Next | | | [ch18](https://github.com/FirstLLM/code/blob/main/notebooks/ch18.ipynb) | planned |
 

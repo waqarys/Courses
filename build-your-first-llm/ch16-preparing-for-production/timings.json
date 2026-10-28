@@ -1,0 +1,282 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 36.79,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 36.79,
+  "dur": 15.57,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 16 roadmap",
+  "start": 52.36,
+  "dur": 15.25,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 67.61,
+  "dur": 21.5,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 89.11,
+  "dur": 2.58,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Two different worlds",
+  "start": 91.69,
+  "dur": 18.54,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "What goes wrong (it will)",
+  "start": 110.22,
+  "dur": 18.66,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Part 2",
+  "start": 128.89,
+  "dur": 3.3,
+  "divider": true
+ },
+ {
+  "slide": 9,
+  "title": "Save the config, with a version",
+  "start": 132.19,
+  "dur": 17.96,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Semantic versioning + a changelog",
+  "start": 150.15,
+  "dur": 18.68,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Why Ollama models fit on a laptop",
+  "start": 168.84,
+  "dur": 16.81,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Part 3",
+  "start": 185.64,
+  "dur": 4.41,
+  "divider": true
+ },
+ {
+  "slide": 13,
+  "title": "HTTP in one slide",
+  "start": 190.06,
+  "dur": 19.96,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "A minimal FastAPI service",
+  "start": 210.02,
+  "dur": 18.3,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "The health check",
+  "start": 228.32,
+  "dur": 22.65,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Running and calling it",
+  "start": 250.97,
+  "dur": 7.74,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "The request path",
+  "start": 258.71,
+  "dur": 19.67,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 4",
+  "start": 278.38,
+  "dur": 2.98,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "Structured JSONL logs",
+  "start": 281.36,
+  "dur": 20.14,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "Simple in-memory metrics",
+  "start": 301.5,
+  "dur": 22.16,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Why LLMs are slow (and that's OK)",
+  "start": 323.66,
+  "dur": 21.14,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Part 5",
+  "start": 344.8,
+  "dur": 3.11,
+  "divider": true
+ },
+ {
+  "slide": 23,
+  "title": "Input validation",
+  "start": 347.91,
+  "dur": 19.62,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "My test: the filter blocks innocent input",
+  "start": 367.53,
+  "dur": 25.81,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Rate limiting",
+  "start": 393.34,
+  "dur": 24.0,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Part 6",
+  "start": 417.34,
+  "dur": 2.58,
+  "divider": true
+ },
+ {
+  "slide": 27,
+  "title": "pytest + TestClient",
+  "start": 419.92,
+  "dur": 18.54,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "My results",
+  "start": 438.45,
+  "dur": 18.86,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Canary deployments (concept)",
+  "start": 457.31,
+  "dur": 17.87,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Timeouts and fallbacks",
+  "start": 475.18,
+  "dur": 22.35,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Config from the environment (my addition)",
+  "start": 497.54,
+  "dur": 21.84,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Part 7",
+  "start": 519.38,
+  "dur": 2.68,
+  "divider": true
+ },
+ {
+  "slide": 33,
+  "title": "The complete `app.py`, in one picture",
+  "start": 522.06,
+  "dur": 19.39,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Small fixes I'd make",
+  "start": 541.45,
+  "dur": 24.44,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "My \"ready to share\" checklist",
+  "start": 565.9,
+  "dur": 21.74,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Part 8",
+  "start": 587.63,
+  "dur": 2.17,
+  "divider": true
+ },
+ {
+  "slide": 37,
+  "title": "Review questions: short answers",
+  "start": 589.8,
+  "dur": 19.32,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Checkpoint exercise",
+  "start": 609.13,
+  "dur": 16.38,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Practice this",
+  "start": 625.51,
+  "dur": 17.21,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Credits",
+  "start": 642.72,
+  "dur": 25.6,
+  "divider": false
+ }
+]
