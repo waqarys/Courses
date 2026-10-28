@@ -1,0 +1,296 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 29.52,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 29.52,
+  "dur": 18.09,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 15 roadmap",
+  "start": 47.61,
+  "dur": 14.1,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 61.71,
+  "dur": 21.39,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 83.1,
+  "dur": 2.9,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Your training skills transfer",
+  "start": 86.0,
+  "dur": 24.36,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Three application patterns",
+  "start": 110.36,
+  "dur": 14.82,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Choosing a pattern",
+  "start": 125.18,
+  "dur": 13.84,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Part 2",
+  "start": 139.02,
+  "dur": 2.56,
+  "divider": true
+ },
+ {
+  "slide": 10,
+  "title": "The basic loop",
+  "start": 141.58,
+  "dur": 16.15,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "The context window",
+  "start": 157.73,
+  "dur": 25.49,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "ChatSession: trim old turns",
+  "start": 183.22,
+  "dur": 16.7,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Logging, and a missing method",
+  "start": 199.92,
+  "dur": 17.17,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Part 3",
+  "start": 217.09,
+  "dur": 3.15,
+  "divider": true
+ },
+ {
+  "slide": 15,
+  "title": "The problem RAG solves",
+  "start": 220.24,
+  "dur": 15.1,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "RAG by hand",
+  "start": 235.34,
+  "dur": 11.73,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Sentence embeddings",
+  "start": 247.07,
+  "dur": 18.51,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Why not GPT-2's embeddings?",
+  "start": 265.59,
+  "dur": 16.44,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Chunking with overlap",
+  "start": 282.03,
+  "dur": 18.79,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "The RAG pipeline",
+  "start": 300.82,
+  "dur": 14.38,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Retrieval = a dot product",
+  "start": 315.2,
+  "dur": 14.12,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Prompting with citations",
+  "start": 329.32,
+  "dur": 14.59,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Notebook knowledge base",
+  "start": 343.91,
+  "dur": 11.32,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "My RAG run: retrieval + answers",
+  "start": 355.23,
+  "dur": 33.31,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "My RAG run: the book's evaluation",
+  "start": 388.54,
+  "dur": 26.56,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Part 4",
+  "start": 415.1,
+  "dur": 2.28,
+  "divider": true
+ },
+ {
+  "slide": 27,
+  "title": "How tool calling works",
+  "start": 417.38,
+  "dur": 18.58,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "The book's tools",
+  "start": 435.96,
+  "dur": 10.45,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "\u26a0 Empty `__builtins__` is not a sandbox",
+  "start": 446.41,
+  "dur": 28.86,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "My tool-calling run",
+  "start": 475.27,
+  "dur": 35.53,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Tool safety rules",
+  "start": 510.8,
+  "dur": 20.05,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Part 5",
+  "start": 530.85,
+  "dur": 3.13,
+  "divider": true
+ },
+ {
+  "slide": 33,
+  "title": "Trait-based evaluation",
+  "start": 533.98,
+  "dur": 15.98,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Temperature per task",
+  "start": 549.96,
+  "dur": 18.71,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Streaming and caching",
+  "start": 568.66,
+  "dur": 13.07,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Debugging checklist",
+  "start": 581.74,
+  "dur": 14.74,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Notebook run summary",
+  "start": 596.48,
+  "dur": 34.98,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Key takeaways",
+  "start": 631.45,
+  "dur": 24.32,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Review questions: short answers",
+  "start": 655.77,
+  "dur": 23.95,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Review 6\u20137 + checkpoint",
+  "start": 679.72,
+  "dur": 19.54,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Practice this",
+  "start": 699.26,
+  "dur": 15.53,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Credits",
+  "start": 714.79,
+  "dur": 25.43,
+  "divider": false
+ }
+]

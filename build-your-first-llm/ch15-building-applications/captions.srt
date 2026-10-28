@@ -1,0 +1,676 @@
+1
+00:00:00,250 --> 00:00:06,329
+Welcome to chapter fifteen of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,329 --> 00:00:18,765
+We stop training and start building: a chat loop with memory, a retrieval augmented generation system with citations, a first look at tool calling, and simple automatic evaluation.
+
+3
+00:00:18,765 --> 00:00:28,921
+I ran the whole pipeline against a real Llama 3.2 3B on my own machine, and I also found that the calculator tool's sandbox isn't a sandbox at all.
+
+4
+00:00:29,771 --> 00:00:33,081
+We've changed weights and we've changed prompts.
+
+5
+00:00:33,081 --> 00:00:38,321
+Today we build an application around the model: memory, documents and tools.
+
+6
+00:00:38,321 --> 00:00:43,492
+Then chapters sixteen and seventeen make it production ready and deploy it.
+
+7
+00:00:43,492 --> 00:00:47,009
+The notebook uses Ollama and sentence transformers.
+
+8
+00:00:47,859 --> 00:00:48,560
+The plan.
+
+9
+00:00:48,560 --> 00:00:49,963
+The mindset shift.
+
+10
+00:00:49,963 --> 00:00:52,379
+The three application patterns.
+
+11
+00:00:52,379 --> 00:00:53,314
+A chat loop.
+
+12
+00:00:53,314 --> 00:00:54,717
+RAG, step by step.
+
+13
+00:00:54,717 --> 00:00:56,899
+Tool calling and its safety.
+
+14
+00:00:56,899 --> 00:00:59,548
+Evaluation with my real model run.
+
+15
+00:00:59,548 --> 00:01:01,107
+And production tips.
+
+16
+00:01:01,957 --> 00:01:02,701
+Key terms.
+
+17
+00:01:02,701 --> 00:01:05,232
+RAG means retrieve, then generate.
+
+18
+00:01:05,232 --> 00:01:09,326
+A sentence embedding is one vector for a whole passage.
+
+19
+00:01:09,326 --> 00:01:11,261
+Chunking splits documents.
+
+20
+00:01:11,261 --> 00:01:14,908
+The context window is how much the model can see.
+
+21
+00:01:14,908 --> 00:01:19,375
+Tool calling lets the model ask your code to run a function.
+
+22
+00:01:19,375 --> 00:01:22,501
+And a citation ties a claim to its source.
+
+23
+00:01:23,351 --> 00:01:24,060
+Part one.
+
+24
+00:01:24,060 --> 00:01:25,399
+A change of role.
+
+25
+00:01:26,249 --> 00:01:29,976
+Nearly every training skill has an application twin.
+
+26
+00:01:29,976 --> 00:01:33,130
+Token embeddings become sentence embeddings.
+
+27
+00:01:33,130 --> 00:01:36,068
+Chunking data becomes chunking documents.
+
+28
+00:01:36,068 --> 00:01:38,362
+Data quality becomes validation.
+
+29
+00:01:38,362 --> 00:01:40,655
+Seeds and logs become debugging.
+
+30
+00:01:40,655 --> 00:01:42,376
+Loss becomes evaluation.
+
+31
+00:01:42,376 --> 00:01:48,110
+One correction: the book says embeddings and cosine similarity were chapter six.
+
+32
+00:01:48,110 --> 00:01:49,758
+They were chapter nine.
+
+33
+00:01:50,608 --> 00:01:54,754
+Three patterns, each adding capability and complexity.
+
+34
+00:01:54,754 --> 00:01:58,286
+Pure prompting uses only what the model knows.
+
+35
+00:01:58,286 --> 00:02:01,127
+RAG adds documents it has never seen.
+
+36
+00:02:01,127 --> 00:02:04,581
+Tools let it fetch live data or take actions.
+
+37
+00:02:05,432 --> 00:02:06,413
+Start simple.
+
+38
+00:02:06,413 --> 00:02:07,395
+Prompt first.
+
+39
+00:02:07,395 --> 00:02:10,794
+Add retrieval when the model lacks knowledge.
+
+40
+00:02:10,794 --> 00:02:14,722
+Add tools when it needs to act or calculate exactly.
+
+41
+00:02:14,722 --> 00:02:18,424
+This chapter goes deep on RAG and previews tools.
+
+42
+00:02:19,274 --> 00:02:19,941
+Part two.
+
+43
+00:02:19,941 --> 00:02:20,980
+The chat loop.
+
+44
+00:02:21,830 --> 00:02:22,688
+A chat loop.
+
+45
+00:02:22,688 --> 00:02:28,049
+Read input, append it to history, send the whole history, append the reply.
+
+46
+00:02:28,049 --> 00:02:34,410
+The model has no memory of its own; memory is just resending the conversation every turn.
+
+47
+00:02:34,410 --> 00:02:37,126
+Which means the history grows forever.
+
+48
+00:02:37,976 --> 00:02:42,164
+Every model has a context window covering prompt plus reply.
+
+49
+00:02:42,164 --> 00:02:45,654
+The book says Llama 3.2's is about eight thousand.
+
+50
+00:02:45,654 --> 00:02:49,982
+The model actually supports a hundred and thirty one thousand.
+
+51
+00:02:49,982 --> 00:02:58,149
+But Ollama runs it with a much smaller window by default; on my machine the server ran with four thousand ninety six.
+
+52
+00:02:58,149 --> 00:03:02,616
+So the practical limit is whatever you configure, using num ctx.
+
+53
+00:03:03,466 --> 00:03:11,392
+The ChatSession class keeps at most twenty messages, dropping the oldest and keeping user and assistant turns paired.
+
+54
+00:03:11,392 --> 00:03:15,320
+It counts messages, not tokens, which is simple but rough.
+
+55
+00:03:15,320 --> 00:03:19,317
+And leave about twenty percent of the window for the reply.
+
+56
+00:03:20,167 --> 00:03:28,187
+The logging version calls count history tokens and count tokens, but neither method exists anywhere, so it crashes.
+
+57
+00:03:28,187 --> 00:03:36,487
+Use a tokenizer, or read Ollama's prompt eval count and eval count from the response, which are the real token numbers.
+
+58
+00:03:37,337 --> 00:03:38,041
+Part three.
+
+59
+00:03:38,041 --> 00:03:39,641
+The heart of the chapter.
+
+60
+00:03:40,491 --> 00:03:44,496
+Models have frozen training data and finite context.
+
+61
+00:03:44,496 --> 00:03:54,742
+RAG turns the test into an open book exam: a retriever finds the right pages, like a librarian, and the model reads them and answers.
+
+62
+00:03:55,592 --> 00:04:00,557
+Here's RAG done by hand: paste the policy into the prompt, then ask.
+
+63
+00:04:00,557 --> 00:04:02,163
+That's the whole idea.
+
+64
+00:04:02,163 --> 00:04:06,472
+The engineering is in finding the right text automatically.
+
+65
+00:04:07,322 --> 00:04:18,965
+A sentence embedding model turns a whole passage into one vector, here three hundred and eighty four numbers, trained so that passages with similar meaning land close together.
+
+66
+00:04:18,965 --> 00:04:24,986
+I ran the book's example: the cosine similarity is point six five seven, matching the book.
+
+67
+00:04:25,836 --> 00:04:28,044
+Why not reuse our own embeddings?
+
+68
+00:04:28,044 --> 00:04:31,926
+Token embeddings are trained for predicting the next word.
+
+69
+00:04:31,926 --> 00:04:35,340
+Sentence encoders are trained for matching meaning.
+
+70
+00:04:35,340 --> 00:04:41,430
+Different objectives give different geometry, so use a purpose built encoder for retrieval.
+
+71
+00:04:42,280 --> 00:04:52,202
+Chunking splits text into windows of two hundred words that overlap by fifty, so a fact sitting on a boundary appears whole in at least one chunk.
+
+72
+00:04:52,202 --> 00:04:56,824
+Too small and chunks lack context; too big and retrieval gets fuzzy.
+
+73
+00:04:56,824 --> 00:05:00,222
+Two hundred to five hundred words is a good start.
+
+74
+00:05:01,072 --> 00:05:02,326
+The full pipeline.
+
+75
+00:05:02,326 --> 00:05:05,115
+Offline, chunk and embed your documents.
+
+76
+00:05:05,115 --> 00:05:14,597
+Online, embed the question, find the most similar chunks, build a prompt with numbered sources, and let the model answer with citations.
+
+77
+00:05:15,447 --> 00:05:17,846
+Retrieval is one matrix product.
+
+78
+00:05:17,846 --> 00:05:24,068
+Normalise every vector to length one, and the dot product equals cosine similarity.
+
+79
+00:05:24,068 --> 00:05:28,716
+Sort, take the top k, and drop anything below a minimum score.
+
+80
+00:05:29,566 --> 00:05:40,150
+The prompt numbers each source and names it, tells the model to cite by number, to use only these sources, and gives it permission to say the answer isn't there.
+
+81
+00:05:40,150 --> 00:05:43,305
+That last line is what keeps hallucination down.
+
+82
+00:05:44,155 --> 00:05:50,482
+The notebook's knowledge base is three short policies: vacation, expenses and remote work.
+
+83
+00:05:50,482 --> 00:05:54,629
+Each is under two hundred words, so each becomes one chunk.
+
+84
+00:05:55,479 --> 00:05:56,305
+My real run.
+
+85
+00:05:56,305 --> 00:06:08,203
+Retrieval works well on in-scope questions: the vacation policy scores point seven nine, the remote work policy point four two, and the answers are correct and mostly cited.
+
+86
+00:06:08,203 --> 00:06:13,293
+The interesting failure is the out of scope question, the meaning of life.
+
+87
+00:06:13,293 --> 00:06:21,546
+Nothing passed the minimum score, so the book's fallback prompt was sent, which offers to answer from general knowledge.
+
+88
+00:06:21,546 --> 00:06:27,943
+The model did exactly that, wrote about Aristotle, and cited a source one that doesn't exist.
+
+89
+00:06:28,793 --> 00:06:33,325
+Scoring with the book's evaluation set gives five out of eight traits.
+
+90
+00:06:33,325 --> 00:06:35,657
+The vacation case passes everything.
+
+91
+00:06:35,657 --> 00:06:39,477
+The expense case is correct but forgot the citation marker.
+
+92
+00:06:39,477 --> 00:06:45,887
+The out of scope case fails both checks: it didn't refuse, and it cited a source that wasn't there.
+
+93
+00:06:45,887 --> 00:06:50,938
+The fix is simple: if retrieval comes back empty, don't call the model at all.
+
+94
+00:06:50,938 --> 00:06:54,500
+Return a fixed reply saying it isn't in your documents.
+
+95
+00:06:55,349 --> 00:06:56,243
+Part four.
+
+96
+00:06:56,243 --> 00:06:56,779
+Tools.
+
+97
+00:06:57,629 --> 00:06:59,960
+Tool calling is a two turn dance.
+
+98
+00:06:59,960 --> 00:07:01,584
+You describe the tools.
+
+99
+00:07:01,584 --> 00:07:05,257
+The model writes a tool request in an agreed format.
+
+100
+00:07:05,257 --> 00:07:12,744
+Your code parses it, runs the function, and sends the result back so the model can write the final answer.
+
+101
+00:07:12,744 --> 00:07:15,357
+The model never runs anything itself.
+
+102
+00:07:16,207 --> 00:07:21,620
+Two tools: a calculator built on eval with empty builtins, and a date tool.
+
+103
+00:07:21,620 --> 00:07:25,807
+A regular expression pulls out the tool name and argument.
+
+104
+00:07:26,657 --> 00:07:27,310
+Important.
+
+105
+00:07:27,310 --> 00:07:32,076
+The book says eval with empty builtins prevents arbitrary code execution.
+
+106
+00:07:32,076 --> 00:07:32,794
+It doesn't.
+
+107
+00:07:32,794 --> 00:07:36,581
+From any Python object you can walk to every loaded class.
+
+108
+00:07:36,581 --> 00:07:45,331
+In my test, a single calculator expression reached the os module and printed the working directory, which means it could run anything.
+
+109
+00:07:45,331 --> 00:07:50,489
+The book does mention simpleeval for production, but treat this code as unsafe.
+
+110
+00:07:50,489 --> 00:07:54,667
+Parse with the ast module and allow only numbers and arithmetic.
+
+111
+00:07:55,517 --> 00:07:57,591
+Tool calling, on my real run.
+
+112
+00:07:57,591 --> 00:08:07,817
+For fifteen percent of eight four seven, the model just wrote calculate fifteen percent of eight four seven, with no tool tags, so nothing ran.
+
+113
+00:08:07,817 --> 00:08:11,035
+For the date, it invented its own tag format.
+
+114
+00:08:11,035 --> 00:08:15,612
+Only the capital of France went well: it correctly used no tool.
+
+115
+00:08:15,612 --> 00:08:17,757
+So zero out of two tool calls.
+
+116
+00:08:17,757 --> 00:08:23,478
+A three billion parameter model doesn't reliably follow an invented text format.
+
+117
+00:08:23,478 --> 00:08:30,199
+Use the runtime's native tool calling, show the format with an example, or use a bigger model.
+
+118
+00:08:31,049 --> 00:08:31,949
+Tool safety.
+
+119
+00:08:31,949 --> 00:08:33,149
+Whitelist names.
+
+120
+00:08:33,149 --> 00:08:37,949
+Validate arguments and never eval anything a user can influence.
+
+121
+00:08:37,949 --> 00:08:43,199
+Start with read only tools and add write tools only with confirmation.
+
+122
+00:08:43,199 --> 00:08:44,324
+Log every call.
+
+123
+00:08:44,324 --> 00:08:50,249
+A tool that can send email, delete files or spend money is a security boundary.
+
+124
+00:08:51,099 --> 00:08:51,791
+Part five.
+
+125
+00:08:51,791 --> 00:08:53,382
+Testing and production.
+
+126
+00:08:54,232 --> 00:08:56,576
+LLM answers vary, so test traits.
+
+127
+00:08:56,576 --> 00:09:02,540
+Does it contain the key words, cite a source, refuse when it should, and say enough?
+
+128
+00:09:02,540 --> 00:09:09,357
+The checker uses a phrase list for refusals, which misses natural wordings like I couldn't find.
+
+129
+00:09:10,207 --> 00:09:11,767
+Temperature by task.
+
+130
+00:09:11,767 --> 00:09:16,367
+Low for RAG, zero for tool calls, higher for creative work.
+
+131
+00:09:16,367 --> 00:09:28,063
+The book's snippet here uses an OpenAI client with GPT three point five that the chapter never sets up; with Ollama you just pass temperature to chat.
+
+132
+00:09:28,913 --> 00:09:30,327
+Two production tips.
+
+133
+00:09:30,327 --> 00:09:35,414
+Stream tokens as they arrive; users feel it's faster even when it isn't.
+
+134
+00:09:35,414 --> 00:09:41,137
+And cache embeddings keyed by a hash of the text, so you only embed what changed.
+
+135
+00:09:41,987 --> 00:09:44,751
+When it misbehaves, go layer by layer.
+
+136
+00:09:44,751 --> 00:09:46,859
+Input: what exactly was sent.
+
+137
+00:09:46,859 --> 00:09:49,550
+Retrieval: which chunks, what scores.
+
+138
+00:09:49,550 --> 00:09:52,094
+Generation: temperature and prompt.
+
+139
+00:09:52,094 --> 00:09:55,875
+And reproducibility: can you replay the exact input?
+
+140
+00:09:56,725 --> 00:09:57,895
+My notebook run.
+
+141
+00:09:57,895 --> 00:10:02,937
+Memory works: asked what it just asked, the model answered correctly.
+
+142
+00:10:02,937 --> 00:10:09,660
+Retrieval passes one chunk per question, with scores of point seven one and point five five.
+
+143
+00:10:09,660 --> 00:10:11,999
+The RAG answers cite source one.
+
+144
+00:10:11,999 --> 00:10:21,426
+Tool calling did not work: the three billion parameter model ignored the tool format and replied with plain text, so no tool ran.
+
+145
+00:10:21,426 --> 00:10:29,611
+Two calls timed out at the helper's two minute limit because my CPU was busy, so I reran those in my own script.
+
+146
+00:10:29,611 --> 00:10:30,853
+Streaming worked.
+
+147
+00:10:31,703 --> 00:10:32,443
+Takeaways.
+
+148
+00:10:32,443 --> 00:10:37,551
+An application is a model plus memory, knowledge, actions and checks.
+
+149
+00:10:37,551 --> 00:10:43,325
+RAG is chunk, embed, retrieve, cite, and retrieval quality decides everything.
+
+150
+00:10:43,325 --> 00:10:47,026
+Your code runs the tools, so you own their safety.
+
+151
+00:10:47,026 --> 00:10:51,098
+Evaluate traits automatically and read the answers too.
+
+152
+00:10:51,098 --> 00:10:55,170
+And check the context limit your runtime actually uses.
+
+153
+00:10:56,019 --> 00:10:57,012
+Short answers.
+
+154
+00:10:57,012 --> 00:10:59,492
+RAG adds facts the model never saw.
+
+155
+00:10:59,492 --> 00:11:06,508
+Token embeddings live inside the model; sentence embeddings represent whole passages for retrieval.
+
+156
+00:11:06,508 --> 00:11:08,635
+Chunking keeps things focused.
+
+157
+00:11:08,635 --> 00:11:13,666
+A minimum score plus permission to say not found handles bad retrieval.
+
+158
+00:11:13,666 --> 00:11:19,123
+And whitelisting stops the model calling functions you never meant to expose.
+
+159
+00:11:19,973 --> 00:11:24,142
+Evaluate accuracy with an eval set and by reading samples.
+
+160
+00:11:24,142 --> 00:11:31,402
+Log request ids, lengths, which sources were retrieved with their scores, tokens, latency and errors.
+
+161
+00:11:31,402 --> 00:11:38,661
+The checkpoint is a personal knowledge assistant over your own files, with a ten question evaluation.
+
+162
+00:11:39,511 --> 00:11:40,153
+Practice.
+
+163
+00:11:40,153 --> 00:11:45,140
+Add questions your documents can't answer and check the app admits it.
+
+164
+00:11:45,140 --> 00:11:51,481
+Replace the eval calculator with an ast based one and confirm the escape no longer works.
+
+165
+00:11:51,481 --> 00:11:54,189
+And log real token counts from Ollama.
+
+166
+00:11:55,039 --> 00:11:59,713
+This video is based on Build Your First LLM by Hasan Degismez.
+
+167
+00:11:59,713 --> 00:12:10,493
+The explanations and diagrams are my own, but the book goes deeper, so please support the author and buy it at leanpub dot com slash First LLM.
+
+168
+00:12:10,493 --> 00:12:15,695
+The code is on GitHub at First LLM slash code, under the MIT licence.
+
+169
+00:12:15,695 --> 00:12:19,615
+Thanks for watching, and see you in chapter sixteen.
+
