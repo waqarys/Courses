@@ -1,0 +1,282 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 38.07,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 38.07,
+  "dur": 19.84,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 7 roadmap",
+  "start": 57.91,
+  "dur": 23.16,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 81.07,
+  "dur": 30.61,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 111.68,
+  "dur": 3.86,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Junk in, junk out",
+  "start": 115.54,
+  "dur": 31.08,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Sourcing text: ethics & licensing",
+  "start": 146.62,
+  "dur": 38.16,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "Part 2",
+  "start": 184.78,
+  "dur": 3.2,
+  "divider": true
+ },
+ {
+  "slide": 9,
+  "title": "Files, sets, JSON",
+  "start": 187.97,
+  "dur": 42.25,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Regex and hashing",
+  "start": 230.22,
+  "dur": 35.98,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "\u26a0\ufe0f Book check: SHA-1 collision odds",
+  "start": 266.2,
+  "dur": 39.84,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Part 3",
+  "start": 306.05,
+  "dur": 3.26,
+  "divider": true
+ },
+ {
+  "slide": 13,
+  "title": "`clean_text` (notebook)",
+  "start": 309.31,
+  "dur": 36.68,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Decisions to make",
+  "start": 345.99,
+  "dur": 26.68,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Part 4",
+  "start": 372.67,
+  "dur": 3.56,
+  "divider": true
+ },
+ {
+  "slide": 16,
+  "title": "Dedup by hash (notebook)",
+  "start": 376.23,
+  "dur": 26.56,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "Exact vs near duplicates",
+  "start": 402.79,
+  "dur": 29.12,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 5",
+  "start": 431.91,
+  "dur": 3.09,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "Split by document, with a seed",
+  "start": 435.0,
+  "dur": 35.77,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "\u26a0\ufe0f Book check: the worked example's split",
+  "start": 470.76,
+  "dur": 44.15,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Part 6",
+  "start": 514.91,
+  "dur": 3.71,
+  "divider": true
+ },
+ {
+  "slide": 22,
+  "title": "Overlapping chunks",
+  "start": 518.62,
+  "dur": 29.27,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Overlap, visualised (my redraw)",
+  "start": 547.89,
+  "dur": 33.14,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Store as JSONL + quality checks",
+  "start": 581.03,
+  "dur": 40.27,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "The notebook's end-to-end walkthrough",
+  "start": 621.3,
+  "dur": 34.12,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Sanity checks after every stage (notebook)",
+  "start": 655.42,
+  "dur": 25.92,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Duplicate rate and top words (notebook)",
+  "start": 681.34,
+  "dur": 28.86,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "Dedup **before** split \u2014 why order matters",
+  "start": 710.2,
+  "dur": 27.71,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "A provenance README (example)",
+  "start": 737.91,
+  "dur": 18.45,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Part 7",
+  "start": 756.36,
+  "dur": 3.32,
+  "divider": true
+ },
+ {
+  "slide": 31,
+  "title": "Three Wells novels through the pipeline (my experiment)",
+  "start": 759.68,
+  "dur": 46.69,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Is \"4 chars \u2248 1 token\" right? (my experiment)",
+  "start": 806.37,
+  "dur": 33.65,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "Part 8",
+  "start": 840.03,
+  "dur": 2.32,
+  "divider": true
+ },
+ {
+  "slide": 34,
+  "title": "Exercises (my answers)",
+  "start": 842.35,
+  "dur": 49.85,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Key takeaways",
+  "start": 892.2,
+  "dur": 25.66,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Notebook run & book check",
+  "start": 917.86,
+  "dur": 29.1,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "Review questions",
+  "start": 946.95,
+  "dur": 51.68,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "Practice this",
+  "start": 998.63,
+  "dur": 25.08,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Up next: Chapter 8",
+  "start": 1023.72,
+  "dur": 15.93,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Credits",
+  "start": 1039.65,
+  "dur": 30.25,
+  "divider": true
+ }
+]

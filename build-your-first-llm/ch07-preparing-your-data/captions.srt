@@ -1,0 +1,800 @@
+1
+00:00:00,250 --> 00:00:06,233
+Welcome to chapter seven of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,233 --> 00:00:11,103
+Part three begins, and it begins not with the model but with the data.
+
+3
+00:00:11,103 --> 00:00:16,877
+Garbage in, garbage out is truer for language models than for almost anything else.
+
+4
+00:00:16,877 --> 00:00:22,721
+Today we build a complete data pipeline: clean, deduplicate, split, chunk and store.
+
+5
+00:00:22,721 --> 00:00:33,157
+I ran the book's chapter seven notebook, and I also pushed three real public domain novels through the same pipeline to see what happens on real text.
+
+6
+00:00:33,157 --> 00:00:37,470
+And I found a couple of mistakes in the book's worked example.
+
+7
+00:00:38,320 --> 00:00:42,413
+In part two we learned Python, tensors and the training loop.
+
+8
+00:00:42,413 --> 00:00:46,036
+Today we produce a clean dataset in JSON lines format.
+
+9
+00:00:46,036 --> 00:00:51,805
+In chapter eight we tokenize it, and from there we embed it, model it and train on it.
+
+10
+00:00:51,805 --> 00:00:57,307
+Everything follows the chapter seven notebook, which is linked in the description.
+
+11
+00:00:58,157 --> 00:00:59,457
+Here's the roadmap.
+
+12
+00:00:59,457 --> 00:01:00,826
+Why quality matters.
+
+13
+00:01:00,826 --> 00:01:03,564
+Where to get text you're allowed to use.
+
+14
+00:01:03,564 --> 00:01:08,630
+Five new Python tools: files, sets, JSON, regular expressions and hashing.
+
+15
+00:01:08,630 --> 00:01:16,501
+Then the pipeline itself: cleaning, deduplication, splitting without leakage, chunking, storage and quality checks.
+
+16
+00:01:16,501 --> 00:01:20,471
+Then my experiment with three real novels, and the review.
+
+17
+00:01:21,322 --> 00:01:22,350
+The vocabulary.
+
+18
+00:01:22,350 --> 00:01:25,641
+A corpus is the collection of text you train on.
+
+19
+00:01:25,641 --> 00:01:29,550
+Splits divide it into training, validation and test sets.
+
+20
+00:01:29,550 --> 00:01:36,339
+Data leakage is when evaluation data sneaks into training, making scores look better than they are.
+
+21
+00:01:36,339 --> 00:01:38,807
+Deduplication removes repeated text.
+
+22
+00:01:38,807 --> 00:01:42,579
+A chunk is a piece of long text sized to fit the model.
+
+23
+00:01:42,579 --> 00:01:47,859
+The context window is the maximum number of tokens the model can see at once.
+
+24
+00:01:47,859 --> 00:01:51,081
+And JSON lines stores one JSON object per line.
+
+25
+00:01:51,932 --> 00:01:52,561
+Part one.
+
+26
+00:01:52,561 --> 00:01:54,939
+Why data quality rules everything.
+
+27
+00:01:55,790 --> 00:02:02,949
+Language models happily memorise whatever you give them: typos, navigation menus, licence boilerplate, spam.
+
+28
+00:02:02,949 --> 00:02:06,860
+Cleaning your data is the cheapest accuracy boost there is.
+
+29
+00:02:06,860 --> 00:02:13,887
+The book's analogy is cooking: fresh ingredients and a good recipe beat a fancy stove with rotten produce.
+
+30
+00:02:13,887 --> 00:02:19,588
+The pipeline goes raw text, clean, deduplicate, split, chunk, and store as JSON lines.
+
+31
+00:02:19,588 --> 00:02:26,019
+And because each stage inherits the problems of the one before, check the data after every stage.
+
+32
+00:02:26,869 --> 00:02:28,438
+Where do you get text?
+
+33
+00:02:28,438 --> 00:02:32,433
+You don't need billions of tokens to learn the pipeline.
+
+34
+00:02:32,433 --> 00:02:34,287
+A few megabytes is plenty.
+
+35
+00:02:34,287 --> 00:02:42,205
+Use public domain books like Project Gutenberg, permissively licensed text, documentation, or your own writing.
+
+36
+00:02:42,205 --> 00:02:50,408
+Avoid personal data, sensitive records, and giant scraped dumps, where you inherit every mess and every legal risk.
+
+37
+00:02:50,408 --> 00:02:55,829
+And keep a small README recording where each text came from and its licence.
+
+38
+00:02:55,829 --> 00:02:58,183
+For my experiment I used three H.
+
+39
+00:02:58,183 --> 00:02:58,326
+G.
+
+40
+00:02:58,326 --> 00:03:04,175
+Wells novels from Project Gutenberg, which are public domain in the United States.
+
+41
+00:03:05,025 --> 00:03:05,706
+Part two.
+
+42
+00:03:05,706 --> 00:03:07,372
+Five new Python tools.
+
+43
+00:03:08,222 --> 00:03:09,575
+Three of the tools.
+
+44
+00:03:09,575 --> 00:03:18,768
+Files: open with a with block, which closes the file automatically even if something crashes, and always pass encoding utf eight.
+
+45
+00:03:18,768 --> 00:03:27,604
+Sets: they store only unique items, and checking whether something is in a set is instant, while a list checks item by item.
+
+46
+00:03:27,604 --> 00:03:32,521
+That matters when you ask have I seen this before thousands of times.
+
+47
+00:03:32,521 --> 00:03:43,210
+JSON: dumps converts a dictionary to a string, and ensure ascii equals false keeps characters like Chinese or emoji readable instead of escaping them.
+
+48
+00:03:43,210 --> 00:03:49,624
+JSON lines puts one record per line, so you can stream a huge file without loading it all.
+
+49
+00:03:50,474 --> 00:03:53,096
+Regular expressions describe patterns.
+
+50
+00:03:53,096 --> 00:04:00,343
+Less than, then one or more characters that aren't greater than, then greater than, matches any HTML tag.
+
+51
+00:04:00,343 --> 00:04:03,587
+Backslash s plus matches any run of whitespace.
+
+52
+00:04:03,587 --> 00:04:07,038
+And hashing gives a short fingerprint of any text.
+
+53
+00:04:07,038 --> 00:04:13,525
+The same input always gives the same hash, and a tiny change gives a completely different one.
+
+54
+00:04:13,525 --> 00:04:18,702
+I checked the book's SHA-1 values for hello and world, and they're correct.
+
+55
+00:04:18,702 --> 00:04:25,604
+For deduplication we compare forty character fingerprints instead of eight hundred character chunks.
+
+56
+00:04:26,454 --> 00:04:27,619
+One correction.
+
+57
+00:04:27,619 --> 00:04:33,988
+The book says SHA-1's collision risk is roughly one in two to the power one sixty.
+
+58
+00:04:33,988 --> 00:04:45,716
+That's the size of the output space, but the birthday paradox means collisions become likely after about two to the power eighty hashes, not one sixty.
+
+59
+00:04:45,716 --> 00:04:52,784
+And SHA-1 is cryptographically broken: researchers produced a deliberate collision in 2017.
+
+60
+00:04:52,784 --> 00:05:00,940
+For removing accidental duplicates from a small corpus, the book's conclusion still holds: SHA-1 is fine.
+
+61
+00:05:00,940 --> 00:05:05,445
+But if anyone could craft inputs against you, use SHA-256.
+
+62
+00:05:06,295 --> 00:05:07,031
+Part three.
+
+63
+00:05:07,031 --> 00:05:08,706
+Cleaning and normalising.
+
+64
+00:05:09,556 --> 00:05:11,676
+Here's the cleaning function.
+
+65
+00:05:11,676 --> 00:05:30,763
+First, NFKC Unicode normalisation, which converts compatibility characters to standard forms: the fi ligature becomes two letters, full width digits become normal digits, and the ellipsis character becomes three dots, which you can see in the notebook's output.
+
+66
+00:05:30,763 --> 00:05:33,762
+Accented letters like é stay as they are.
+
+67
+00:05:33,762 --> 00:05:40,929
+Then strip HTML tags, turn tabs and carriage returns into spaces, and collapse runs of whitespace.
+
+68
+00:05:40,929 --> 00:05:43,269
+Notice the smart quotes survive.
+
+69
+00:05:43,269 --> 00:05:45,389
+NFKC doesn't straighten them.
+
+70
+00:05:46,240 --> 00:05:47,748
+A few policy decisions.
+
+71
+00:05:47,748 --> 00:05:54,764
+Lowercasing shrinks the vocabulary but loses information, for example US the country versus us the pronoun.
+
+72
+00:05:54,764 --> 00:05:57,583
+Either choice is fine if you're consistent.
+
+73
+00:05:57,583 --> 00:06:01,911
+Keep punctuation, because models learn sentence structure from it.
+
+74
+00:06:01,911 --> 00:06:05,911
+Keep emoji and non-Latin scripts only if you'll support them.
+
+75
+00:06:05,911 --> 00:06:12,074
+And always look at the text before and after cleaning to make sure nothing important vanished.
+
+76
+00:06:12,924 --> 00:06:13,637
+Part four.
+
+77
+00:06:13,637 --> 00:06:15,634
+Deduplication and filtering.
+
+78
+00:06:16,483 --> 00:06:21,484
+Models memorise duplicates instead of learning patterns, so remove them early.
+
+79
+00:06:21,484 --> 00:06:26,869
+Hash every chunk, keep a set of hashes you've seen, and keep only first occurrences.
+
+80
+00:06:26,869 --> 00:06:29,561
+continue skips to the next loop iteration.
+
+81
+00:06:29,561 --> 00:06:32,574
+The notebook goes from four documents to three.
+
+82
+00:06:32,574 --> 00:06:42,190
+Then filter: drop chunks that are very short, under forty characters, or very long, over two thousand, and optionally run a language or content check.
+
+83
+00:06:43,040 --> 00:06:45,183
+One limitation to keep in mind.
+
+84
+00:06:45,183 --> 00:06:47,809
+Hashing only catches exact duplicates.
+
+85
+00:06:47,809 --> 00:06:53,822
+The cat sat full stop and the cat sat exclamation mark get completely different hashes.
+
+86
+00:06:53,822 --> 00:07:01,839
+Large scale pipelines use near duplicate detection, like MinHash with locality sensitive hashing, or n-gram overlap.
+
+87
+00:07:01,839 --> 00:07:09,095
+A cheap trick is to clean and normalise before hashing, which turns many near duplicates into exact ones.
+
+88
+00:07:09,095 --> 00:07:11,307
+That's why cleaning comes first.
+
+89
+00:07:12,157 --> 00:07:12,836
+Part five.
+
+90
+00:07:12,836 --> 00:07:14,397
+Splits without leakage.
+
+91
+00:07:15,247 --> 00:07:19,999
+Splits measure how well the model generalises to text it hasn't seen.
+
+92
+00:07:19,999 --> 00:07:28,745
+The rules: split by whole document, not by paragraph; eighty, ten, ten is typical; and set a seed so the split is reproducible.
+
+93
+00:07:28,745 --> 00:07:33,910
+The function copies the list, shuffles it with a fixed seed, and slices it.
+
+94
+00:07:33,910 --> 00:07:48,097
+Leakage example: if chapter one of a book is in training and chapter two is in validation, the model already knows the author's style and characters, and the validation score looks better than it really is.
+
+95
+00:07:48,097 --> 00:07:50,163
+Keep whole documents together.
+
+96
+00:07:51,013 --> 00:07:54,497
+And here's a real bug in the book's worked example.
+
+97
+00:07:54,497 --> 00:08:03,512
+It splits three documents with train at point three four and validation at point three three, and claims one document in each split.
+
+98
+00:08:03,512 --> 00:08:09,112
+But int of three times point three three is int of point nine nine, which is zero.
+
+99
+00:08:09,112 --> 00:08:12,664
+So validation is empty, and test gets two documents.
+
+100
+00:08:12,664 --> 00:08:18,264
+The book's own notebook prints exactly that: train one, validation zero, test two.
+
+101
+00:08:18,264 --> 00:08:25,982
+The same example also says the bird flew over the house has length thirty three, but it's twenty nine characters.
+
+102
+00:08:25,982 --> 00:08:34,314
+The lesson: int truncates, so for tiny data sets compute split sizes with round, or guarantee at least one item per split.
+
+103
+00:08:35,164 --> 00:08:35,792
+Part six.
+
+104
+00:08:35,792 --> 00:08:38,023
+Chunking for the context window.
+
+105
+00:08:38,873 --> 00:08:43,753
+Transformers have a fixed context window, so long text must be cut into chunks.
+
+106
+00:08:43,753 --> 00:08:55,922
+The function takes windows of eight hundred characters, and advances by eight hundred minus the overlap of two hundred, a stride of six hundred, so neighbouring chunks share two hundred characters.
+
+107
+00:08:55,922 --> 00:09:07,289
+The rule of thumb is about four characters per token for English, so eight hundred characters is roughly two hundred tokens, leaving room inside a five hundred and twelve token window.
+
+108
+00:09:08,139 --> 00:09:10,116
+Here's the overlap visualised.
+
+109
+00:09:10,116 --> 00:09:18,156
+Chunk one is zero to eight hundred, chunk two six hundred to fourteen hundred, chunk three twelve hundred to two thousand.
+
+110
+00:09:18,156 --> 00:09:22,506
+A sentence near position seven hundred appears whole in chunk two.
+
+111
+00:09:22,506 --> 00:09:34,632
+One side effect the book doesn't mention: with two thousand characters, the loop makes a fourth chunk from eighteen hundred to two thousand, which is entirely contained in chunk three.
+
+112
+00:09:34,632 --> 00:09:36,280
+That's a small duplicate.
+
+113
+00:09:36,280 --> 00:09:40,431
+You can stop the loop once a chunk reaches the end of the text.
+
+114
+00:09:41,281 --> 00:09:48,895
+Store the result as JSON lines, with fields for the text, its source, its split, and optionally its length.
+
+115
+00:09:48,895 --> 00:09:58,927
+Then run quality checks on every split: counts, average and maximum lengths, the most common words, and a few random samples read by a human.
+
+116
+00:09:58,927 --> 00:10:13,727
+Red flags include HTML words like div or href among the top words, a duplicate rate above five percent, a maximum length many times the average, and the replacement character that signals an encoding problem.
+
+117
+00:10:13,727 --> 00:10:20,699
+And always deduplicate before splitting, otherwise the same chunk can land in both train and test.
+
+118
+00:10:21,549 --> 00:10:27,024
+Here's the notebook's complete walkthrough, as it actually printed on my run.
+
+119
+00:10:27,024 --> 00:10:31,788
+Four raw documents, two of them identical once the HTML is removed.
+
+120
+00:10:31,788 --> 00:10:35,271
+Cleaning normalises the tab and the extra spaces.
+
+121
+00:10:35,271 --> 00:10:37,191
+Deduplication leaves three.
+
+122
+00:10:37,191 --> 00:10:40,746
+The split gives one, zero and two, as we just saw.
+
+123
+00:10:40,746 --> 00:10:47,571
+The single training document becomes one chunk, and the JSON record has a length of twenty four.
+
+124
+00:10:47,571 --> 00:10:54,823
+The book's printed version shows a different, impossible split, so always trust the run over the page.
+
+125
+00:10:55,673 --> 00:11:04,375
+The notebook includes a sanity check function that prints the count, average, maximum and minimum length of the chunks, plus a sample.
+
+126
+00:11:04,375 --> 00:11:14,051
+On the toy corpus it found four chunks, average sixty three characters, no HTML leakage, and it warned that one chunk is shorter than ten characters.
+
+127
+00:11:14,051 --> 00:11:19,117
+That's exactly the kind of thing you want to catch before training, not after.
+
+128
+00:11:19,117 --> 00:11:20,740
+Run it after every stage.
+
+129
+00:11:21,590 --> 00:11:22,969
+Two more quick checks.
+
+130
+00:11:22,969 --> 00:11:26,979
+The duplicate rate is one minus unique hashes over total hashes.
+
+131
+00:11:26,979 --> 00:11:30,739
+And top words just counts the most frequent lowercase words.
+
+132
+00:11:30,739 --> 00:11:34,624
+If markup words like div or href show up, cleaning isn't done.
+
+133
+00:11:34,624 --> 00:11:41,016
+On the Time Machine, the top words were the, and, then I, at fifteen hundred and thirty eight, and of.
+
+134
+00:11:41,016 --> 00:11:45,966
+The capital I ranks third because the story is told by a first person narrator.
+
+135
+00:11:45,966 --> 00:11:49,601
+Top words tell you about your corpus, not just about bugs.
+
+136
+00:11:50,451 --> 00:11:55,369
+Let's stress the ordering rule, because it's the most common pipeline mistake.
+
+137
+00:11:55,369 --> 00:12:03,943
+If you split first and deduplicate afterwards within each split, a paragraph that appears twice can land once in train and once in test.
+
+138
+00:12:03,943 --> 00:12:08,672
+Then the model has literally seen the test answer, and the test score lies.
+
+139
+00:12:08,672 --> 00:12:14,094
+On web scale data, boilerplate repeats thousands of times, so this matters enormously.
+
+140
+00:12:14,094 --> 00:12:17,309
+The order is clean, deduplicate, split, then chunk.
+
+141
+00:12:18,159 --> 00:12:29,660
+And here's what a provenance README might look like: each file, its author, its source with the Gutenberg number, its licence status, and a one line summary of how it was processed.
+
+142
+00:12:29,660 --> 00:12:35,759
+It takes two minutes to write, and future you, or anyone reviewing your model, will be grateful.
+
+143
+00:12:36,609 --> 00:12:37,410
+Part seven.
+
+144
+00:12:37,410 --> 00:12:39,084
+A real book experiment.
+
+145
+00:12:39,934 --> 00:12:43,534
+I ran three public domain novels through the same steps.
+
+146
+00:12:43,534 --> 00:12:50,221
+First I stripped Project Gutenberg's licence header and footer, which is about ten percent of each file.
+
+147
+00:12:50,221 --> 00:12:53,692
+Pure boilerplate you don't want the model to memorise.
+
+148
+00:12:53,692 --> 00:12:58,771
+Then I split into paragraphs, cleaned them, deduplicated, filtered and chunked.
+
+149
+00:12:58,771 --> 00:13:07,965
+The duplicate rate was only zero point three eight percent: things like the one word line Well, in quotes, which appears seven times, and by H.
+
+150
+00:13:07,965 --> 00:13:08,094
+G.
+
+151
+00:13:08,094 --> 00:13:09,251
+Wells three times.
+
+152
+00:13:09,251 --> 00:13:16,516
+But three hundred and thirty eight paragraphs were shorter than forty characters, mostly short lines of dialogue.
+
+153
+00:13:16,516 --> 00:13:22,495
+The book's length filter drops all of them, which for fiction may be throwing away good data.
+
+154
+00:13:22,495 --> 00:13:25,774
+Filters are policy decisions, not universal truths.
+
+155
+00:13:26,623 --> 00:13:29,669
+Is the four characters per token rule right?
+
+156
+00:13:29,669 --> 00:13:33,198
+I ran GPT-2's real tokenizer over The Time Machine.
+
+157
+00:13:33,198 --> 00:13:39,704
+The answer is four point three characters per token, so the rule holds well for English prose.
+
+158
+00:13:39,704 --> 00:13:54,238
+The eight hundred character chunks came out between a hundred and eight and two hundred and forty six tokens, averaging a hundred and eighty seven, all comfortably inside a five hundred and twelve token window.
+
+159
+00:13:54,238 --> 00:13:59,428
+Victorian prose with long words and dialogue gives a fair amount of spread.
+
+160
+00:14:00,278 --> 00:14:00,982
+Part eight.
+
+161
+00:14:00,982 --> 00:14:01,750
+Wrapping up.
+
+162
+00:14:02,600 --> 00:14:04,516
+My answers to the exercises.
+
+163
+00:14:04,516 --> 00:14:11,496
+Hash detective: a duplicated paragraph gives an identical SHA-1, and with a set each check is instant.
+
+164
+00:14:11,496 --> 00:14:24,156
+Splitter check with seed one twenty three and twelve documents: int of nine point six is nine for training, int of one point two is one for validation, and the remaining two go to test.
+
+165
+00:14:24,156 --> 00:14:26,688
+A rerun gives exactly the same split.
+
+166
+00:14:26,688 --> 00:14:42,564
+Chunk reality, three thousand characters with eight hundred and two hundred: chunks start at zero, six hundred, twelve hundred, eighteen hundred and twenty four hundred, so five chunks, with the last one six hundred characters long.
+
+167
+00:14:42,564 --> 00:14:51,597
+And the end of chapter exercises, the full pipeline, the statistics and the casing comparison, are what I did with the Wells novels.
+
+168
+00:14:52,447 --> 00:14:53,654
+The key takeaways.
+
+169
+00:14:53,654 --> 00:14:57,409
+Data quality is the cheapest accuracy boost you can buy.
+
+170
+00:14:57,409 --> 00:15:01,566
+Use text you're allowed to use, and record where it came from.
+
+171
+00:15:01,566 --> 00:15:06,193
+Clean it, deduplicate before splitting, and split by whole documents.
+
+172
+00:15:06,193 --> 00:15:12,899
+Chunk with overlap, remembering about four characters per token, four point three in my measurement.
+
+173
+00:15:12,899 --> 00:15:17,258
+And store it as JSON lines, with sanity checks after every stage.
+
+174
+00:15:18,107 --> 00:15:20,233
+My notebook run and book check.
+
+175
+00:15:20,233 --> 00:15:26,060
+The chapter seven notebook ran end to end on a CPU, all eleven code cells, no errors.
+
+176
+00:15:26,060 --> 00:15:34,355
+Three errata: the worked example's split is one, zero, two rather than one, one, one, which the notebook itself confirms.
+
+177
+00:15:34,355 --> 00:15:38,606
+The bird sentence is twenty nine characters, not thirty three.
+
+178
+00:15:38,606 --> 00:15:41,622
+And the SHA-1 collision odds are overstated.
+
+179
+00:15:41,622 --> 00:15:46,353
+Plus one note: the chunking loop can produce a redundant final chunk.
+
+180
+00:15:47,203 --> 00:15:49,849
+The review questions, with my answers.
+
+181
+00:15:49,849 --> 00:15:56,116
+One: lowercasing shrinks the vocabulary and merges variants, but loses names and acronyms.
+
+182
+00:15:56,116 --> 00:16:01,408
+Keep case when they matter, or when you want natural looking generated text.
+
+183
+00:16:01,408 --> 00:16:09,764
+Two: deduplication prevents memorisation and wasted compute, and stops inflated evaluation when duplicates cross splits.
+
+184
+00:16:09,764 --> 00:16:19,303
+Three: a hash is a fixed length fingerprint, and SHA-1 is fine for accidental duplicates at small scale, though not against an adversary.
+
+185
+00:16:19,303 --> 00:16:26,823
+Four: split by document because text from the same document is correlated, which would leak into validation.
+
+186
+00:16:26,823 --> 00:16:32,324
+Five: overlap ensures text near a boundary appears whole in at least one chunk.
+
+187
+00:16:32,324 --> 00:16:38,034
+Six: JSON lines is streamable, greppable and appendable, with one record per line.
+
+188
+00:16:38,884 --> 00:16:40,106
+Your practice list.
+
+189
+00:16:40,106 --> 00:16:46,984
+Run the chapter seven notebook, and fix the worked example's split so every set gets at least one document.
+
+190
+00:16:46,984 --> 00:16:52,255
+Download a Gutenberg book, strip its header and footer, and run the full pipeline.
+
+191
+00:16:52,255 --> 00:16:55,212
+Measure characters per token on your own text.
+
+192
+00:16:55,212 --> 00:16:58,876
+Compare the top fifty words with and without lowercasing.
+
+193
+00:16:58,876 --> 00:17:03,119
+And keep your train dot jsonl, because chapter eight tokenizes it.
+
+194
+00:17:03,969 --> 00:17:05,435
+That's chapter seven.
+
+195
+00:17:05,435 --> 00:17:09,346
+We now have clean, deduplicated, well split text chunks.
+
+196
+00:17:09,346 --> 00:17:19,051
+In chapter eight, we turn those strings into token IDs, building byte pair encoding from scratch and comparing it to production tokenizers.
+
+197
+00:17:19,901 --> 00:17:24,955
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+198
+00:17:24,955 --> 00:17:34,137
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+199
+00:17:34,137 --> 00:17:45,740
+The code shown comes from the companion repository at github dot com slash First LLM slash code, under the MIT license, and the novels came from Project Gutenberg.
+
+200
+00:17:45,740 --> 00:17:49,299
+Thanks for watching, and see you in chapter eight.
+
