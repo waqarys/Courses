@@ -1,0 +1,185 @@
+{
+ "log": [
+  {
+   "step": 0,
+   "train": 0,
+   "val": 10.863679885864258,
+   "ppl": 52243.97676014187,
+   "t": 19
+  },
+  {
+   "step": 50,
+   "train": 9.391221133349774,
+   "val": 8.901768207550049,
+   "ppl": 7344.949458803401,
+   "t": 290
+  },
+  {
+   "step": 100,
+   "train": 6.782758610659338,
+   "val": 6.452539348602295,
+   "ppl": 634.3109861473176,
+   "t": 407
+  },
+  {
+   "step": 150,
+   "train": 6.067916616259018,
+   "val": 6.08124475479126,
+   "ppl": 437.57352761264343,
+   "t": 644
+  },
+  {
+   "step": 200,
+   "train": 5.769430649779104,
+   "val": 5.862519598007202,
+   "ppl": 351.60894207388463,
+   "t": 795
+  },
+  {
+   "step": 250,
+   "train": 5.526436118142227,
+   "val": 5.645402956008911,
+   "ppl": 282.98756479069925,
+   "t": 926
+  },
+  {
+   "step": 300,
+   "train": 5.34767339618223,
+   "val": 5.495765924453735,
+   "ppl": 243.65807838968166,
+   "t": 1083
+  },
+  {
+   "step": 350,
+   "train": 5.238639471748789,
+   "val": 5.368905067443848,
+   "ppl": 214.6277361054901,
+   "t": 1229
+  },
+  {
+   "step": 400,
+   "train": 5.059234445038942,
+   "val": 5.301931571960449,
+   "ppl": 200.72414890566475,
+   "t": 1369
+  },
+  {
+   "step": 450,
+   "train": 5.013115038849509,
+   "val": 5.238967800140381,
+   "ppl": 188.47545762588754,
+   "t": 1528
+  },
+  {
+   "step": 500,
+   "train": 4.9229567876214855,
+   "val": 5.165298414230347,
+   "ppl": 175.08970003468949,
+   "t": 1725
+  },
+  {
+   "step": 550,
+   "train": 4.849562530855549,
+   "val": 5.115687274932862,
+   "ppl": 166.61525212845882,
+   "t": 1961
+  },
+  {
+   "step": 600,
+   "train": 4.759285424365654,
+   "val": 5.067040491104126,
+   "ppl": 158.70394589789305,
+   "t": 2222
+  },
+  {
+   "step": 650,
+   "train": 4.682347600645667,
+   "val": 5.034613227844238,
+   "ppl": 153.64015738375488,
+   "t": 2384
+  },
+  {
+   "step": 700,
+   "train": 4.655264418782583,
+   "val": 4.997416973114014,
+   "ppl": 148.03029860473154,
+   "t": 2565
+  },
+  {
+   "step": 750,
+   "train": 4.6161782599379855,
+   "val": 4.958952236175537,
+   "ppl": 142.44446951910473,
+   "t": 2982
+  },
+  {
+   "step": 800,
+   "train": 4.5672761138783375,
+   "val": 4.949693250656128,
+   "ppl": 141.13166523518407,
+   "t": 3441
+  },
+  {
+   "step": 850,
+   "train": 4.543078468423084,
+   "val": 4.931138038635254,
+   "ppl": 138.53708321519676,
+   "t": 3710
+  },
+  {
+   "step": 900,
+   "train": 4.4937019511515555,
+   "val": 4.90378885269165,
+   "ppl": 134.79954898872668,
+   "t": 4043
+  },
+  {
+   "step": 950,
+   "train": 4.485843864553797,
+   "val": 4.890431308746338,
+   "ppl": 133.010930458899,
+   "t": 4324
+  },
+  {
+   "step": 1000,
+   "train": 4.461260935676144,
+   "val": 4.884522819519043,
+   "ppl": 132.2273539653748,
+   "t": 4609
+  },
+  {
+   "step": 1050,
+   "train": 4.418287430711888,
+   "val": 4.8743072032928465,
+   "ppl": 130.88344617314849,
+   "t": 5049
+  },
+  {
+   "step": 1100,
+   "train": 4.41238576612586,
+   "val": 4.874292087554932,
+   "ppl": 130.88146778823116,
+   "t": 5294
+  },
+  {
+   "step": 1150,
+   "train": 4.453811482073529,
+   "val": 4.869534587860107,
+   "ppl": 130.2602780717704,
+   "t": 5458
+  },
+  {
+   "step": 1200,
+   "train": 4.435202115158395,
+   "val": 4.866571950912475,
+   "ppl": 129.8749352564304,
+   "t": 5535
+  }
+ ],
+ "gen": {
+  "ROMEO:": "ROMEO:\nAnd makes the news, look'd again.\n\nThird Lord:\nSo I shall have not so, my lord!\n\nLTA:\nI will thou judge my kaced your head.\n\nGREUKE VINCENTIO:\n customizable to your war's love.",
+  "The king": "The king is married:\n' the purpose, my pretty suits,\nWith letters of carbonum'd by the matter.\n\nANGABELLA:\nThe inclination;\nTo my lord,\nLORD OF AUMNurse:\nWell, and so, God.\n\nGLOU",
+  "To be or not to be": "To be or not to be the sequel of her heart.\n\nNo, and the place,\nTo the town of my own person\nAnd thou soft than theert did must trust's name.\n\nAMINIUS:\nI'll come:\nAnd I stay, my daughter, for a very bastard,",
+  "KING HENRY:": "KING HENRY:\nIt should said long:\nA saved before, my lord.\n\nQUEEN MARGARET:\nI tell me not it, and knee,\nAnd being my heart as thou shall be as I love,\nYou musicianarted me:\nA word and conceel to"
+ }
+}

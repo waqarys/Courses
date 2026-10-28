@@ -1,0 +1,310 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 33.46,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 33.46,
+  "dur": 17.19,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 14 roadmap",
+  "start": 50.65,
+  "dur": 14.7,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 65.35,
+  "dur": 23.02,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 88.36,
+  "dur": 3.13,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "Models continue text",
+  "start": 91.5,
+  "dur": 22.12,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Anatomy of a good prompt",
+  "start": 113.62,
+  "dur": 14.08,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "System vs user messages",
+  "start": 127.69,
+  "dur": 21.35,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "Part 2",
+  "start": 149.04,
+  "dur": 2.96,
+  "divider": true
+ },
+ {
+  "slide": 10,
+  "title": "Temperature reshapes the distribution",
+  "start": 152.01,
+  "dur": 15.16,
+  "divider": false
+ },
+ {
+  "slide": 11,
+  "title": "Checking the book's temperature table",
+  "start": 167.17,
+  "dur": 25.08,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "Picking a temperature",
+  "start": 192.26,
+  "dur": 20.88,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Temperature in code",
+  "start": 213.14,
+  "dur": 18.04,
+  "divider": false
+ },
+ {
+  "slide": 14,
+  "title": "Top-p: a dynamic shortlist",
+  "start": 231.18,
+  "dur": 16.25,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Top-p in code",
+  "start": 247.44,
+  "dur": 16.17,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Part 3",
+  "start": 263.6,
+  "dur": 5.8,
+  "divider": true
+ },
+ {
+  "slide": 17,
+  "title": "Zero-shot: just ask",
+  "start": 269.4,
+  "dur": 13.05,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Few-shot: show, don't tell",
+  "start": 282.45,
+  "dur": 15.74,
+  "divider": false
+ },
+ {
+  "slide": 19,
+  "title": "Chain-of-thought",
+  "start": 298.2,
+  "dur": 16.87,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "My CoT run (Llama 3.2 3B)",
+  "start": 315.07,
+  "dur": 27.9,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Delimiters: clear boundaries",
+  "start": 342.97,
+  "dur": 15.63,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "Structured output: JSON",
+  "start": 358.6,
+  "dur": 10.58,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Defensive parsing",
+  "start": 369.18,
+  "dur": 12.33,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "My JSON run: instructions vs `format=json`",
+  "start": 381.51,
+  "dur": 27.26,
+  "divider": false
+ },
+ {
+  "slide": 25,
+  "title": "Prompt evolution",
+  "start": 408.77,
+  "dur": 11.05,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Part 4",
+  "start": 419.81,
+  "dur": 2.36,
+  "divider": true
+ },
+ {
+  "slide": 27,
+  "title": "What is prompt injection?",
+  "start": 422.18,
+  "dur": 16.36,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "My injection test (Llama 3.2 3B)",
+  "start": 438.54,
+  "dur": 27.99,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Four layers of defence",
+  "start": 466.52,
+  "dur": 21.2,
+  "divider": false
+ },
+ {
+  "slide": 30,
+  "title": "Input validation (book)",
+  "start": 487.73,
+  "dur": 9.9,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "When prompts can't protect you",
+  "start": 497.62,
+  "dur": 15.87,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Part 5",
+  "start": 513.49,
+  "dur": 2.77,
+  "divider": true
+ },
+ {
+  "slide": 33,
+  "title": "The iteration trap",
+  "start": 516.26,
+  "dur": 9.72,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "The chapter's evaluation set",
+  "start": 525.99,
+  "dur": 12.2,
+  "divider": false
+ },
+ {
+  "slide": 35,
+  "title": "Scoring: strict vs lenient",
+  "start": 538.18,
+  "dur": 17.28,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "My eval: BAD vs BETTER vs BEST (Llama 3.2 3B, T=0)",
+  "start": 555.46,
+  "dur": 46.37,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "The iteration workflow",
+  "start": 601.83,
+  "dur": 11.73,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "When prompts aren't enough",
+  "start": 613.56,
+  "dur": 17.58,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Notebook run summary",
+  "start": 631.14,
+  "dur": 19.09,
+  "divider": false
+ },
+ {
+  "slide": 40,
+  "title": "Key takeaways",
+  "start": 650.23,
+  "dur": 18.19,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Review questions: short answers",
+  "start": 668.42,
+  "dur": 26.64,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Review 6\u20137 + checkpoint",
+  "start": 695.06,
+  "dur": 20.58,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "Practice this",
+  "start": 715.65,
+  "dur": 11.47,
+  "divider": false
+ },
+ {
+  "slide": 44,
+  "title": "Credits",
+  "start": 727.12,
+  "dur": 25.34,
+  "divider": false
+ }
+]
