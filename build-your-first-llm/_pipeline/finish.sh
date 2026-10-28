@@ -13,7 +13,7 @@ PY
 TITLE=$(sed -n 's/^\*\*Title:\*\* //p' $D/youtube.md); DUR=$(sed -n 's/^\*\*Duration:\*\* \([0-9:]*\).*/\1/p' $D/youtube.md)
 grep -q "^ch$N |" $U/READY.txt 2>/dev/null || echo "ch$N | $TITLE | $DUR" >> $U/READY.txt
 R=_src/courses-repo; B=$R/build-your-first-llm/$D; mkdir -p $B/img
-cp $D/{slides.md,notes.md,script.md,youtube.md,captions.srt,timings.json,thumbnail.png} $B/; cp $D/img/*.png $B/img/ 2>/dev/null || true
+cp $D/{slides.md,notes.md,script.md,youtube.md,captions.srt,timings.json,thumbnail.png} $B/; cp $D/img/*.png $B/img/ 2>/dev/null || true; cp $D/*.py $B/ 2>/dev/null || true
 cp _pipeline/*.py _pipeline/*.css _pipeline/*.sh $R/build-your-first-llm/_pipeline/ 2>/dev/null || true
 [ -f ERRATA.md ] && cp ERRATA.md $R/build-your-first-llm/ERRATA.md
 python3 - "$R/build-your-first-llm/README.md" "$D" "$((10#$N))" <<'PY'

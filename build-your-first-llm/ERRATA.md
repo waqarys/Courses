@@ -11,3 +11,5 @@ Mistakes I found while verifying the book's text against running code (PyTorch 2
 | 4 | §4.4.2 LayerNorm example | `[102.5, 98.3, 105.7, 95.2]` → `[0.52, -0.31, 1.12, -0.78]` | → **`[0.52, -0.53, 1.32, -1.31]`** (book's output doesn't sum to 0) | `F.layer_norm` |
 | 4 | §4.2.5 GELU note | "Most modern LLMs (GPT, Claude, LLaMA) use GELU or close variants" | LLaMA uses **SwiGLU** (gated FFN with SiLU); Claude's architecture is unpublished | model papers |
 | 4 | §4.1.7 RoPE | "LLaMA, Mistral, and GPT-4 often use RoPE" | GPT-4's architecture is **not published** | — |
+| 5 | §5.4.1 Variables | `print(len(output))  # 68` | **71** (60 letters + 11 spaces); the book's own notebook prints 71 | ran notebook |
+| 6 | §6.12 Gotchas (embeddings) | "GPT-2 uses learned position embeddings; BERT uses sinusoidal (fixed)" | BERT uses **learned** absolute position embeddings (512×768); sinusoidal = 2017 Transformer | BERT config/paper |

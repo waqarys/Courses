@@ -1,0 +1,896 @@
+1
+00:00:00,250 --> 00:00:06,216
+Welcome to chapter five of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,216 --> 00:00:12,464
+This is where part two begins, and where we stop drawing diagrams and start writing code.
+
+3
+00:00:12,464 --> 00:00:26,433
+In this chapter we'll run a real language model in a few lines, learn the Python we need to understand what just happened, and build our own tokenizer from scratch, the very first stage of every LLM.
+
+4
+00:00:26,433 --> 00:00:33,524
+I ran the book's chapter five notebook end to end for this video, and I'll show you the real outputs.
+
+5
+00:00:34,374 --> 00:00:37,825
+In part one we learned how LLMs work on paper.
+
+6
+00:00:37,825 --> 00:00:44,578
+Part two gives us the tools: Python, NumPy, PyTorch, tokenizers and small neural networks.
+
+7
+00:00:44,578 --> 00:00:49,905
+Today we run GPT-2, learn the Python essentials, and build a tokenizer.
+
+8
+00:00:49,905 --> 00:00:58,459
+Everything follows the book's chapter five notebook, which you can open in Colab from the link in the description.
+
+9
+00:00:59,309 --> 00:01:00,612
+Here's the roadmap.
+
+10
+00:01:00,612 --> 00:01:04,521
+We start with the hook: running GPT-2 in about ten lines.
+
+11
+00:01:04,521 --> 00:01:05,618
+Then why Python.
+
+12
+00:01:05,618 --> 00:01:09,664
+Then the basics: variables, strings, numbers and f-strings.
+
+13
+00:01:09,664 --> 00:01:12,681
+Lists and dictionaries give us a vocabulary.
+
+14
+00:01:12,681 --> 00:01:15,698
+Control flow and loops handle unknown words.
+
+15
+00:01:15,698 --> 00:01:18,578
+Functions give us tokenize and detokenize.
+
+16
+00:01:18,578 --> 00:01:23,653
+A class packages it all into a SimpleTokenizer shaped like Hugging Face's.
+
+17
+00:01:23,653 --> 00:01:28,727
+Then we come full circle, solve the exercises and do the review questions.
+
+18
+00:01:29,578 --> 00:01:31,419
+The vocabulary for today.
+
+19
+00:01:31,419 --> 00:01:34,440
+A variable is a name attached to a value.
+
+20
+00:01:34,440 --> 00:01:39,081
+A string is text, which is what language models read and write.
+
+21
+00:01:39,081 --> 00:01:43,944
+A list is an ordered collection, perfect for a sequence of tokens.
+
+22
+00:01:43,944 --> 00:01:49,249
+A dictionary maps keys to values, which is exactly what a vocabulary is.
+
+23
+00:01:49,249 --> 00:01:53,227
+A function is reusable code with inputs and an output.
+
+24
+00:01:53,227 --> 00:01:59,121
+A class is a blueprint that bundles data and functions, like a tokenizer object.
+
+25
+00:01:59,121 --> 00:02:02,510
+A tokenizer converts text to numbers and back.
+
+26
+00:02:02,510 --> 00:02:08,036
+And a token is one unit of text, a word, a piece of a word, or a character.
+
+27
+00:02:08,885 --> 00:02:09,733
+Part one.
+
+28
+00:02:09,733 --> 00:02:10,580
+The hook.
+
+29
+00:02:10,580 --> 00:02:12,085
+Let's run GPT-2.
+
+30
+00:02:12,936 --> 00:02:15,673
+Here's the cell from the book's notebook.
+
+31
+00:02:15,673 --> 00:02:23,953
+pipeline, from Hugging Face's transformers library, downloads and loads GPT-2, a hundred and twenty four million parameters.
+
+32
+00:02:23,953 --> 00:02:34,169
+Then we call the generator with a prompt, the secret to building AI is, ask for twenty new tokens, and turn on sampling so the output is a little random.
+
+33
+00:02:34,169 --> 00:02:36,907
+The pad token ID just silences a warning.
+
+34
+00:02:36,907 --> 00:02:37,574
+That's it.
+
+35
+00:02:37,574 --> 00:02:41,714
+You're driving one of the most important models in AI history.
+
+36
+00:02:42,564 --> 00:02:46,142
+And here's what I got when I ran it on a plain CPU.
+
+37
+00:02:46,142 --> 00:02:51,264
+The secret to building AI is to know that people are not afraid to learn.
+
+38
+00:02:51,264 --> 00:02:55,614
+Then it wanders off into conducted by the National Academy of.
+
+39
+00:02:55,614 --> 00:03:01,087
+Your output will be different, because sampling draws random tokens each time.
+
+40
+00:03:01,087 --> 00:03:06,489
+It's fluent-ish but drifts off topic, which is typical of a small base model.
+
+41
+00:03:06,489 --> 00:03:15,049
+One small detail: the comment says twenty more words, but max new tokens counts tokens, and a token can be part of a word.
+
+42
+00:03:15,899 --> 00:03:16,673
+Why Python?
+
+43
+00:03:16,673 --> 00:03:17,517
+Two reasons.
+
+44
+00:03:17,517 --> 00:03:21,879
+It's readable: for word in sentence says exactly what it does.
+
+45
+00:03:21,879 --> 00:03:26,452
+And the ecosystem: NumPy, PyTorch and Hugging Face already exist.
+
+46
+00:03:26,452 --> 00:03:27,719
+Isn't Python slow?
+
+47
+00:03:27,719 --> 00:03:29,056
+Raw Python is, yes.
+
+48
+00:03:29,056 --> 00:03:31,588
+But it doesn't do the heavy lifting.
+
+49
+00:03:31,588 --> 00:03:37,569
+When you called pipeline, Python was gluing together highly optimised C and GPU code.
+
+50
+00:03:37,569 --> 00:03:40,454
+Python conducts, and the orchestra plays.
+
+51
+00:03:41,304 --> 00:03:41,937
+Part two.
+
+52
+00:03:41,937 --> 00:03:43,906
+Storing and processing text.
+
+53
+00:03:44,756 --> 00:03:46,913
+A variable is a labelled container.
+
+54
+00:03:46,913 --> 00:03:49,378
+Here output and prompt hold two strings.
+
+55
+00:03:49,378 --> 00:03:53,568
+len gives the number of characters, and type confirms it's a string.
+
+56
+00:03:53,568 --> 00:04:00,962
+split breaks the text into a list of words, and lower makes everything lowercase first, which is called method chaining.
+
+57
+00:04:00,962 --> 00:04:06,507
+And output, square bracket, len of prompt, colon, is slicing: everything after the prompt.
+
+58
+00:04:06,507 --> 00:04:09,588
+When I ran it, the length printed was seventy one.
+
+59
+00:04:10,438 --> 00:04:11,460
+A small erratum.
+
+60
+00:04:11,460 --> 00:04:15,357
+In the book's text, the comment says this prints sixty eight.
+
+61
+00:04:15,357 --> 00:04:20,275
+But the real answer, and what the book's own notebook prints, is seventy one.
+
+62
+00:04:20,275 --> 00:04:25,449
+len counts every character, including the eleven spaces between the twelve words.
+
+63
+00:04:25,449 --> 00:04:32,284
+It's a trivial slip, but it's a good habit to form right now: never trust a comment over the actual output.
+
+64
+00:04:32,284 --> 00:04:32,731
+Run it.
+
+65
+00:04:33,581 --> 00:04:38,087
+Slicing deserves a slide of its own, because we'll use it constantly.
+
+66
+00:04:38,087 --> 00:04:41,482
+Index zero is the first item, minus one is the last.
+
+67
+00:04:41,482 --> 00:04:43,702
+Colon three means the first three.
+
+68
+00:04:43,702 --> 00:04:46,575
+Four colon means from index four to the end.
+
+69
+00:04:46,575 --> 00:04:55,520
+And two slices we'll see in every training loop: colon minus one, everything except the last, and one colon, everything except the first.
+
+70
+00:04:55,520 --> 00:05:00,483
+Keep those last two in mind, because they come back in the review questions.
+
+71
+00:05:01,333 --> 00:05:10,395
+Numbers come in two main kinds: integers like fifty thousand two hundred and fifty seven, and floats like point zero zero zero one.
+
+72
+00:05:10,395 --> 00:05:13,024
+Underscores make big numbers readable.
+
+73
+00:05:13,024 --> 00:05:27,551
+And f-strings let you put values straight into text: colon comma adds thousands separators, colon point two e gives scientific notation, and you can even compute inside the braces, like integer division by two.
+
+74
+00:05:27,551 --> 00:05:36,267
+Fifty thousand two hundred and fifty seven divided by two, rounded down, is twenty five thousand one hundred and twenty eight.
+
+75
+00:05:36,267 --> 00:05:39,449
+You'll write f-strings in every training loop.
+
+76
+00:05:40,299 --> 00:05:41,124
+Part three.
+
+77
+00:05:41,124 --> 00:05:42,774
+Building a vocabulary.
+
+78
+00:05:43,624 --> 00:05:45,450
+Here's the crucial insight.
+
+79
+00:05:45,450 --> 00:05:47,005
+GPT-2 never sees words.
+
+80
+00:05:47,005 --> 00:05:48,087
+It sees numbers.
+
+81
+00:05:48,087 --> 00:05:58,975
+The book's prompt, the secret to building AI is, becomes four six four, three two hundred, two eight four, two six one five, nine five five two, three one eight.
+
+82
+00:05:58,975 --> 00:06:02,897
+I checked those with the real tokenizer and they're right.
+
+83
+00:06:02,897 --> 00:06:04,453
+So we need a tokenizer.
+
+84
+00:06:04,453 --> 00:06:11,485
+Text goes in, gets lowercased and split, each word is looked up in a vocabulary, and out come token IDs.
+
+85
+00:06:12,335 --> 00:06:15,725
+First, collect all the words from some training text.
+
+86
+00:06:15,725 --> 00:06:18,283
+The notebook uses three short sentences.
+
+87
+00:06:18,283 --> 00:06:24,486
+We loop over them, lowercase and split each one, and use extend to add the words to one big list.
+
+88
+00:06:24,486 --> 00:06:26,596
+extend adds each item separately.
+
+89
+00:06:26,596 --> 00:06:32,095
+If you used append, you'd add the whole list as a single item, a classic beginner bug.
+
+90
+00:06:32,095 --> 00:06:38,490
+Then indexing: the first word is the, the last is examples, and the first three are the, secret, to.
+
+91
+00:06:39,340 --> 00:06:43,698
+Now the key step: a dictionary mapping each word to a number.
+
+92
+00:06:43,698 --> 00:06:46,055
+We start with two special tokens.
+
+93
+00:06:46,055 --> 00:06:52,341
+PAD, ID zero, fills empty space so that sequences in a batch line up to the same length.
+
+94
+00:06:52,341 --> 00:06:56,342
+UNK, ID one, is the fallback for words we've never seen.
+
+95
+00:06:56,342 --> 00:07:05,842
+Then for each word, if it isn't in the vocabulary yet, we give it the next free ID, which is just the current size of the dictionary.
+
+96
+00:07:05,842 --> 00:07:10,128
+Fourteen unique words plus two special tokens gives sixteen.
+
+97
+00:07:10,128 --> 00:07:14,129
+The IDs follow the order in which words were first seen.
+
+98
+00:07:14,979 --> 00:07:15,754
+Part four.
+
+99
+00:07:15,754 --> 00:07:17,304
+Handling edge cases.
+
+100
+00:07:18,154 --> 00:07:21,913
+What happens with a word that isn't in the vocabulary?
+
+101
+00:07:21,913 --> 00:07:26,298
+Indexing the dictionary directly raises a KeyError and crashes.
+
+102
+00:07:26,298 --> 00:07:32,980
+We could check with if and else: if the word is in the vocabulary use its ID, otherwise use UNK.
+
+103
+00:07:32,980 --> 00:07:36,391
+Or more neatly, use dot get with a default value.
+
+104
+00:07:36,391 --> 00:07:40,010
+That pattern is everywhere in machine learning code.
+
+105
+00:07:40,010 --> 00:07:44,117
+With our vocabulary, neural maps to one, the unknown token.
+
+106
+00:07:44,967 --> 00:07:48,474
+Now a whole sentence: the neural network learns.
+
+107
+00:07:48,474 --> 00:07:55,124
+The loop version goes word by word, gets each ID with a fallback, and appends it to a list.
+
+108
+00:07:55,124 --> 00:08:03,965
+The list comprehension does exactly the same thing in one line: square brackets, the expression, for each w in the words.
+
+109
+00:08:03,965 --> 00:08:06,084
+Both give two, one, one, one.
+
+110
+00:08:06,084 --> 00:08:07,180
+Three unknowns.
+
+111
+00:08:07,180 --> 00:08:11,637
+Our tiny vocabulary has never seen neural, network or learns.
+
+112
+00:08:11,637 --> 00:08:18,433
+That's the weakness of word level tokenizers, and subword tokenizers in chapter eight fix it.
+
+113
+00:08:19,283 --> 00:08:19,989
+Part five.
+
+114
+00:08:19,989 --> 00:08:21,544
+Functions and classes.
+
+115
+00:08:22,394 --> 00:08:24,725
+Functions package reusable code.
+
+116
+00:08:24,725 --> 00:08:30,041
+def, a name, parameters in parentheses, and return sends back the result.
+
+117
+00:08:30,041 --> 00:08:33,828
+tokenize lowercases, splits, and looks up each word.
+
+118
+00:08:33,828 --> 00:08:45,481
+detokenize needs the reverse mapping, from ID to word, so it builds one with a dictionary comprehension that flips every pair, then joins the words with spaces.
+
+119
+00:08:45,481 --> 00:08:50,360
+The secret to AI encodes to two, three, four, six and decodes back.
+
+120
+00:08:50,360 --> 00:08:54,584
+Notice we lost the capital letters, because we lowercased.
+
+121
+00:08:54,584 --> 00:09:04,052
+GPT-2's tokenizer gives completely different numbers, from a different vocabulary, but the principle is the same: text to numbers.
+
+122
+00:09:04,902 --> 00:09:09,582
+Hugging Face organises its tokenizers as classes, so let's do the same.
+
+123
+00:09:09,582 --> 00:09:13,866
+A class is a blueprint, and an object is one thing built from it.
+
+124
+00:09:13,866 --> 00:09:18,217
+You can build many objects from one class, each with its own data.
+
+125
+00:09:18,217 --> 00:09:24,281
+The special method init runs once when the object is created and sets up its starting state.
+
+126
+00:09:24,281 --> 00:09:26,522
+self means this particular object.
+
+127
+00:09:26,522 --> 00:09:29,554
+Methods are functions that live on the object.
+
+128
+00:09:29,554 --> 00:09:34,299
+And defining the special method len lets you call len on your tokenizer.
+
+129
+00:09:35,149 --> 00:09:38,131
+Here's the full class from the notebook.
+
+130
+00:09:38,131 --> 00:09:46,629
+init creates both directions of the mapping, word to ID and ID to word, already containing the two special tokens.
+
+131
+00:09:46,629 --> 00:09:56,617
+fit builds the vocabulary from training texts, assigning each new word the next ID and recording the reverse mapping at the same time.
+
+132
+00:09:56,617 --> 00:10:00,791
+encode turns text into IDs, using one for unknown words.
+
+133
+00:10:00,791 --> 00:10:03,176
+decode turns IDs back into text.
+
+134
+00:10:03,176 --> 00:10:05,860
+And len returns the vocabulary size.
+
+135
+00:10:05,860 --> 00:10:09,960
+About twenty lines, and it's a real, working tokenizer.
+
+136
+00:10:10,809 --> 00:10:13,743
+Using it looks just like using Hugging Face.
+
+137
+00:10:13,743 --> 00:10:17,211
+Create the object, fit it on texts, and call encode.
+
+138
+00:10:17,211 --> 00:10:23,412
+With GPT-2's tokenizer, you load it with from pretrained and call encode, the same interface.
+
+139
+00:10:23,412 --> 00:10:29,613
+My run printed a vocabulary of sixteen, the encoding two, three, four, six, and the decoding.
+
+140
+00:10:29,613 --> 00:10:37,881
+The real tokenizer just has many more features: subword tokenization, more special tokens, saving and loading, and batching.
+
+141
+00:10:38,731 --> 00:10:40,752
+Our tokenizer is word level.
+
+142
+00:10:40,752 --> 00:10:46,091
+GPT-2 uses subword byte pair encoding, which we'll build in chapter eight.
+
+143
+00:10:46,091 --> 00:10:55,110
+Our vocabulary grows with the data, sixteen words here, while GPT-2's is fixed at fifty thousand two hundred and fifty seven.
+
+144
+00:10:55,110 --> 00:11:03,696
+We map unseen words to UNK, while GPT-2 never needs to, because it can always fall back to smaller pieces or raw bytes.
+
+145
+00:11:03,696 --> 00:11:08,891
+And GPT-2 keeps case, and treats the leading space as part of the token.
+
+146
+00:11:08,891 --> 00:11:13,364
+The book says understanding can split into under and standing.
+
+147
+00:11:13,364 --> 00:11:23,177
+I checked: that's true without a leading space, but with a space in front, as it would appear mid-sentence, GPT-2 keeps it as one token.
+
+148
+00:11:23,177 --> 00:11:24,187
+Spaces matter.
+
+149
+00:11:25,037 --> 00:11:25,787
+Part six.
+
+150
+00:11:25,787 --> 00:11:26,786
+Full circle.
+
+151
+00:11:27,636 --> 00:11:29,542
+Now we can explain the hook.
+
+152
+00:11:29,542 --> 00:11:33,625
+When you called pipeline at the start, five things happened.
+
+153
+00:11:33,625 --> 00:11:38,320
+One: your text went through a tokenizer, like the one you just built.
+
+154
+00:11:38,320 --> 00:11:41,655
+Two: the IDs became embeddings, from chapter two.
+
+155
+00:11:41,655 --> 00:11:48,596
+Three: those vectors flowed through twelve transformer layers with attention, chapters three and four.
+
+156
+00:11:48,596 --> 00:11:52,611
+Four: a token was sampled from the predicted probabilities.
+
+157
+00:11:52,611 --> 00:11:54,925
+Five: it was decoded back to text.
+
+158
+00:11:54,925 --> 00:12:00,097
+And then it looped, appending the new token and running again, twenty times.
+
+159
+00:12:00,097 --> 00:12:01,934
+You've now built stage one.
+
+160
+00:12:02,784 --> 00:12:05,356
+And here's why those two slices matter.
+
+161
+00:12:05,356 --> 00:12:09,247
+To train a language model, we take a sequence of token IDs.
+
+162
+00:12:09,247 --> 00:12:16,304
+The inputs are all tokens except the last, and the targets are all tokens except the first, shifted by one.
+
+163
+00:12:16,304 --> 00:12:21,843
+At every position, the model sees the tokens so far and has to predict the next one.
+
+164
+00:12:21,843 --> 00:12:26,460
+The cat sat on the mat gives five training examples from one sentence.
+
+165
+00:12:26,460 --> 00:12:30,944
+This one line of slicing is at the heart of every LLM training loop.
+
+166
+00:12:31,794 --> 00:12:32,605
+Part seven.
+
+167
+00:12:32,605 --> 00:12:35,037
+The exercises, with my solutions.
+
+168
+00:12:35,887 --> 00:12:39,062
+Here are my solutions to the three exercises.
+
+169
+00:12:39,062 --> 00:12:42,730
+This is my own code, not from the book's repository.
+
+170
+00:12:42,730 --> 00:12:53,736
+Exercise one, strip punctuation: a clean helper that lowercases, removes every punctuation character using string dot punctuation and translate, and splits.
+
+171
+00:12:53,736 --> 00:12:58,181
+Both fit and encode use it, so learning comma becomes learning.
+
+172
+00:12:58,181 --> 00:13:03,966
+Exercise two, count unknowns: encode each sentence and count how many ones appear.
+
+173
+00:13:03,966 --> 00:13:13,279
+Exercise three, save and load: dump the word to ID dictionary to JSON, and a class method loads it and rebuilds the reverse mapping.
+
+174
+00:13:13,279 --> 00:13:23,509
+I ran all three: the punctuation was stripped, my test sentences had three unknown words, and a saved and reloaded tokenizer encoded identically.
+
+175
+00:13:23,509 --> 00:13:26,825
+The full file is in the repo next to the notes.
+
+176
+00:13:27,675 --> 00:13:29,948
+One gotcha in exercise three.
+
+177
+00:13:29,948 --> 00:13:41,629
+JSON keys are always strings, so if you save the ID to word dictionary directly, your integer keys come back as strings, and decoding silently fails.
+
+178
+00:13:41,629 --> 00:13:47,586
+The fix is to save only word to ID, and rebuild the reverse mapping on load.
+
+179
+00:13:47,586 --> 00:13:53,936
+Hugging Face does exactly this: GPT-2's vocab dot json maps token strings to IDs.
+
+180
+00:13:54,786 --> 00:13:55,490
+Part eight.
+
+181
+00:13:55,490 --> 00:13:56,258
+Wrapping up.
+
+182
+00:13:57,108 --> 00:13:59,929
+Here's everything from today on one page.
+
+183
+00:13:59,929 --> 00:14:01,648
+Variables to name values.
+
+184
+00:14:01,648 --> 00:14:03,712
+Strings, with lower and split.
+
+185
+00:14:03,712 --> 00:14:08,459
+Lists, with indexing like minus one and slicing like colon minus one.
+
+186
+00:14:08,459 --> 00:14:11,279
+Dictionaries, with dot get and a default.
+
+187
+00:14:11,279 --> 00:14:12,586
+Functions with def.
+
+188
+00:14:12,586 --> 00:14:16,026
+And classes that bundle data and methods together.
+
+189
+00:14:16,026 --> 00:14:20,084
+That's enough Python to read most of the code in this book.
+
+190
+00:14:20,934 --> 00:14:22,314
+The key takeaways.
+
+191
+00:14:22,314 --> 00:14:31,970
+One: you ran a hundred and twenty four million parameter model in about ten lines, because Python orchestrates optimised code.
+
+192
+00:14:31,970 --> 00:14:35,648
+Two: language models see token IDs, never words.
+
+193
+00:14:35,648 --> 00:14:43,312
+Three: a vocabulary is a dictionary from words to IDs, with special tokens for padding and unknowns.
+
+194
+00:14:43,312 --> 00:14:48,677
+Four: encode turns text into IDs, and decode turns IDs back into text.
+
+195
+00:14:48,677 --> 00:14:53,811
+Five: our SimpleTokenizer has the same interface as Hugging Face's.
+
+196
+00:14:53,811 --> 00:15:01,781
+Six: the two slices, colon minus one and one colon, give the inputs and targets for next token training.
+
+197
+00:15:02,631 --> 00:15:04,950
+My notebook run and book check.
+
+198
+00:15:04,950 --> 00:15:11,456
+The chapter five notebook ran end to end on a CPU, all nine code cells, with no errors.
+
+199
+00:15:11,456 --> 00:15:18,112
+The GPT-2 token IDs, the vocabulary size of sixteen and the encodings all match the book.
+
+200
+00:15:18,112 --> 00:15:23,871
+One erratum: the length of the output string is seventy one, not sixty eight.
+
+201
+00:15:23,871 --> 00:15:30,826
+One clarification: understanding splits into under and standing only without a leading space.
+
+202
+00:15:30,826 --> 00:15:38,679
+And the notebook pins transformers version four point four six, but it ran fine with a newer version too.
+
+203
+00:15:39,529 --> 00:15:42,258
+The review questions, with my answers.
+
+204
+00:15:42,258 --> 00:15:44,054
+One: what does GPT-2 see?
+
+205
+00:15:44,054 --> 00:15:50,087
+Token IDs, integers from a vocabulary of fifty thousand two hundred and fifty seven.
+
+206
+00:15:50,087 --> 00:15:52,242
+Two: why use dot get with UNK?
+
+207
+00:15:52,242 --> 00:15:59,137
+Because looking up an unknown word directly raises a KeyError, while get returns a safe default.
+
+208
+00:15:59,137 --> 00:16:08,690
+Three: a function is one reusable operation, while a class bundles state, like the vocabulary, together with the methods that use it.
+
+209
+00:16:08,690 --> 00:16:17,596
+Four: tokens colon minus one is everything but the last token, used as the inputs, while tokens one colon gives the targets.
+
+210
+00:16:17,596 --> 00:16:29,016
+Five: our tokenizer follows the same pattern as Hugging Face's, create, fit or load, encode and decode, but theirs adds subword BPE, special tokens and saving.
+
+211
+00:16:29,866 --> 00:16:31,147
+Your practice list.
+
+212
+00:16:31,147 --> 00:16:38,696
+Open the chapter five notebook in Colab and run every cell, then change the prompt and the number of new tokens.
+
+213
+00:16:38,696 --> 00:16:44,020
+Set do sample to false and check whether the output becomes the same every run.
+
+214
+00:16:44,020 --> 00:16:48,671
+Add the three exercise methods and test them with your own sentences.
+
+215
+00:16:48,671 --> 00:16:53,524
+Compare our tokenizer with GPT-2's on a sentence containing a rare word.
+
+216
+00:16:53,524 --> 00:16:56,085
+And next up, the chapter six notebook.
+
+217
+00:16:56,935 --> 00:16:58,365
+That's chapter five.
+
+218
+00:16:58,365 --> 00:17:00,940
+We can now turn text into token IDs.
+
+219
+00:17:00,940 --> 00:17:10,738
+But IDs are just the start: next they become vectors, and vectors become matrices, and we need to compute on millions of numbers at once.
+
+220
+00:17:10,738 --> 00:17:15,601
+That's chapter six, with NumPy and PyTorch, the language of tensors.
+
+221
+00:17:16,451 --> 00:17:21,681
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+222
+00:17:21,681 --> 00:17:31,181
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+223
+00:17:31,181 --> 00:17:39,946
+The code shown comes from the companion repository at github dot com slash First LLM slash code, under the MIT license.
+
+224
+00:17:39,946 --> 00:17:43,481
+Thanks for watching, and see you in chapter six.
+
