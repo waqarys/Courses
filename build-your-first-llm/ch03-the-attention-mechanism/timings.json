@@ -1,0 +1,401 @@
+[
+ {
+  "slide": 1,
+  "title": "Build Your First LLM",
+  "start": 0.0,
+  "dur": 36.51,
+  "divider": true
+ },
+ {
+  "slide": 2,
+  "title": "Where we are",
+  "start": 36.51,
+  "dur": 28.86,
+  "divider": false
+ },
+ {
+  "slide": 3,
+  "title": "Chapter 3 roadmap",
+  "start": 65.37,
+  "dur": 37.9,
+  "divider": false
+ },
+ {
+  "slide": 4,
+  "title": "Key terms for this chapter",
+  "start": 103.27,
+  "dur": 50.04,
+  "divider": false
+ },
+ {
+  "slide": 5,
+  "title": "Part 1",
+  "start": 153.31,
+  "dur": 3.43,
+  "divider": true
+ },
+ {
+  "slide": 6,
+  "title": "RNNs: reading through a sticky note",
+  "start": 156.74,
+  "dur": 37.3,
+  "divider": false
+ },
+ {
+  "slide": 7,
+  "title": "Where the sticky note fails",
+  "start": 194.05,
+  "dur": 27.58,
+  "divider": false
+ },
+ {
+  "slide": 8,
+  "title": "\u26a0\ufe0f A precision note: \"vanishing gradients\"",
+  "start": 221.63,
+  "dur": 42.0,
+  "divider": false
+ },
+ {
+  "slide": 9,
+  "title": "What long text requires",
+  "start": 263.62,
+  "dur": 26.83,
+  "divider": false
+ },
+ {
+  "slide": 10,
+  "title": "Part 2",
+  "start": 290.46,
+  "dur": 2.64,
+  "divider": true
+ },
+ {
+  "slide": 11,
+  "title": "Three ways to picture it",
+  "start": 293.1,
+  "dur": 38.71,
+  "divider": false
+ },
+ {
+  "slide": 12,
+  "title": "From sequential to parallel",
+  "start": 331.81,
+  "dur": 23.93,
+  "divider": false
+ },
+ {
+  "slide": 13,
+  "title": "Part 3",
+  "start": 355.74,
+  "dur": 3.07,
+  "divider": true
+ },
+ {
+  "slide": 14,
+  "title": "The library analogy (my redraw)",
+  "start": 358.81,
+  "dur": 38.65,
+  "divider": false
+ },
+ {
+  "slide": 15,
+  "title": "Every word is both visitor and book",
+  "start": 397.46,
+  "dur": 37.58,
+  "divider": false
+ },
+ {
+  "slide": 16,
+  "title": "Where Q, K, V come from (my redraw)",
+  "start": 435.04,
+  "dur": 42.53,
+  "divider": false
+ },
+ {
+  "slide": 17,
+  "title": "\"Open weights\", decoded",
+  "start": 477.57,
+  "dur": 26.26,
+  "divider": false
+ },
+ {
+  "slide": 18,
+  "title": "Part 4",
+  "start": 503.83,
+  "dur": 3.94,
+  "divider": true
+ },
+ {
+  "slide": 19,
+  "title": "Step 1 & 2: scores \u2192 softmax",
+  "start": 507.77,
+  "dur": 43.83,
+  "divider": false
+ },
+ {
+  "slide": 20,
+  "title": "Softmax, by hand",
+  "start": 551.6,
+  "dur": 27.96,
+  "divider": false
+ },
+ {
+  "slide": 21,
+  "title": "Step 3: weighted sum of values",
+  "start": 579.56,
+  "dur": 21.27,
+  "divider": false
+ },
+ {
+  "slide": 22,
+  "title": "The whole thing in three lines",
+  "start": 600.83,
+  "dur": 28.35,
+  "divider": false
+ },
+ {
+  "slide": 23,
+  "title": "Why divide by \u221ad? (my experiment)",
+  "start": 629.18,
+  "dur": 45.0,
+  "divider": false
+ },
+ {
+  "slide": 24,
+  "title": "Part 5",
+  "start": 674.18,
+  "dur": 3.13,
+  "divider": true
+ },
+ {
+  "slide": 25,
+  "title": "One head isn't enough",
+  "start": 677.32,
+  "dur": 25.21,
+  "divider": false
+ },
+ {
+  "slide": 26,
+  "title": "Many heads in parallel (my redraw)",
+  "start": 702.53,
+  "dur": 36.09,
+  "divider": false
+ },
+ {
+  "slide": 27,
+  "title": "Heads really do differ (real GPT-2)",
+  "start": 738.61,
+  "dur": 28.84,
+  "divider": false
+ },
+ {
+  "slide": 28,
+  "title": "How many heads?",
+  "start": 767.45,
+  "dur": 40.31,
+  "divider": false
+ },
+ {
+  "slide": 29,
+  "title": "Part 6",
+  "start": 807.76,
+  "dur": 4.39,
+  "divider": true
+ },
+ {
+  "slide": 30,
+  "title": "Two flavours (my redraw)",
+  "start": 812.16,
+  "dur": 26.83,
+  "divider": false
+ },
+ {
+  "slide": 31,
+  "title": "Masking in GPT-style models",
+  "start": 838.99,
+  "dur": 28.11,
+  "divider": false
+ },
+ {
+  "slide": 32,
+  "title": "Where each is used",
+  "start": 867.1,
+  "dur": 39.18,
+  "divider": false
+ },
+ {
+  "slide": 33,
+  "title": "The cost: n\u00b2 comparisons",
+  "start": 906.28,
+  "dur": 21.42,
+  "divider": false
+ },
+ {
+  "slide": 34,
+  "title": "Part 7",
+  "start": 927.7,
+  "dur": 4.22,
+  "divider": true
+ },
+ {
+  "slide": 35,
+  "title": "\"Attention Is All You Need\" (June 2017)",
+  "start": 931.92,
+  "dur": 31.27,
+  "divider": false
+ },
+ {
+  "slide": 36,
+  "title": "Why it won",
+  "start": 963.19,
+  "dur": 34.06,
+  "divider": false
+ },
+ {
+  "slide": 37,
+  "title": "\u26a0\ufe0f Book check: \"12 hours instead of days\"",
+  "start": 997.25,
+  "dur": 34.59,
+  "divider": false
+ },
+ {
+  "slide": 38,
+  "title": "What followed",
+  "start": 1031.84,
+  "dur": 37.54,
+  "divider": false
+ },
+ {
+  "slide": 39,
+  "title": "Part 8",
+  "start": 1069.38,
+  "dur": 3.64,
+  "divider": true
+ },
+ {
+  "slide": 40,
+  "title": "Real GPT-2: \"The cat sat on the mat\" (my experiment)",
+  "start": 1073.03,
+  "dur": 35.51,
+  "divider": false
+ },
+ {
+  "slide": 41,
+  "title": "Two surprises the analogies hide",
+  "start": 1108.54,
+  "dur": 41.14,
+  "divider": false
+ },
+ {
+  "slide": 42,
+  "title": "Exercise 1 in a GPT model (my experiment)",
+  "start": 1149.68,
+  "dur": 46.43,
+  "divider": false
+ },
+ {
+  "slide": 43,
+  "title": "Part 9",
+  "start": 1196.11,
+  "dur": 2.47,
+  "divider": true
+ },
+ {
+  "slide": 44,
+  "title": "Exercise 0: draw your own attention",
+  "start": 1198.58,
+  "dur": 26.86,
+  "divider": false
+ },
+ {
+  "slide": 45,
+  "title": "Exercises 2 & 3 + what to look for",
+  "start": 1225.44,
+  "dur": 39.76,
+  "divider": false
+ },
+ {
+  "slide": 46,
+  "title": "A 12-line attention you can run (my own)",
+  "start": 1265.2,
+  "dur": 37.45,
+  "divider": false
+ },
+ {
+  "slide": 47,
+  "title": "Part 10",
+  "start": 1302.65,
+  "dur": 3.45,
+  "divider": true
+ },
+ {
+  "slide": 48,
+  "title": "Checkpoint: pronouns, heads, reflection",
+  "start": 1306.1,
+  "dur": 35.94,
+  "divider": false
+ },
+ {
+  "slide": 49,
+  "title": "My answers",
+  "start": 1342.04,
+  "dur": 47.05,
+  "divider": false
+ },
+ {
+  "slide": 50,
+  "title": "Part 11",
+  "start": 1389.09,
+  "dur": 2.56,
+  "divider": true
+ },
+ {
+  "slide": 51,
+  "title": "Key takeaways",
+  "start": 1391.65,
+  "dur": 47.07,
+  "divider": false
+ },
+ {
+  "slide": 52,
+  "title": "Notes on the book (checked)",
+  "start": 1438.72,
+  "dur": 35.68,
+  "divider": false
+ },
+ {
+  "slide": 53,
+  "title": "Review questions 1",
+  "start": 1474.4,
+  "dur": 39.03,
+  "divider": false
+ },
+ {
+  "slide": 54,
+  "title": "Review questions 2",
+  "start": 1513.43,
+  "dur": 52.19,
+  "divider": false
+ },
+ {
+  "slide": 55,
+  "title": "Practice this",
+  "start": 1565.63,
+  "dur": 27.99,
+  "divider": false
+ },
+ {
+  "slide": 56,
+  "title": "Up next: Chapter 4",
+  "start": 1593.61,
+  "dur": 25.62,
+  "divider": false
+ },
+ {
+  "slide": 57,
+  "title": "Credits",
+  "start": 1619.23,
+  "dur": 31.36,
+  "divider": true
+ }
+]

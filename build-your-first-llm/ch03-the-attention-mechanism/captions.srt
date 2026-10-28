@@ -1,0 +1,1312 @@
+1
+00:00:00,250 --> 00:00:06,613
+Welcome to chapter three of my study series on Build Your First LLM by Hasan Degismez.
+
+2
+00:00:06,613 --> 00:00:13,568
+Last time we turned words into vectors, and found that averaging them loses order and context.
+
+3
+00:00:13,568 --> 00:00:19,339
+Today we meet the fix, the single most important idea in modern AI: attention.
+
+4
+00:00:19,339 --> 00:00:35,913
+We'll build the intuition with analogies, then do the actual arithmetic by hand, and then look inside a real GPT-2 model to see what attention really does, including a couple of surprises the analogies don't prepare you for.
+
+5
+00:00:36,763 --> 00:00:37,618
+Where are we?
+
+6
+00:00:37,618 --> 00:00:43,996
+Chapter two gave us embeddings, but static ones that can't tell dog bites man from man bites dog.
+
+7
+00:00:43,996 --> 00:00:49,256
+Today, attention lets each word look at every other word and update its meaning.
+
+8
+00:00:49,256 --> 00:00:52,807
+Chapter four assembles the full transformer around it.
+
+9
+00:00:52,807 --> 00:00:57,343
+And in chapter ten we'll implement attention in PyTorch line by line.
+
+10
+00:00:57,343 --> 00:01:04,774
+As this is part one, there's no book notebook, so the code and the GPT-2 experiments you'll see today are my own.
+
+11
+00:01:05,623 --> 00:01:06,788
+Here's the plan.
+
+12
+00:01:06,788 --> 00:01:13,121
+First the problem attention solved: recurrent networks and their sequential bottleneck.
+
+13
+00:01:13,121 --> 00:01:16,615
+Then what attention is, through three analogies.
+
+14
+00:01:16,615 --> 00:01:19,599
+Then the core trio, query, key and value.
+
+15
+00:01:19,599 --> 00:01:27,096
+Then the calculation itself, step by step, including why we divide by the square root of the dimension.
+
+16
+00:01:27,096 --> 00:01:32,847
+Then multi-head attention, self versus cross attention, and the quadratic cost.
+
+17
+00:01:32,847 --> 00:01:35,758
+Then the 2017 paper that started it all.
+
+18
+00:01:35,758 --> 00:01:42,674
+And finally real attention maps from GPT-2, the exercises, the checkpoint and review questions.
+
+19
+00:01:43,524 --> 00:01:44,573
+The vocabulary.
+
+20
+00:01:44,573 --> 00:01:51,080
+Attention lets each word weigh every other word by relevance and blend information from them.
+
+21
+00:01:51,080 --> 00:01:57,937
+Self attention works within one sequence, and cross attention lets one sequence attend to another.
+
+22
+00:01:57,937 --> 00:02:04,165
+Query, key and value: what a word is looking for, what it offers, and what it hands over.
+
+23
+00:02:04,165 --> 00:02:08,293
+Softmax turns scores into positive weights that sum to one.
+
+24
+00:02:08,293 --> 00:02:16,199
+Scaled dot product attention computes scores as Q times K transpose, divided by the square root of the dimension.
+
+25
+00:02:16,199 --> 00:02:20,188
+Multi head attention runs several attentions in parallel.
+
+26
+00:02:20,188 --> 00:02:28,164
+Weights are the learned numbers, and multiplying an embedding by them is the transformation that makes Q, K and V.
+
+27
+00:02:28,164 --> 00:02:32,712
+And the transformer is the attention only architecture from 2017.
+
+28
+00:02:33,562 --> 00:02:34,266
+Part one.
+
+29
+00:02:34,266 --> 00:02:36,144
+The problem with old AI.
+
+30
+00:02:36,993 --> 00:02:42,171
+Before 2017, language models were mostly recurrent neural networks, RNNs.
+
+31
+00:02:42,171 --> 00:02:50,539
+An RNN reads one word at a time, and carries a fixed size summary forward, like keeping notes on a single sticky note.
+
+32
+00:02:50,539 --> 00:02:54,936
+After each word you update the note, but it never gets bigger.
+
+33
+00:02:54,936 --> 00:02:59,901
+By the end of a long sentence, the early words have been squeezed out.
+
+34
+00:02:59,901 --> 00:03:03,943
+In the top row you can see the note fading as it travels.
+
+35
+00:03:03,943 --> 00:03:13,446
+In the bottom row, attention gives the word ran a direct line to every earlier word, so it can reach cat no matter how far back it is.
+
+36
+00:03:14,296 --> 00:03:19,885
+Here's the book's example: the cat that the dog that the man owned chased ran away.
+
+37
+00:03:19,885 --> 00:03:28,570
+By the time the RNN reaches ran, it has overwritten its notes with dog and man, and it's lost track of what is doing the running.
+
+38
+00:03:28,570 --> 00:03:29,580
+It was the cat.
+
+39
+00:03:29,580 --> 00:03:31,533
+There's also a speed problem.
+
+40
+00:03:31,533 --> 00:03:41,027
+An RNN can't process word ten until it has processed words one to nine, so training can't take full advantage of parallel hardware like GPUs.
+
+41
+00:03:41,877 --> 00:03:43,457
+A small precision note.
+
+42
+00:03:43,457 --> 00:03:51,700
+The book describes this forgetting as the vanishing gradient problem, information degrading as it travels along a chain.
+
+43
+00:03:51,700 --> 00:03:54,859
+That's close, but it mixes two related issues.
+
+44
+00:03:54,859 --> 00:04:02,278
+Going forward, a fixed size hidden state has to compress the whole past, which is an information bottleneck.
+
+45
+00:04:02,278 --> 00:04:11,345
+During training, the error signal shrinks as it's passed backward through many time steps, so long range patterns are hard to learn.
+
+46
+00:04:11,345 --> 00:04:15,398
+That second one is what vanishing gradients strictly means.
+
+47
+00:04:15,398 --> 00:04:23,023
+Gated networks like LSTMs and GRUs eased it a lot, but they still pass everything through one fixed size state.
+
+48
+00:04:23,873 --> 00:04:28,016
+Consider the trophy didn't fit in the suitcase because it was too big.
+
+49
+00:04:28,016 --> 00:04:28,667
+What is it?
+
+50
+00:04:28,667 --> 00:04:32,396
+The trophy, because only a too big trophy explains not fitting.
+
+51
+00:04:32,396 --> 00:04:42,932
+To work that out you need three things: keep both candidates available when you reach it, use the meaning of too big to choose between them, and connect words that are far apart.
+
+52
+00:04:42,932 --> 00:04:45,418
+The old approach struggled with all three.
+
+53
+00:04:45,418 --> 00:04:48,851
+We need the ability to look back at any word, at any time.
+
+54
+00:04:48,851 --> 00:04:49,857
+That's attention.
+
+55
+00:04:50,707 --> 00:04:51,304
+Part two.
+
+56
+00:04:51,304 --> 00:04:52,499
+What is attention?
+
+57
+00:04:53,349 --> 00:04:55,468
+The book gives three pictures.
+
+58
+00:04:55,468 --> 00:04:57,304
+First, the cocktail party.
+
+59
+00:04:57,304 --> 00:05:05,498
+In a noisy room you can focus on one conversation, yet you still notice when someone across the room says your name.
+
+60
+00:05:05,498 --> 00:05:10,372
+That's selective focus, and the other voices are dimmed, not deleted.
+
+61
+00:05:10,372 --> 00:05:12,491
+Second, spotlights on a stage.
+
+62
+00:05:12,491 --> 00:05:17,153
+An RNN is a single spotlight that has to move from actor to actor.
+
+63
+00:05:17,153 --> 00:05:21,532
+Attention is many spotlights that can light anyone, instantly.
+
+64
+00:05:21,532 --> 00:05:23,157
+Third, a search engine.
+
+65
+00:05:23,157 --> 00:05:31,209
+Each word runs its own search over the sentence, ranks every word by relevance, and blends together what it finds.
+
+66
+00:05:32,060 --> 00:05:34,747
+The key shift is from a chain to a web.
+
+67
+00:05:34,747 --> 00:05:37,985
+In an RNN, each step depends on the one before.
+
+68
+00:05:37,985 --> 00:05:46,254
+With attention, every pair of words is connected directly, so the first and last words can communicate in a single step.
+
+69
+00:05:46,254 --> 00:05:55,142
+And because no position has to wait for another, all positions can be computed at once, which is exactly what GPUs are built for.
+
+70
+00:05:55,992 --> 00:05:56,755
+Part three.
+
+71
+00:05:56,755 --> 00:05:58,211
+Query, key and value.
+
+72
+00:05:59,061 --> 00:06:03,372
+Imagine walking into a library looking for books about cats.
+
+73
+00:06:03,372 --> 00:06:05,312
+Your question is the query.
+
+74
+00:06:05,312 --> 00:06:12,426
+Each book's spine label is its key: Feline Biology, Dog Training, Cat Psychology, Medieval History.
+
+75
+00:06:12,426 --> 00:06:15,732
+And the content inside each book is its value.
+
+76
+00:06:15,732 --> 00:06:24,139
+You compare your query to every spine, find that Feline Biology and Cat Psychology match, and combine their contents.
+
+77
+00:06:24,139 --> 00:06:27,229
+The weights in my picture are illustrative.
+
+78
+00:06:27,229 --> 00:06:31,396
+The important detail is that attention's matching is soft.
+
+79
+00:06:31,396 --> 00:06:36,857
+Every book gets some weight, and the mismatches just get very small weights.
+
+80
+00:06:37,707 --> 00:06:41,866
+In self attention, every word plays all three roles at once.
+
+81
+00:06:41,866 --> 00:06:47,826
+It's a visitor with a query, and it's also a book on the shelf with a key and a value.
+
+82
+00:06:47,826 --> 00:06:49,004
+Take the cat sat.
+
+83
+00:06:49,004 --> 00:06:51,499
+The word sat asks, who's doing this?
+
+84
+00:06:51,499 --> 00:06:55,587
+The word cat advertises, I'm something that can do actions.
+
+85
+00:06:55,587 --> 00:07:03,280
+So when sat compares its query to every key, cat scores highest, and sat pulls in a large share of cat's value.
+
+86
+00:07:03,280 --> 00:07:09,656
+The new representation of sat means something like sat, and by the way, the cat is doing it.
+
+87
+00:07:09,656 --> 00:07:14,437
+And at the same moment, cat is running its own search, and finds sat.
+
+88
+00:07:15,287 --> 00:07:18,144
+Where do queries, keys and values come from?
+
+89
+00:07:18,144 --> 00:07:20,092
+They aren't stored separately.
+
+90
+00:07:20,092 --> 00:07:29,700
+They're computed on the fly from the same embedding, by multiplying it with three different learned weight matrices, three lenses on the same photo.
+
+91
+00:07:29,700 --> 00:07:31,713
+Here's the book's tiny example.
+
+92
+00:07:31,713 --> 00:07:46,190
+If cat's embedding is two, four, one, and one column of the query weights is a half, a quarter and one, then that query entry is two times a half, plus four times a quarter, plus one times one: one plus one plus one, three.
+
+93
+00:07:46,190 --> 00:07:53,136
+A real query has many such entries, each with its own weights, and keys and values have their own matrices.
+
+94
+00:07:53,136 --> 00:07:55,928
+None of these weights are designed by hand.
+
+95
+00:07:55,928 --> 00:07:56,967
+They're learned.
+
+96
+00:07:57,817 --> 00:08:01,781
+This also decodes a phrase you see in the news: open weights.
+
+97
+00:08:01,781 --> 00:08:07,174
+Weights are all those learned numbers, including the query, key and value matrices.
+
+98
+00:08:07,174 --> 00:08:13,478
+When a company releases an open weights model, like Llama or Mistral, it publishes those numbers.
+
+99
+00:08:13,478 --> 00:08:18,546
+Then anyone can run the model on their own machine, offline, and fine tune it.
+
+100
+00:08:18,546 --> 00:08:23,225
+Model code without the weights is like a recipe without the ingredients.
+
+101
+00:08:24,075 --> 00:08:24,794
+Part four.
+
+102
+00:08:24,794 --> 00:08:27,168
+The attention calculation itself.
+
+103
+00:08:28,018 --> 00:08:30,036
+Let's walk the book's example.
+
+104
+00:08:30,036 --> 00:08:35,283
+The sentence is the cat sat on the mat, and we're computing attention for sat.
+
+105
+00:08:35,283 --> 00:08:39,655
+Step one: compare sat's query with every key using a dot product.
+
+106
+00:08:39,655 --> 00:08:51,291
+The book's illustrative scores are point one for the, point eight for cat, point four for sat itself, point two for on, point one for the second the, and point five for mat.
+
+107
+00:08:51,291 --> 00:08:52,502
+Step two: softmax.
+
+108
+00:08:52,502 --> 00:08:58,623
+Exponentiate each score and divide by the total, so they become positive and add up to one.
+
+109
+00:08:58,623 --> 00:09:08,577
+I recomputed it and the book's numbers are right: point one three, point two five, point one seven, point one four, point one three, point one nine.
+
+110
+00:09:08,577 --> 00:09:10,999
+Cat gets a quarter of the attention.
+
+111
+00:09:11,849 --> 00:09:13,303
+Here's softmax by hand.
+
+112
+00:09:13,303 --> 00:09:15,831
+For each score you take e to that score.
+
+113
+00:09:15,831 --> 00:09:22,214
+e to the point eight is about two point two three, and e to the point one is about one point one one.
+
+114
+00:09:22,214 --> 00:09:26,512
+Add up all six exponentials and you get about eight point eight two.
+
+115
+00:09:26,512 --> 00:09:32,453
+So cat's weight is two point two three divided by eight point eight two, about point two five.
+
+116
+00:09:32,453 --> 00:09:38,963
+The exponential amplifies differences between scores, and the division makes the weights add up to one.
+
+117
+00:09:39,813 --> 00:09:40,570
+Step three.
+
+118
+00:09:40,570 --> 00:09:44,969
+Multiply each word's value vector by its weight and add them up.
+
+119
+00:09:44,969 --> 00:09:52,531
+The output is a brand new vector for sat, carrying context from the whole sentence, mostly from cat, then mat.
+
+120
+00:09:52,531 --> 00:10:00,229
+And because the output has the same shape as the input, we can stack many attention layers on top of each other.
+
+121
+00:10:01,079 --> 00:10:03,049
+And that's the whole formula.
+
+122
+00:10:03,049 --> 00:10:07,666
+Scores are Q times K transpose: every query compared with every key.
+
+123
+00:10:07,666 --> 00:10:12,418
+Weights are the softmax of the scores divided by the square root of d.
+
+124
+00:10:12,418 --> 00:10:16,153
+And the output is weights times V, blending the values.
+
+125
+00:10:16,153 --> 00:10:18,054
+Compare, normalise, combine.
+
+126
+00:10:18,054 --> 00:10:25,591
+Because we do it for all the words at once using matrix multiplication, it's extremely fast on modern hardware.
+
+127
+00:10:25,591 --> 00:10:28,578
+We'll implement exactly this in chapter ten.
+
+128
+00:10:29,428 --> 00:10:31,817
+Why divide by the square root of d?
+
+129
+00:10:31,817 --> 00:10:33,523
+I ran a quick experiment.
+
+130
+00:10:33,523 --> 00:10:49,628
+For random query and key vectors, the dot product's typical size grows like the square root of the dimension: a standard deviation of about two for d of four, about eight for d of sixty four, and twenty eight for d of seven sixty eight.
+
+131
+00:10:49,628 --> 00:10:53,996
+Feed scores that big into softmax and it becomes all or nothing.
+
+132
+00:10:53,996 --> 00:10:59,660
+On the left, one key gets a weight of one point zero and everything else gets zero.
+
+133
+00:10:59,660 --> 00:11:03,073
+That kills learning, because the gradients vanish.
+
+134
+00:11:03,073 --> 00:11:13,582
+Divide by the square root of d, and the spread is back to about one at any size, so softmax stays soft, like turning down a microphone before it distorts.
+
+135
+00:11:14,432 --> 00:11:15,169
+Part five.
+
+136
+00:11:15,169 --> 00:11:16,715
+Multi head attention.
+
+137
+00:11:17,565 --> 00:11:19,121
+Why more than one head?
+
+138
+00:11:19,121 --> 00:11:24,129
+Look at the word won in the tall lawyer who argued the case won the trial.
+
+139
+00:11:24,129 --> 00:11:33,198
+To understand it, won needs its subject, lawyer, its object, trial, the modifier on the subject, tall, and the earlier action, argued.
+
+140
+00:11:33,198 --> 00:11:41,927
+A single attention distribution has to share out one unit of weight, so it can't focus sharply on all four relationships at once.
+
+141
+00:11:42,777 --> 00:11:45,644
+So we run several attentions in parallel.
+
+142
+00:11:45,644 --> 00:11:52,705
+Each head has its own query, key and value weights, so it can learn a different kind of relationship.
+
+143
+00:11:52,705 --> 00:12:00,885
+In GPT-2 small, the seven sixty eight dimensional input is projected into twelve heads of sixty four dimensions each.
+
+144
+00:12:00,885 --> 00:12:10,953
+Each head runs attention separately, the outputs are concatenated back to seven sixty eight, and a final learned projection mixes them together.
+
+145
+00:12:10,953 --> 00:12:18,014
+Think of it as a committee of experts: one for grammar, one for meaning, one for position, and so on.
+
+146
+00:12:18,864 --> 00:12:20,805
+Do the heads really specialise?
+
+147
+00:12:20,805 --> 00:12:26,503
+Here are four heads from layer five of the real GPT-2 model, all on the cat sat on the mat.
+
+148
+00:12:26,503 --> 00:12:28,131
+They're visibly different.
+
+149
+00:12:28,131 --> 00:12:35,833
+Some put nearly everything on the very first token, some look at the previous token, and others spread their attention out.
+
+150
+00:12:35,833 --> 00:12:37,774
+Nobody designed these patterns.
+
+151
+00:12:37,774 --> 00:12:40,968
+They emerged from training on next word prediction.
+
+152
+00:12:40,968 --> 00:12:45,288
+The upper triangle is empty because GPT-2 can't look at future words.
+
+153
+00:12:45,288 --> 00:12:46,853
+More on that in a moment.
+
+154
+00:12:47,703 --> 00:12:50,174
+How many heads do real models use?
+
+155
+00:12:50,174 --> 00:12:55,407
+The original 2017 transformer base had eight heads of width five twelve.
+
+156
+00:12:55,407 --> 00:13:09,723
+GPT-2 small has twelve, GPT-3 has ninety six with a model width of twelve thousand two hundred and eighty eight, and Llama three point one four oh five B has a hundred and twenty eight query heads.
+
+157
+00:13:09,723 --> 00:13:15,101
+These are from the published papers and model cards, not the book's table.
+
+158
+00:13:15,101 --> 00:13:17,862
+Larger models tend to have more heads.
+
+159
+00:13:17,862 --> 00:13:27,164
+Many modern models also let several query heads share keys and values, which is called grouped query attention and saves memory.
+
+160
+00:13:28,014 --> 00:13:28,692
+Part six.
+
+161
+00:13:28,692 --> 00:13:31,555
+Self attention versus cross attention.
+
+162
+00:13:32,405 --> 00:13:37,722
+In self attention, the queries, keys and values all come from the same sequence.
+
+163
+00:13:37,722 --> 00:13:41,510
+Each word asks what in my own sentence is relevant to me.
+
+164
+00:13:41,510 --> 00:13:43,703
+That's what GPT style models use.
+
+165
+00:13:43,703 --> 00:13:49,817
+In cross attention, the queries come from one sequence and the keys and values from another.
+
+166
+00:13:49,817 --> 00:13:58,389
+In translation, for example, each word being generated in the target language asks what in the source sentence is relevant to me.
+
+167
+00:13:59,239 --> 00:14:00,674
+One important detail.
+
+168
+00:14:00,674 --> 00:14:10,582
+GPT models are trained to predict the next word, so they can't be allowed to look at the words after the one they're predicting, or they'd cheat.
+
+169
+00:14:10,582 --> 00:14:14,682
+A causal mask blocks attention to any position to the right.
+
+170
+00:14:14,682 --> 00:14:19,465
+So row i of the attention matrix only has entries for columns up to i.
+
+171
+00:14:19,465 --> 00:14:23,702
+That's the empty upper triangle you saw in the GPT-2 heatmaps.
+
+172
+00:14:23,702 --> 00:14:26,503
+We'll implement this mask in chapter ten.
+
+173
+00:14:27,353 --> 00:14:28,710
+Where is each used?
+
+174
+00:14:28,710 --> 00:14:36,276
+Self attention powers GPT style language models, encoding a single document, and BERT style understanding.
+
+175
+00:14:36,276 --> 00:14:51,051
+Cross attention appears whenever two sequences meet: translation, image captioning where words attend to image regions, question answering, and text to image generation where the image attends to the prompt.
+
+176
+00:14:51,051 --> 00:15:01,115
+The classic encoder decoder transformer uses both: self attention inside the encoder and the decoder, and cross attention connecting the two.
+
+177
+00:15:01,115 --> 00:15:05,683
+This book focuses on self attention, since that's what GPT uses.
+
+178
+00:15:06,533 --> 00:15:08,007
+Attention has a price.
+
+179
+00:15:08,007 --> 00:15:14,304
+Every word compares itself with every other word, so a thousand tokens means a million scores.
+
+180
+00:15:14,304 --> 00:15:18,457
+Double the length, and you get four times the work and memory.
+
+181
+00:15:18,457 --> 00:15:27,099
+That quadratic growth is why language models have context limits, and why there's so much research into more efficient attention.
+
+182
+00:15:27,949 --> 00:15:29,145
+Part seven.
+
+183
+00:15:29,145 --> 00:15:31,319
+The 2017 revolution.
+
+184
+00:15:32,169 --> 00:15:45,638
+In June 2017, eight researchers at Google, Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan Gomez, Lukasz Kaiser and Illia Polosukhin, published Attention Is All You Need.
+
+185
+00:15:45,638 --> 00:15:49,524
+Attention already existed, as a helper that improved RNNs.
+
+186
+00:15:49,524 --> 00:16:00,514
+Their radical step was to throw the recurrence away entirely and build the model from attention alone, stacked in layers, six in the encoder and six in the decoder.
+
+187
+00:16:00,514 --> 00:16:02,591
+They called it the transformer.
+
+188
+00:16:03,441 --> 00:16:04,447
+Why did it win?
+
+189
+00:16:04,447 --> 00:16:09,144
+It trained much faster, because nothing had to wait for anything else.
+
+190
+00:16:09,144 --> 00:16:21,958
+It was better, scoring twenty eight point four BLEU on the standard English to German translation benchmark, more than two points above the previous best, which is a big margin in that field.
+
+191
+00:16:21,958 --> 00:16:24,642
+And it connected distant words directly.
+
+192
+00:16:24,642 --> 00:16:34,504
+Two more ingredients made it work: positional encodings, to tell the model about word order now that there's no sequence, and stacking many layers.
+
+193
+00:16:34,504 --> 00:16:36,651
+Both are coming in chapter four.
+
+194
+00:16:37,501 --> 00:16:38,513
+One correction.
+
+195
+00:16:38,513 --> 00:16:44,587
+The book says the two BLEU gain came with training that took twelve hours instead of days.
+
+196
+00:16:44,587 --> 00:16:49,176
+In the paper, twelve hours is for the base model on eight P100 GPUs.
+
+197
+00:16:49,176 --> 00:16:56,262
+The twenty eight point four BLEU record came from the big model, which trained for three and a half days.
+
+198
+00:16:56,262 --> 00:17:09,017
+The fair summary is that the transformer reached a new record at a fraction of the training cost of earlier models, but the record itself took about three and a half days, not twelve hours.
+
+199
+00:17:09,017 --> 00:17:11,244
+I've put this in the errata file.
+
+200
+00:17:12,094 --> 00:17:14,783
+And then the floodgates opened.
+
+201
+00:17:14,783 --> 00:17:16,778
+GPT-1 and BERT in 2018.
+
+202
+00:17:16,778 --> 00:17:22,068
+GPT-2 in 2019, the model we'll load and study in this course.
+
+203
+00:17:22,068 --> 00:17:27,706
+GPT-3 with a hundred and seventy five billion parameters in 2020.
+
+204
+00:17:27,706 --> 00:17:29,093
+ChatGPT in 2022.
+
+205
+00:17:29,093 --> 00:17:31,175
+And rapid scaling since.
+
+206
+00:17:31,175 --> 00:17:33,690
+All built on the transformer.
+
+207
+00:17:33,690 --> 00:17:37,940
+The title is a little tongue in cheek, of course.
+
+208
+00:17:37,940 --> 00:17:46,526
+You also need embeddings, layer normalisation, feed forward layers and more, which is chapter four.
+
+209
+00:17:46,526 --> 00:17:48,781
+But attention is the star.
+
+210
+00:17:49,631 --> 00:17:50,363
+Part eight.
+
+211
+00:17:50,363 --> 00:17:52,426
+Let's look inside a real model.
+
+212
+00:17:53,276 --> 00:17:59,905
+This is real attention from GPT-2 small, averaged over all twelve heads in layers five to eight.
+
+213
+00:17:59,905 --> 00:18:01,562
+Look at the row for sat.
+
+214
+00:18:01,562 --> 00:18:05,014
+It doesn't look like the book's tidy illustration.
+
+215
+00:18:05,014 --> 00:18:14,197
+Seventy eight percent of sat's attention goes to the very first token, the, fourteen percent goes to cat and eight percent to itself.
+
+216
+00:18:14,197 --> 00:18:18,823
+And it can't see on, the or mat at all, because they come after it.
+
+217
+00:18:18,823 --> 00:18:23,242
+Of what remains after that first token, cat does get most of it.
+
+218
+00:18:23,242 --> 00:18:27,937
+So the subject verb pattern is there, just alongside something else.
+
+219
+00:18:28,787 --> 00:18:30,865
+Two lessons the analogies hide.
+
+220
+00:18:30,865 --> 00:18:32,340
+First, causal masking.
+
+221
+00:18:32,340 --> 00:18:42,061
+In the book's example, sat gives nineteen percent of its attention to mat, but in a GPT style model, mat hasn't happened yet when we process sat.
+
+222
+00:18:42,061 --> 00:18:47,291
+That pattern fits a bidirectional model like BERT, which sees both directions.
+
+223
+00:18:47,291 --> 00:18:51,313
+The book's numbers are illustrative, so this isn't an error.
+
+224
+00:18:51,313 --> 00:18:53,593
+Just keep the distinction in mind.
+
+225
+00:18:53,593 --> 00:18:55,202
+Second, attention sinks.
+
+226
+00:18:55,202 --> 00:18:58,889
+Many heads put most of their weight on the first token.
+
+227
+00:18:58,889 --> 00:19:09,079
+Researchers think the model uses it as a kind of parking spot when nothing in particular is relevant, since softmax forces the weights to add up to one.
+
+228
+00:19:09,929 --> 00:19:13,009
+I tried the book's pronoun exercise on GPT-2.
+
+229
+00:19:13,009 --> 00:19:17,937
+The cake in the freezer because it was warm, versus because it was cold.
+
+230
+00:19:17,937 --> 00:19:29,231
+The attention from it was exactly identical in both sentences: about point zero four on cake and point zero five four on freezer, averaged over every head and layer.
+
+231
+00:19:29,231 --> 00:19:30,394
+That's not a bug.
+
+232
+00:19:30,394 --> 00:19:36,759
+Warm and cold come after it, so under the causal mask they're invisible when it is processed.
+
+233
+00:19:36,759 --> 00:19:49,627
+To see the attention flip the way the book describes, use a bidirectional model like BERT in a tool such as BertViz, or look at attention from the later words back toward cake and freezer.
+
+234
+00:19:49,627 --> 00:19:55,513
+This is a great example of why it helps to know which kind of model you're inspecting.
+
+235
+00:19:56,363 --> 00:19:57,216
+Part nine.
+
+236
+00:19:57,216 --> 00:19:57,984
+Hands on.
+
+237
+00:19:58,834 --> 00:20:00,849
+Exercise zero needs no computer.
+
+238
+00:20:00,849 --> 00:20:04,123
+Take the chef who prepared the meal forgot the salt.
+
+239
+00:20:04,123 --> 00:20:11,491
+Draw arrows from forgot to the words it should attend to: thick arrows to chef, who forgot, and to salt, forgot what.
+
+240
+00:20:11,491 --> 00:20:16,213
+Then do the same for prepared: chef, who prepared, and meal, prepared what.
+
+241
+00:20:16,213 --> 00:20:22,132
+They share a subject but have different objects, so each word needs its own attention pattern.
+
+242
+00:20:22,132 --> 00:20:24,839
+That's exactly what per word queries allow.
+
+243
+00:20:25,689 --> 00:20:30,027
+Exercise two compares heads on the lawyer who argued the case won.
+
+244
+00:20:30,027 --> 00:20:37,059
+Look for one head linking won to lawyer, another linking argued to case, and another linking who to lawyer.
+
+245
+00:20:37,059 --> 00:20:46,194
+Exercise three tests long range links: the cat, which had been sitting on the mat for hours while the dog barked outside, finally stood up.
+
+246
+00:20:46,194 --> 00:20:48,100
+Does stood reach back to cat?
+
+247
+00:20:48,100 --> 00:20:59,535
+While you explore, look for heads that track grammar, heads that just look at the previous word, heads that reach far back, and how patterns change from early to late layers.
+
+248
+00:20:59,535 --> 00:21:04,595
+BertViz is the classic tool, and there are many demos on Hugging Face Spaces.
+
+249
+00:21:05,445 --> 00:21:10,830
+Here's a complete attention calculation in about a dozen lines of PyTorch.
+
+250
+00:21:10,830 --> 00:21:14,396
+This is my own snippet, not from the book's repo.
+
+251
+00:21:14,396 --> 00:21:17,598
+Six words with eight dimensional embeddings.
+
+252
+00:21:17,598 --> 00:21:20,872
+Three random weight matrices make Q, K and V.
+
+253
+00:21:20,872 --> 00:21:25,602
+The scores are Q times K transpose over the square root of eight.
+
+254
+00:21:25,602 --> 00:21:32,297
+A causal mask sets every future position to minus infinity, so softmax gives it zero weight.
+
+255
+00:21:32,297 --> 00:21:39,646
+Softmax normalises each row, and weights times V gives the output: six new eight dimensional vectors.
+
+256
+00:21:39,646 --> 00:21:42,047
+Every row of weights sums to one.
+
+257
+00:21:42,897 --> 00:21:43,607
+Part ten.
+
+258
+00:21:43,607 --> 00:21:45,500
+The checkpoint exercise.
+
+259
+00:21:46,350 --> 00:21:48,446
+The checkpoint has three parts.
+
+260
+00:21:48,446 --> 00:21:52,299
+Part one: the cat chased the mouse because it was hungry.
+
+261
+00:21:52,299 --> 00:21:53,787
+What does it refer to?
+
+262
+00:21:53,787 --> 00:21:55,747
+Then change hungry to scared.
+
+263
+00:21:55,747 --> 00:22:02,305
+Draw the arrows from it, and notice that your human answer depends on a word that comes after it.
+
+264
+00:22:02,305 --> 00:22:07,578
+Part two: design three heads for the quick brown fox jumped over the lazy dog.
+
+265
+00:22:07,578 --> 00:22:10,891
+What should jumped, quick and dog each attend to?
+
+266
+00:22:10,891 --> 00:22:12,243
+Part three: reflect.
+
+267
+00:22:12,243 --> 00:22:17,178
+Why is attention better than strictly left to right reading for pronouns?
+
+268
+00:22:17,178 --> 00:22:18,463
+Why use many heads?
+
+269
+00:22:18,463 --> 00:22:21,437
+And what happens if every weight is uniform?
+
+270
+00:22:22,287 --> 00:22:23,072
+My answers.
+
+271
+00:22:23,072 --> 00:22:26,922
+Part one: with hungry, it is the cat, the one chasing.
+
+272
+00:22:26,922 --> 00:22:28,990
+With scared, it is the mouse.
+
+273
+00:22:28,990 --> 00:22:36,120
+In a bidirectional view, it should attend strongly to both candidates and to the deciding adjective.
+
+274
+00:22:36,120 --> 00:22:46,030
+In GPT-2 I measured it attending to cat at point zero three seven and mouse at point zero five six, before the adjective has even appeared.
+
+275
+00:22:46,030 --> 00:22:49,096
+Part two: jumped looks to fox, its subject.
+
+276
+00:22:49,096 --> 00:22:52,019
+Quick looks to fox, the noun it modifies.
+
+277
+00:22:52,019 --> 00:22:55,157
+Dog looks to lazy, its modifier, or to over.
+
+278
+00:22:55,157 --> 00:23:08,489
+Part three: attention gives direct access to any word, many heads capture many relationship types at once, and uniform weights would just be averaging, the exact problem from chapter two.
+
+279
+00:23:09,339 --> 00:23:10,193
+Part eleven.
+
+280
+00:23:10,193 --> 00:23:11,046
+Wrapping up.
+
+281
+00:23:11,896 --> 00:23:13,225
+The key takeaways.
+
+282
+00:23:13,225 --> 00:23:19,206
+One: RNNs pass a fixed size state along a chain, so long range information fades.
+
+283
+00:23:19,206 --> 00:23:24,006
+Two: attention lets every word look at every other word directly.
+
+284
+00:23:24,006 --> 00:23:30,651
+Three: query, key and value mean what I'm looking for, what I offer, and what I hand over.
+
+285
+00:23:30,651 --> 00:23:37,149
+Four: scores are Q K transpose over root d, then softmax, then a weighted sum of values.
+
+286
+00:23:37,149 --> 00:23:42,096
+Five: multi head attention captures many relationships in parallel.
+
+287
+00:23:42,096 --> 00:23:53,615
+Six: self attention works within a sequence and cross attention between sequences, GPT adds a causal mask, and the cost grows with the square of the length.
+
+288
+00:23:53,615 --> 00:23:58,119
+Seven: in 2017 the transformer removed recurrence altogether.
+
+289
+00:23:58,969 --> 00:24:01,601
+My notes on the book for this chapter.
+
+290
+00:24:01,601 --> 00:24:06,102
+The softmax example and the query entry example are both correct.
+
+291
+00:24:06,102 --> 00:24:07,972
+Two items go in the errata.
+
+292
+00:24:07,972 --> 00:24:15,727
+The twelve hours figure refers to the base model, while the record setting big model took three and a half days.
+
+293
+00:24:15,727 --> 00:24:21,890
+And RNN forgetting isn't strictly the vanishing gradient problem, as I explained earlier.
+
+294
+00:24:21,890 --> 00:24:33,801
+Finally, a clarification rather than an error: the illustrative sat to mat weight and the pronoun exercise assume a model that can see both directions, while GPT is causal.
+
+295
+00:24:34,651 --> 00:24:36,925
+Review questions with my answers.
+
+296
+00:24:36,925 --> 00:24:39,131
+One: what problem did RNNs have?
+
+297
+00:24:39,131 --> 00:24:49,675
+They pass a fixed size state step by step, like a sticky note that keeps getting overwritten, so early words fade, and they can't be trained in parallel.
+
+298
+00:24:49,675 --> 00:24:54,430
+Two: the cocktail party analogy captures soft, relevance based focus.
+
+299
+00:24:54,430 --> 00:24:58,910
+You tune in to what matters, and the rest is dimmed, not removed.
+
+300
+00:24:58,910 --> 00:25:05,319
+Three: query, key and value are the search question, the spine label and the book's contents.
+
+301
+00:25:05,319 --> 00:25:12,831
+Four: the three steps are dot product scores, softmax of the scaled scores, and a weighted sum of the values.
+
+302
+00:25:13,681 --> 00:25:15,662
+Five: why divide by root d?
+
+303
+00:25:15,662 --> 00:25:25,124
+Because dot products grow like the square root of the dimension, and huge scores make softmax one hot, which kills the gradients.
+
+304
+00:25:25,124 --> 00:25:27,911
+Scaling keeps the variance around one.
+
+305
+00:25:27,911 --> 00:25:29,378
+Six: why many heads?
+
+306
+00:25:29,378 --> 00:25:40,087
+Each head learns its own relationship, subject, object, modifier, position or long range, and a single softmax can't focus on all of them at once.
+
+307
+00:25:40,087 --> 00:25:45,074
+Seven: self attention takes Q, K and V from one sequence, as in GPT.
+
+308
+00:25:45,074 --> 00:25:53,436
+Cross attention takes queries from one sequence and keys and values from another, as in translation or captioning.
+
+309
+00:25:53,436 --> 00:26:02,091
+Eight: the 2017 paper removed recurrence, which brought parallel training, better quality and direct long range links.
+
+310
+00:26:02,091 --> 00:26:05,025
+It's the foundation of every modern LLM.
+
+311
+00:26:05,875 --> 00:26:07,060
+Your practice list.
+
+312
+00:26:07,060 --> 00:26:09,368
+Recompute the book's softmax by hand.
+
+313
+00:26:09,368 --> 00:26:13,860
+Run my twelve line attention, then remove the mask and compare the rows.
+
+314
+00:26:13,860 --> 00:26:21,034
+Try BertViz with a BERT model on the cake and freezer sentences, and see whether it flips between cake and freezer.
+
+315
+00:26:21,034 --> 00:26:22,156
+Do the checkpoint.
+
+316
+00:26:22,156 --> 00:26:28,644
+And peek ahead at the book's repository, where the chapter ten notebook implements all of this properly.
+
+317
+00:26:28,644 --> 00:26:33,011
+The code in this video is my own, since part one has no book notebook.
+
+318
+00:26:33,861 --> 00:26:35,230
+That's chapter three.
+
+319
+00:26:35,230 --> 00:26:37,967
+We now have the key innovation, attention.
+
+320
+00:26:37,967 --> 00:26:40,183
+But attention alone isn't a model.
+
+321
+00:26:40,183 --> 00:26:45,854
+If every word is processed in parallel, how does the model know the order of the words?
+
+322
+00:26:45,854 --> 00:26:48,005
+And what happens after attention?
+
+323
+00:26:48,005 --> 00:26:58,629
+Chapter four, the transformer architecture, adds positional encodings, feed forward layers, layer normalisation and residual connections, and puts it all together.
+
+324
+00:26:59,479 --> 00:27:04,775
+This video is based on the book Build Your First LLM by Hasan Degismez.
+
+325
+00:27:04,775 --> 00:27:14,397
+Everything here is my own adaptation for study, so please support the author and buy the book at leanpub dot com slash First LLM.
+
+326
+00:27:14,397 --> 00:27:21,109
+The companion code is at github dot com slash First LLM slash code, under the MIT license.
+
+327
+00:27:21,109 --> 00:27:26,331
+The GPT-2 experiments used OpenAI's released weights via Hugging Face.
+
+328
+00:27:26,331 --> 00:27:29,985
+Thanks for watching, and see you in chapter four.
+

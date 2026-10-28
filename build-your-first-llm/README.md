@@ -18,7 +18,7 @@ Videos (MP4) are not stored in git; they are uploaded to YouTube.
 |---|---|---|---|---|---|
 | 1 | What is AI, Really? | [slides](ch01-what-is-ai/slides.md) | [notes](ch01-what-is-ai/notes.md) | — (no notebook) | ✅ pilot |
 | 2 | How Computers "Understand" Words | [slides](ch02-how-computers-understand-words/slides.md) | [notes](ch02-how-computers-understand-words/notes.md) | — | ✅ |
-| 3 | The Attention Mechanism | | | — | planned |
+| 3 | The Attention Mechanism | [slides](ch03-the-attention-mechanism/slides.md) | [notes](ch03-the-attention-mechanism/notes.md) | — | ✅ |
 | 4 | The Transformer Architecture | | | — | planned |
 | 5 | Your First Python Program | | | [ch05](https://github.com/FirstLLM/code/blob/main/notebooks/ch05.ipynb) | planned |
 | 6 | NumPy & PyTorch Survival Guide | | | [ch06](https://github.com/FirstLLM/code/blob/main/notebooks/ch06.ipynb) | planned |
