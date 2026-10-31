@@ -37,9 +37,13 @@ quota:
 # The defaults already match the Science Olympiad renderer; only list what differs.
 layouts:
   science_olympiad: {}
-  python_kids:
-    render_dirs: ["render", "output", "."]
-    full_video: ["{name}_full.mp4", "{name}_final.mp4", "{name}.mp4"]
+  python_kids:                # Courses branch python-kids-fast-pipeline: lessons/NN_Topic/render/...
+    render_dirs: ["render", "."]
+    full_video: ["{name}_full.mp4", "{name}_full_1080p.mp4"]
+    short_video: ["{name}_short.mp4"]
+    captions: ["{name}_full.srt"]
+    chapters: ["{name}_chapters.txt"]
+    thumbnail: ["{name}_thumb.jpg"]
 
 channels:
   happy:
@@ -57,10 +61,10 @@ channels:
   build:
     name: Waqar Shaikh Builds (@BuildWithWaqar)
     token: secrets/token_build.json
-    series_root: C:/working/Courses/python-kids
+    series_root: C:/working/Courses/lessons      # folder holding 01_Hello_World, 02_..., etc.
     layout: python_kids
-    playlist: ""
-    made_for_kids: false
+    playlist: ""              # blank = the "📚 Playlist: ..." line in each YouTube.md (Python for Kids – Full Course ...)
+    made_for_kids: true       # the Python for Kids YouTube.md says "made for kids"; set false for adult content
     category: 27
     language: en-IN
     caption_name: English (India)

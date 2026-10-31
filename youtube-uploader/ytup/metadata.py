@@ -124,6 +124,10 @@ def parse_youtube_md(path: Path) -> dict:
     tags = [t.strip().strip("`") for t in re.split(r"[,\n]", tags_raw) if t.strip() and not t.strip().startswith("#")]
     tags = [re.sub(r"^[-*]\s*", "", t) for t in tags]
     playlists = [re.sub(r"^[-*]\s*", "", l).strip() for l in sec.get("playlist", "").splitlines() if l.strip().startswith(("-", "*"))]
+    if not playlists:   # e.g. "📚 Playlist: Python for Kids – Full Course (...)" inside the description
+        m = re.search(r"Playlist:\s*(.+)", desc)
+        if m:
+            playlists = [m.group(1).strip()]
     hashtags = re.findall(r"#\w+", desc.splitlines()[-1]) if desc else []
     short_title = next((l.strip() for l in sec.get("short title", "").splitlines() if l.strip()), "")
     return {"title": title, "description": desc, "tags": tags, "playlists": playlists,
@@ -188,6 +192,11 @@ def replace_chapters(desc: str, chapters: list[str]) -> str:
         return desc
     lines = desc.splitlines()
     idx = [i for i, l in enumerate(lines) if TIME_RE.match(l)]
+    ph = [i for i, l in enumerate(lines) if re.match(r"^\W*chapters\b", l.strip(), re.I)]
+    if not idx and ph:   # placeholder line, e.g. "⏱️ Chapters: paste render/<lesson>_chapters.txt here"
+        i = ph[0]
+        head = lines[i].split(":")[0].strip() if ":" in lines[i] else lines[i].strip()
+        return "\n".join(lines[:i] + [head] + chapters + lines[i + 1:])
     if not idx:
         return desc + "\n\n⏱️ Chapters\n" + "\n".join(chapters)
     return "\n".join(lines[: idx[0]] + chapters + lines[idx[-1] + 1:])
