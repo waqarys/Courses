@@ -50,21 +50,29 @@ channels:
     name: Happy Learners ICSE
     token: secrets/token_happy.json
     # channel_id: UCxxxxxxxx          # printed by `auth`; protects against uploading to the wrong channel
-    series_root: C:/working/Content/HighSchoolCourses/Grade2/Science-Olympiad
-    layout: science_olympiad
-    playlist: "Class 2 Science Olympiad (NSO/ISO) – Full Course"   # title or playlist ID (PL...); blank = first one in YouTube.md
     made_for_kids: true
     category: 27              # Education
     language: en-IN
     caption_name: English (India)
+    # Several series on one channel. Each has its own folder, file layout and playlist; they share the
+    # channel's schedule, so one free slot = one video, whichever series it comes from.
+    # `upload` picks the series from the folder path (or use --series); `queue` does all of them.
+    series:
+      olympiad:
+        series_root: C:/working/Content/HighSchoolCourses/Grade2/Science-Olympiad
+        layout: science_olympiad
+        playlist: "Class 2 Science Olympiad (NSO/ISO) – Full Course"   # title or playlist ID (PL...)
+      python:
+        series_root: C:/working/Courses/lessons        # Courses branch python-kids-fast-pipeline -> lessons/
+        layout: python_kids
+        playlist: "Python for Kids – Full Course"
 
   build:
     name: Waqar Shaikh Builds (@BuildWithWaqar)
     token: secrets/token_build.json
-    series_root: C:/working/Courses/lessons      # folder holding 01_Hello_World, 02_..., etc.
-    layout: python_kids
-    playlist: ""              # blank = the "📚 Playlist: ..." line in each YouTube.md (Python for Kids – Full Course ...)
-    made_for_kids: true       # the Python for Kids YouTube.md says "made for kids"; set false for adult content
+    series_root: C:/working/Courses/build-your-first-llm   # adult tech content
+    playlist: ""              # blank = first playlist named in each YouTube.md
+    made_for_kids: false
     category: 27
     language: en-IN
     caption_name: English (India)

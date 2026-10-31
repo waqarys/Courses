@@ -6,15 +6,15 @@ It uses the official YouTube Data API and runs on your Windows laptop (or WSL). 
 
 Works with the render folders from `HighSchoolCourses/.../Science-Olympiad` (`NN_Topic/YouTube.md`, `Intro_Outro.md`,
 `render/NN_Topic_full.mp4`, `_short.mp4`, `_full.srt`, `_full_chapters.txt`, `_thumb.jpg`) and with flat staging
-folders (`02_Plants_YouTube.md`, `02_Plants_full.mp4`, `02_desc.txt`, `02s_desc.txt` ...). The Python-for-Kids lessons use the same layout
-(`layout: python_kids` in config).
+folders (`02_Plants_YouTube.md`, `02_Plants_full.mp4`, `02_desc.txt`, `02s_desc.txt` ...). Python for Kids lessons (`Courses` branch `python-kids-fast-pipeline`, `lessons/NN_Topic/render/...`) go to
+**Happy Learners ICSE** too, as a second series (`series: python`, `layout: python_kids`, playlist "Python for Kids – Full Course").
 
 ## Setup checklist (10 minutes, once)
 1. Install Python 3.11+ from python.org (tick "Add to PATH").
 2. Copy this `youtube-uploader` folder anywhere, e.g. `C:\working\youtube-uploader`.
 3. Do **SETUP_GOOGLE.md** steps 1-5. This creates the Google project, turns on the API, adds you as a test user,
    and gets you `secrets\client_secret.json`.
-4. `copy config.example.yaml config.yaml` and check `series_root`, `playlist` and `schedule.times` for each channel.
+4. `copy config.example.yaml config.yaml` and check each `series_root` (Science Olympiad and Python under `happy`), `playlist` and `schedule.times`.
 5. `run.bat auth --channel happy` (pick **Happy Learners ICSE** in the browser), then `run.bat auth --channel build`.
    Put the printed `channel_id` values in `config.yaml`.
 6. Tell it about videos you already uploaded by hand, so they are never uploaded twice:
@@ -32,7 +32,13 @@ run.bat upload "C:\working\Content\HighSchoolCourses\Grade2\Science-Olympiad\03_
 It picks the **next free slot** (default every day 07:00 IST; the Short goes 1 hour later), uploads, sets the thumbnail,
 English (India) captions and the playlist, marks the video made for kids, and prints the links.
 
-Or upload everything rendered but not yet uploaded:
+Python for Kids lesson (same channel, its own playlist):
+```bat
+run.bat upload "C:\working\Courses\lessons\01_Hello_World" --channel happy --series python
+```
+`--series` is optional when the folder is inside that series' `series_root`.
+
+Or upload everything rendered but not yet uploaded (all series on the channel):
 ```bat
 run.bat queue --channel happy
 ```
@@ -45,7 +51,8 @@ run.bat queue --channel happy
 | skip the Short | `--no-short` |
 | one video from a flat folder | `upload C:\staging --name 04_Human_Body --channel happy` |
 | what's uploaded / next slot | `run.bat status --channel happy` (`--remote` also asks YouTube) |
-| Python series | `run.bat upload <lesson_folder> --channel build` |
+| Python for Kids lesson | `run.bat upload "C:\working\Courses\lessons\01_Hello_World" --channel happy --series python` |
+| only one series in `queue` | `run.bat queue --channel happy --series python` (no `--series` = all series) |
 
 The schedule is set in `config.yaml` → `schedule:` (`times: ["07:00"]`, `days: daily` or `[mon, wed, fri]`,
 `short_offset_minutes: 60`). Each channel can have its own.

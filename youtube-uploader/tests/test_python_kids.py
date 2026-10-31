@@ -1,5 +1,5 @@
 """Python-for-Kids layout: lessons/01_Hello_World/YouTube.md + render/ outputs (branch python-kids-fast-pipeline)."""
-import os, shutil, subprocess
+import os, shutil, subprocess, sys
 from pathlib import Path
 import pytest, yaml
 from ytup import cli, metadata as md
@@ -46,12 +46,28 @@ def test_files_and_metadata(tmp_path):
 def test_cli_dry_run(tmp_path):
     root = lessons(tmp_path)
     cfg = yaml.safe_load((HERE / "config.example.yaml").read_text(encoding="utf-8"))
-    cfg["channels"]["build"]["series_root"] = str(root)
+    cfg["channels"]["happy"]["series"]["python"]["series_root"] = str(root)
     cfg["state_file"] = str(tmp_path / "uploaded.json")
     (tmp_path / "config.yaml").write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
-    out = subprocess.run(["python", str(HERE / "yt_upload.py"), "--config", str(tmp_path / "config.yaml"), "upload",
-                          str(root / "01_Hello_World"), "--channel", "build", "--dry-run"],
-                         capture_output=True, text=True, encoding="utf-8", check=True).stdout
-    assert "01_Hello_World_full.mp4" in out and "01_Hello_World_short.mp4" in out
-    assert "Playlist      : Python for Kids" in out and "17:00" in out
+    def run(*extra):
+        return subprocess.run([sys.executable, str(HERE / "yt_upload.py"), "--config", str(tmp_path / "config.yaml"),
+                               "upload", str(root / "01_Hello_World"), "--channel", "happy", "--dry-run", *extra],
+                              capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    for out in (run("--series", "python"), run()):          # explicit, and guessed from the folder
+        assert "01_Hello_World_full.mp4" in out and "01_Hello_World_short.mp4" in out
+        assert "Series: python" in out and "Made for kids : True" in out
+        assert "Playlist      : Python for Kids – Full Course\n" in out and "07:00" in out
+    q = subprocess.run([sys.executable, str(HERE / "yt_upload.py"), "--config", str(tmp_path / "config.yaml"),
+                        "queue", "--channel", "happy", "--series", "python", "--dry-run"],
+                       capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    assert "1 ready and not uploaded" in q
     assert not (tmp_path / "uploaded.json").exists()       # dry-run writes nothing
+
+
+def test_build_channel_not_for_kids():
+    cfg = cli.load_config(HERE / "config.example.yaml")
+    assert cli.channel_cfg(cfg, "build")["made_for_kids"] is False
+    h = cli.channel_cfg(cfg, "happy")
+    assert h["series_name"] == "olympiad" and h["made_for_kids"] is True and h["playlist"].startswith("Class 2")
+    p = cli.channel_cfg(cfg, "happy", "python")
+    assert p["playlist"] == "Python for Kids – Full Course" and p["layout"]["chapters"] == ["{name}_chapters.txt"]

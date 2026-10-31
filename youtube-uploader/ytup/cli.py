@@ -53,11 +53,34 @@ def rel(cfg, p) -> Path:
     return p
 
 
-def channel_cfg(cfg, name):
+def series_names(cfg, name):
+    return list((cfg.get("channels", {}).get(name) or {}).get("series") or {})
+
+
+def guess_series(cfg, name, folder):
+    """Series whose series_root contains folder (so --series is optional for `upload`)."""
+    f = str(Path(folder).resolve()).replace("\\", "/").lower()
+    for sname, sv in ((cfg["channels"][name] or {}).get("series") or {}).items():
+        root = str(sv.get("series_root", "")).replace("\\", "/").lower().rstrip("/")
+        if root and (f.startswith(root + "/") or f == root or f.startswith(str(rel(cfg, root)).lower())):
+            return sname
+    return None
+
+
+def channel_cfg(cfg, name, series=None):
     chans = cfg.get("channels", {})
     if name not in chans:
         raise SystemExit(f"Unknown channel '{name}'. Configured: {', '.join(chans) or 'none'}")
-    ch = dict(chans[name])
+    ch = {k: v for k, v in dict(chans[name]).items() if k != "series"}
+    all_series = chans[name].get("series") or {}
+    if all_series:
+        series = series or next(iter(all_series))
+        if series not in all_series:
+            raise SystemExit(f"Unknown series '{series}' for channel '{name}'. Configured: {', '.join(all_series)}")
+        ch = deep_merge(ch, all_series[series])     # series settings (series_root, layout, playlist, ...) win
+        ch["series_name"] = series
+    elif series:
+        raise SystemExit(f"Channel '{name}' has no series: block in config.yaml")
     ch["schedule"] = deep_merge(cfg["schedule"], ch.get("schedule", {}))
     ch["metadata"] = deep_merge(cfg["metadata"], ch.get("metadata", {}))
     ch["upload"] = deep_merge(cfg["upload"], ch.get("upload", {}))
@@ -100,9 +123,9 @@ def video_body(meta, ch, privacy, publish_at=None, short=False):
 
 
 class Runner:
-    def __init__(self, cfg, channel, dry_run=False, open_browser=True):
+    def __init__(self, cfg, channel, dry_run=False, open_browser=True, series=None):
         self.cfg, self.name, self.dry = cfg, channel, dry_run
-        self.ch = channel_cfg(cfg, channel)
+        self.ch = channel_cfg(cfg, channel, series)
         self.state = State(rel(cfg, cfg["state_file"]))
         self.api = None
         self.open_browser = open_browser
@@ -264,7 +287,8 @@ class Runner:
 
     def print_plan(self, item, meta, playlist, when, slot, privacy):
         ch = self.ch
-        print(f"  Channel       : {self.name} ({ch.get('name', '')})")
+        print(f"  Channel       : {self.name} ({ch.get('name', '')})"
+              + (f"   Series: {ch['series_name']}" if ch.get("series_name") else ""))
         print(f"  Publish       : {when}")
         if slot and item.get("short_video") and ch["upload"]["upload_short"]:
             print(f"  Short publish : {fmt_local(short_time(slot, ch['schedule']), ch['schedule']['timezone'])}")
@@ -319,7 +343,8 @@ def items_for(path, name, layout):
 
 
 def cmd_upload(cfg, a):
-    r = Runner(cfg, a.channel, a.dry_run, not a.no_browser)
+    series = a.series or guess_series(cfg, a.channel, a.folder)
+    r = Runner(cfg, a.channel, a.dry_run, not a.no_browser, series)
     its = items_for(a.folder, a.name, r.ch["layout"])
     if len(its) > 1:
         raise SystemExit(f"{a.folder} holds {len(its)} videos; use --name NN_Topic or the `queue` command.")
@@ -333,7 +358,20 @@ def cmd_upload(cfg, a):
 
 
 def cmd_queue(cfg, a):
-    r = Runner(cfg, a.channel, a.dry_run, not a.no_browser)
+    names = [a.series] if a.series else (series_names(cfg, a.channel) or [None])
+    if a.dir and not a.series and len(names) > 1:
+        names = [guess_series(cfg, a.channel, a.dir) or names[0]]
+    for sname in names:
+        if sname:
+            print(f"=== series: {sname}")
+        rc = queue_one(cfg, a, sname)
+        if rc:
+            return rc
+    return 0
+
+
+def queue_one(cfg, a, series):
+    r = Runner(cfg, a.channel, a.dry_run, not a.no_browser, series)
     root = a.dir or r.ch.get("series_root")
     if not root:
         raise SystemExit("Give a folder, or set series_root for this channel in config.yaml")
@@ -410,10 +448,12 @@ def main(argv=None):
     pu.add_argument("--at", help='publish time, e.g. "2026-11-02 07:00" (config timezone)')
     pu.add_argument("--now", action="store_true", help="publish public immediately")
     pu.add_argument("--no-short", action="store_true")
+    pu.add_argument("--series", help="series under the channel (e.g. olympiad, python); upload guesses it from the folder")
     pu.add_argument("--dry-run", action="store_true"); pu.add_argument("--no-browser", action="store_true")
     pq = sub.add_parser("queue", help="upload every rendered video in a folder that isn't uploaded yet")
     pq.add_argument("dir", nargs="?"); pq.add_argument("--channel", required=True)
     pq.add_argument("--limit", type=int, default=0, help="max videos this run (0 = as many as quota allows)")
+    pq.add_argument("--series", help="series under the channel (e.g. olympiad, python); upload guesses it from the folder")
     pq.add_argument("--dry-run", action="store_true"); pq.add_argument("--no-browser", action="store_true")
     ps = sub.add_parser("status", help="what's uploaded / scheduled")
     ps.add_argument("--channel"); ps.add_argument("--remote", action="store_true", help="also ask YouTube")
