@@ -1,0 +1,68 @@
+# Copy this file to config.yaml and edit. config.yaml is ignored by git.
+# Paths can be absolute (C:/working/...) or relative to this folder. Use forward slashes.
+
+client_secret: secrets/client_secret.json   # downloaded from Google Cloud (SETUP_GOOGLE.md step 5)
+state_file: uploaded.json                   # what has been uploaded (makes every command safe to re-run)
+
+schedule:                     # default for all channels (each channel can override)
+  timezone: Asia/Kolkata
+  days: daily                 # or: [mon, wed, fri, sat]
+  times: ["07:00"]            # one or more slots per day, e.g. ["07:00", "17:00"]
+  short_offset_minutes: 60    # Short goes live this long after its long video
+  min_lead_minutes: 60        # never schedule sooner than this from now
+  check_channel: true         # also read already-scheduled videos from YouTube (~2 quota units)
+
+metadata:
+  max_tags: 14
+  max_hashtags: 3             # YouTube shows the first 3 above the title
+  intro_in_description: true  # first paragraph = your intro text from Intro_Outro.md
+  extra_tags: []
+  short_template: "{hook}\n\nFull lesson: {full_url}\n\n#Shorts {hashtags}"
+
+upload:
+  mode: schedule              # schedule = next free slot | private = upload private, publish in Studio | public = now
+  upload_short: true
+  captions: true
+  thumbnail: true
+  notify_subscribers: true
+  contains_synthetic_media: false   # set true if a video shows realistic AI people/places/events
+  playlist_privacy: public
+  create_playlist: true             # create the playlist if no playlist with that title exists
+
+quota:
+  daily_units: 10000          # default YouTube quota per Google Cloud project per day
+  safety_margin: 200
+
+# File-name patterns. {name} = folder name (02_Plants), {num} = its number (02).
+# The defaults already match the Science Olympiad renderer; only list what differs.
+layouts:
+  science_olympiad: {}
+  python_kids:
+    render_dirs: ["render", "output", "."]
+    full_video: ["{name}_full.mp4", "{name}_final.mp4", "{name}.mp4"]
+
+channels:
+  happy:
+    name: Happy Learners ICSE
+    token: secrets/token_happy.json
+    # channel_id: UCxxxxxxxx          # printed by `auth`; protects against uploading to the wrong channel
+    series_root: C:/working/Content/HighSchoolCourses/Grade2/Science-Olympiad
+    layout: science_olympiad
+    playlist: "Class 2 Science Olympiad (NSO/ISO) – Full Course"   # title or playlist ID (PL...); blank = first one in YouTube.md
+    made_for_kids: true
+    category: 27              # Education
+    language: en-IN
+    caption_name: English (India)
+
+  build:
+    name: Waqar Shaikh Builds (@BuildWithWaqar)
+    token: secrets/token_build.json
+    series_root: C:/working/Courses/python-kids
+    layout: python_kids
+    playlist: ""
+    made_for_kids: false
+    category: 27
+    language: en-IN
+    caption_name: English (India)
+    schedule:
+      times: ["17:00"]

@@ -1,0 +1,12 @@
+# NEVER commit secrets: this repo is public
+secrets/
+client_secret*.json
+token*.json
+*.token
+config.yaml
+uploaded.json
+*.tmp
+.venv/
+__pycache__/
+*.pyc
+logs/
