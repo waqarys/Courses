@@ -22,6 +22,12 @@ STYLE = ("STYLE: bright kids' educational cartoon, soft gradients, high saturati
          "16:9 landscape 1920x1080, absolutely no text, no letters, no code on screen, no logos, no copyrighted characters.")
 
 
+
+def _tag_topic(title):
+    """'Records, tuples, sets' -> 'records tuples sets python' (YouTube tags are comma-separated)."""
+    t = ' '.join(title.lower().replace(',', ' ').replace('?', ' ').split())
+    return t if t.endswith('python') else f'{t} python'
+
 def slug(t):
     return re.sub(r'_+', '_', re.sub(r'[^A-Za-z0-9]+', '_', t)).strip('_')
 
@@ -189,7 +195,7 @@ def build(L, force):
         (f"▶️ NEXT: {nxt['title']}" if nxt else ''), '',
         'For kids 8–14. Works with Thonny (Windows/Mac) or Google Colab (Chromebook). Explanations use an AI voice and AI-made pictures (Grok Imagine); the coding is recorded live.',
         '', '#Python #PythonForKids #CodingForKids #LearnPython #ICSE #HappyLearnersICSE', '```', '',
-        '## Tags', f"python for kids, {L['title'].lower()} python, learn python, coding for kids, thonny, icse computer applications, python lesson {int(L['n'])}, happy learners icse", '',
+        '## Tags', f"python for kids, {_tag_topic(L['title'])}, learn python, coding for kids, thonny, icse computer applications, python lesson {int(L['n'])}, happy learners icse", '',
         '## Settings', '- Audience: **Yes, made for kids** (no comments/end screens/cards; the video itself says what is next).',
         '- Altered or synthetic content: No (cartoon mascot + AI voice narration). Category: Education. Language: English (India). Captions: upload the SRT.', ''])
     for fn, body in files.items():

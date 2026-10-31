@@ -21,7 +21,7 @@ For kids 8–14. Works with Thonny (Windows/Mac) or Google Colab (Chromebook). E
 ```
 
 ## Tags
-python for kids, hello, world python, learn python, coding for kids, thonny, icse computer applications, python lesson 1, happy learners icse
+python for kids, hello world python, learn python, coding for kids, thonny, icse computer applications, python lesson 1, happy learners icse
 
 ## Settings
 - Audience: **Yes, made for kids** (no comments/end screens/cards; the video itself says what is next).

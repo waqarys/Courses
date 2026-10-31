@@ -21,7 +21,7 @@ For kids 8–14. Works with Thonny (Windows/Mac) or Google Colab (Chromebook). E
 ```
 
 ## Tags
-python for kids, records, tuples, sets python, learn python, coding for kids, thonny, icse computer applications, python lesson 17, happy learners icse
+python for kids, records tuples sets python, learn python, coding for kids, thonny, icse computer applications, python lesson 17, happy learners icse
 
 ## Settings
 - Audience: **Yes, made for kids** (no comments/end screens/cards; the video itself says what is next).
