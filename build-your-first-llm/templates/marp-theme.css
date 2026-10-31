@@ -1,0 +1,19 @@
+/* @theme zerotollm */
+/* Zero to LLM channel style: dark navy, neon cyan, amber */
+@import 'default';
+section { background: #0B1026; color: #E5E7EB; font-family: 'Segoe UI', 'Inter', Arial, sans-serif; font-size: 30px; padding: 60px 80px 60px 80px; }
+/* keep the bottom-right 360x360 free for the OBS webcam circle */
+section::after { color: #64748B; }
+h1 { color: #22D3EE; font-size: 56px; margin-bottom: 0.3em; }
+h2, h3 { color: #F59E0B; }
+strong { color: #F59E0B; }
+a { color: #22D3EE; }
+code { background: #111a3a; color: #A5F3FC; border-radius: 6px; padding: 0 6px; }
+pre { background: #111a3a; border-left: 4px solid #22D3EE; font-size: 22px; max-width: 72%; }
+table { font-size: 24px; max-width: 72%; }
+th { background: #13204a; color: #22D3EE; }
+td, th { border-color: #24305e; background: #0f1736; }
+blockquote { border-left: 4px solid #F59E0B; color: #CBD5E1; }
+header, footer { color: #64748B; font-size: 16px; }
+section.title { display: flex; flex-direction: column; justify-content: center; background: radial-gradient(circle at 70% 40%, #13305a 0%, #0B1026 60%); }
+section.title h1 { font-size: 76px; }
