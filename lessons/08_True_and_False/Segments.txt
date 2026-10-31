@@ -1,0 +1,12 @@
+# Order of the video body (intro and outro are added automatically).
+# explain N[-M]  = narrated scenes from Script.md (AI voice + Imagine pictures/clips)
+# code N         = live/live_NN.mp4 (your OBS recording), with a "Let's code" card
+# yourturn       = challenge card from Challenge.md   |   quiz = Quiz.md (optional)
+
+explain 1-3
+code 1 | Try a score
+code 2 | = stores. == asks.
+explain 4
+code 3 | and, or, not
+explain 5
+yourturn

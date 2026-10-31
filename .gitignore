@@ -2,3 +2,14 @@ videos/_frames/
 __pycache__/
 *.pyc
 .DS_Store
+lessons/*/render/
+lessons/*/live/*.mp4
+lessons/*/live/*.mkv
+lessons/*/live/*.mov
+lessons/*/voice/*.m4a
+lessons/*/voice/*.mp3
+lessons/*/voice/*.wav
+lessons/*/voice/*.mp4
+lessons/*/images/*.mp4
+.tts_cache/
+tools/kokoro/

@@ -1,5 +1,12 @@
 # Python for Kids
 
+> **New: Fast Pipeline (branch `python-kids-fast-pipeline`).** AI explainer (Imagine pictures + Kokoro voice) →
+> your live coding in OBS (Thonny / IntelliJ + webcam circle) → Your-turn card, wrapped in intro/outro, rendered with
+> one command: `python tools/render_video.py 01 --gpu`. Start with [Fast_Pipeline.md](Fast_Pipeline.md),
+> lessons in [Lessons.md](Lessons.md). The silent-slides + OBS voiceover workflow below is the **older workflow**
+> (superseded for new videos, kept for reference and the install videos).
+
+
 Branch: `python-introduction-to-kids`
 
 Silent pictures, speaker notes, and example programs for a first Python course. You add the voice in OBS. Nothing in the videos is narrated.
