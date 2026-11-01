@@ -13,3 +13,7 @@
 | Intro is a black video | CapCut voice-only export – fine, only its audio is used, over the thumbnail. |
 | Captions for my live talk missing | Expected: SRT covers AI narration. Use YouTube auto-captions, or `pip install faster-whisper` + `--whisper`. |
 | Edited Script.md, voice didn't change | It does – the TTS cache is keyed by the text. Delete `.tts_cache\` if in doubt. |
+| Music too loud / too quiet | `--music-level -3` (or `+3`). Permanently: change `BED_DB` / `UNDER_DB` at the top of `tools/music_bed.py`. |
+| Don't want music on one video | `--no-music` |
+| `music: mixing failed … kept the video without music` | Usually a damaged track: delete or re-download it from `music/`. The video itself is fine. |
+| `music: none (put .mp3 … )` | `music/` folder empty or missing: `git pull` to get the tracks. |

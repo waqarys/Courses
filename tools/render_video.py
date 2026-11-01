@@ -7,6 +7,8 @@
     python tools/render_video.py --all --gpu              # every lesson that has images (or all with --placeholder)
     python tools/render_video.py 01 --intro my_intro.m4a --outro my_outro.m4a   # override voice/intro.* & voice/outro.*
     python tools/render_video.py 01 --ai-intro-outro      # ignore recordings, AI voice reads Intro_Outro.md
+    python tools/render_video.py 01 --no-music            # music/ tracks are mixed in automatically; this turns it off
+    python tools/render_video.py 01 --music music/x.mp3 --music-level -3
 
 Video = INTRO + body + OUTRO.  The body order comes from <lesson>/Segments.txt:
     explain 1-3            Script.md scenes 1..3: AI voice (Kokoro) + images/scene_NN.jpg|png OR scene_NN.mp4 clip
@@ -38,6 +40,7 @@ ROOT = HERE.parent
 LESSONS = ROOT / 'lessons'
 sys.path.insert(0, str(HERE))
 import prep_video as pv  # noqa: E402
+import music_bed as mb  # noqa: E402
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -387,15 +390,26 @@ class Part:
     """A rendered piece of the final video: path, duration, captions (relative), chapter title."""
     def __init__(self, path, dur, cues=(), chapter=None, kind=''):
         self.path, self.dur, self.cues, self.chapter, self.kind = path, dur, list(cues), chapter, kind
+        self.spans = []   # (start, end) of each slideshow item
+
+    def music_sections(self, start):
+        """Background-music level per part: bed (intro/outro), silent (live coding, quiz countdown), else under."""
+        if self.kind in ('intro', 'outro'):
+            return [(start, start + self.dur, 'bed')]
+        if self.kind == 'live':
+            return [(start, start + self.dur, 'silent')]
+        if self.kind == 'quiz':
+            return [(start + a, start + b, 'silent' if i in self.silent else 'under') for i, (a, b) in enumerate(self.spans)]
+        return [(start, start + self.dur, 'under')]
 
 
 def slideshow(items, out, work, size, burn=True, tag='p'):
     """items: list of (visual_path, audio np @24k, kb, overlay_png, caps[(s,e,text)]) -> Part (mp4 with burned captions)."""
-    clips, auds, cues, t = [], [], [], 0.0
+    clips, auds, cues, t, spans = [], [], [], 0.0, []
     for k, (vis, aud, kb, ov, caps) in enumerate(items):
         dur = max(len(aud) / SR, 0.5)
         c = work / f'{tag}_{k:02d}.mp4'; visual_clip(vis, dur, c, size, ov, kb); clips.append(c)
-        auds.append(np.concatenate([aud, silence(dur - len(aud) / SR)]))
+        auds.append(np.concatenate([aud, silence(dur - len(aud) / SR)])); spans.append((t, t + dur))
         for s, e, txt in caps:
             pieces = split_caption(txt)
             for j, pc in enumerate(pieces):
@@ -412,7 +426,8 @@ def slideshow(items, out, work, size, burn=True, tag='p'):
     run(['ffmpeg', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', f'{tag}_list.txt', '-i', f'{tag}.wav',
          '-vf', vf, '-af', f'loudnorm=I={LUFS}:TP=-1.5:LRA=11', *venc(), '-pix_fmt', 'yuv420p', *AENC,
          '-t', f'{t:.3f}', Path(out).resolve()], cwd=work)
-    return Part(out, t, cues)
+    p = Part(out, t, cues); p.spans = spans
+    return p
 
 
 def live_part(src, out, size, trim):
@@ -654,18 +669,20 @@ def render(arg, a):
                           work / 'yourturn.mp4', work, size, not a.no_captions, 'yourturn')
             p.chapter = 'Your turn'; parts.append(p)
         elif kind == 'quiz' and (folder / 'Quiz.md').exists():
-            qs = pv.parse_quiz(folder / 'Quiz.md'); items = []
+            qs = pv.parse_quiz(folder / 'Quiz.md'); items = []; quiet = set()
             for n, q in enumerate(qs, 1):
                 opts = [o for _, o in q['opts']]; ans = q['ans'][0]; qt = q['q'].split('. ', 1)[-1]
                 aq, cq = speak([qt] + [f'{L}. {noemoji(o)}.' for L, o in q['opts']])
                 items.append((png(quiz_card(n, len(qs), qt, opts, base=first_still), f'q{n}'), aq, False, None, cq))
                 for c in range(5, 0, -1):
+                    quiet.add(len(items))
                     items.append((png(quiz_card(n, len(qs), qt, opts, count=c, base=first_still), f'q{n}c{c}'), silence(1), False, None, []))
                 ar, cr = speak([f'The answer is {ans}. {noemoji(opts["ABCD".index(ans)])}!', q['why']])
                 items.append((png(quiz_card(n, len(qs), qt, opts, ans=ans, why=q['why'], base=first_still), f'q{n}a'),
                               np.concatenate([ar, silence(.8)]), False, None, cr))
             if items:
-                p = slideshow(items, work / 'quiz.mp4', work, size, not a.no_captions, 'quiz'); p.chapter = 'Quiz'; parts.append(p)
+                p = slideshow(items, work / 'quiz.mp4', work, size, not a.no_captions, 'quiz'); p.chapter = 'Quiz'
+                p.kind = 'quiz'; p.silent = quiet; parts.append(p)
     # ---- OUTRO: next lesson's thumbnail + UP NEXT
     if not a.no_intro_outro:
         n = int(name[:2]) + 1
@@ -681,6 +698,11 @@ def render(arg, a):
         if p.chapter:
             chap.append((s, p.chapter))
     write_srt(cues, out / f'{name}_full.srt')
+    track = mb.pick_track(ROOT, name, a.music, a.no_music)
+    if track:
+        secs_ = [x for p, s in zip(parts, starts) for x in p.music_sections(s)]
+        mb.add_music(full, secs_, track, a.music_level); mb.credit(track, out / f'{name}_music.txt')
+        print(f'  music: {track[0].name} (intro/outro) + {track[1].name} (explainer), level {a.music_level:+.0f} dB; credit line in render/{name}_music.txt)')
     merged = []
     for t, c in chap:   # YouTube: first chapter 0:00, each >= 10 s
         if merged and t - merged[-1][0] < 10:
@@ -693,6 +715,8 @@ def render(arg, a):
                                                              dur=round(p.dur, 2), file=Path(p.path).name) for p, s in zip(parts, starts)], indent=1))
     if not a.no_short and explain_parts:
         make_short(name, explain_parts[0], out, work)
+        if track:
+            sp = out / f'{name}_short.mp4'; mb.add_music(sp, [(0, media_dur(sp), 'under')], track, a.music_level)
     if not a.keep_work:
         shutil.rmtree(work, ignore_errors=True)
     secs = time.time() - t0
@@ -748,6 +772,9 @@ def main():
     ap.add_argument('--whisper', action='store_true', help='caption live clips with faster-whisper (optional)')
     ap.add_argument('--no-short', action='store_true'); ap.add_argument('--no-captions', action='store_true')
     ap.add_argument('--keep-work', action='store_true')
+    ap.add_argument('--music', help='background music file (default: a track from music/ picked by lesson name)')
+    ap.add_argument('--no-music', action='store_true', help='no background music')
+    ap.add_argument('--music-level', type=float, default=0.0, help='shift all music levels by N dB (-3 quieter, +3 louder)')
     a = ap.parse_args()
     if shutil.which('ffmpeg') is None:
         sys.exit('ffmpeg not found on PATH (Windows: winget install Gyan.FFmpeg, then open a new terminal)')

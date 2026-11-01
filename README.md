@@ -5,6 +5,7 @@
 > one command: `python tools/render_video.py 01 --gpu`. Start with [Fast_Pipeline.md](Fast_Pipeline.md),
 > lessons in [Lessons.md](Lessons.md). The silent-slides + OBS voiceover workflow below is the **older workflow**
 > (superseded for new videos, kept for reference and the install videos).
+> **Background music** is added automatically from `music/` (CC0 tracks, credits in `music/CREDITS.md`); `--no-music` turns it off, `--music-level -3` makes it quieter.
 
 
 Branch: `python-introduction-to-kids`

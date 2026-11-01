@@ -85,3 +85,18 @@ Measured on the Grok Bot box (8 CPU cores, no GPU): lesson 01 placeholder previe
 
 See also: [OBS_Setup.md](OBS_Setup.md) · [Folder_Layout.md](Folder_Layout.md) · [Troubleshooting.md](Troubleshooting.md) ·
 [All_Intros_Outros.md](All_Intros_Outros.md) · [Lessons.md](Lessons.md)
+
+## Background music (automatic)
+Five CC0 tracks ship in `music/` (see `music/CREDITS.md`). Every render mixes them in automatically:
+- `theme_happy_ukulele_island.mp3` = channel sound under the **intro, outro, title and end cards** (moderate, ~−28 LUFS, ducked under your voice).
+- One of the other tracks (picked by the video name, so re-renders keep it) plays **very quietly under the AI narration**, ducked further while the voice speaks.
+- **Silent** (0.5 s fade) during the quiz 5-4-3-2-1 countdown and during live coding clips.
+- The Short gets the same "quiet under narration" music. Voice level is unchanged.
+- `render/<video>_music.txt` has the credit line(s) to paste at the end of the description (CC0 needs none, it's a courtesy).
+
+```
+--no-music                 no background music
+--music music/happy_loop.mp3   one specific track for everything
+--music-level -3           all music 3 dB quieter (+3 = louder)
+```
+Constants (BED_DB, UNDER_DB, FADE, DUCK) are at the top of `tools/music_bed.py`. Empty/missing `music/` → renders exactly as before.
