@@ -1,3 +1,5 @@
+> **Moved:** this uploader now lives in its own private repo, https://github.com/waqarys/youtube-uploader (with its history). Use that one; this copy is kept for reference and isn't updated.
+
 # YouTube uploader (no Grok Bot usage)
 
 One command uploads a rendered lesson to YouTube: **long video + Short + thumbnail + captions (SRT) + playlist + schedule**.
