@@ -4,13 +4,13 @@ title: "Comments and Clean Code"
 module: 2
 module_title: "Variables, Input and Output"
 next: "Mini-Project: Recipe Scaler"
-minutes: 4.3   # rendered video length
+minutes: 7.31
 thumb_code: '# TODO: plan first!'
 goals: ["Why comments matter", "Three rules for good comments", "Planning with comment stubs", "TODO notes"]
 youtube:
   title: "Python Lesson 2.8: Comments, Clean Code and Planning with Stubs | Introduction to Python"
   description: |
-    Code is read far more often than it is written. Pip the Python explains how to write helpful comments, three rules
+    Code is read far more often than it is written. Ziggy the Python explains how to write helpful comments, three rules
     for good comments, and a pro trick: planning a program as comment stubs first, then filling in the code.
     Then you plan and write a screen-time calculator.
     For beginners aged 7 to 20.
@@ -20,7 +20,7 @@ youtube:
 <!-- Booklet 2.4 Comments and code maintenance: principles, examples, stubs. -->
 
 ## INTRO
-Hello, Happy Learners! It's Pip the Python here. Here's a fact that surprises people: code is read far more often than it's written. Today we'll learn how to leave helpful notes in our code, and a clever trick for planning a program before we write it.
+Hello, Happy Learners! It's Ziggy the Python here. Here's a fact that surprises people: code is read far more often than it's written. Today we'll learn how to leave helpful notes in our code, and a clever trick for planning a program before we write it.
 
 ## STUDY | Why comments?
 @ snippet # This is a comment. Python skips it.
@@ -69,8 +69,78 @@ Line five does the multiplication.
 Step three, and the code to show the result.
 @ line 8 | TODO = an idea for later
 And line eight is a TODO: an idea we'll add later.
+@ predict 4 | Five comment lines. How many lines of output?
+This program has eight lines, and five of them are comments. How many lines will appear in the output?
 @ run | Comments don't change the output at all
-Run it. In a year you get two thousand six hundred coins. The comments didn't appear in the output at all. They're only for the people reading the code.
+Run it. Just one line: in a year you get two thousand six hundred coins. The comments didn't appear in the output at all. They're only for the people reading the code.
+
+## CODE | turn_off.py
+```python
+print("Step 1: get ready")
+print("Step 2: jump")
+print("Step 3: land")
+```
+@ say
+Comments have another superpower. Programmers use them to switch lines off for a moment, without deleting them. It's called commenting out.
+@ line 1-3 | Three steps
+Three print lines: get ready, jump, and land.
+@ run | All three steps
+Run. All three steps appear.
+@ edit 2 => # print("Step 2: jump")
+Now let's put a hash at the start of line two.
+@ predict 4 | What will we see now?
+The line is still there, but it starts with a hash. What will the output look like now?
+@ run | Line 2 is switched off
+Run. Only steps one and three! Python skipped line two, because it's now a comment.
+@ edit 2 => print("Step 2: jump")
+Remove the hash to switch it back on.
+@ run | Back on again
+And it's back. This is really handy when you're hunting a bug. You can switch off a few lines to see whether they cause the problem, then switch them back on, without retyping anything. Most editors have a keyboard shortcut for it, often control and forward slash.
+
+## CODE | clean_up.py
+```python
+# x
+x = 3
+# y
+y = 4
+# z
+z = x * y
+print(z)
+```
+@ say
+Now let's look at some bad comments, and clean them up.
+@ line 1-6 | These comments add nothing
+This program has a comment above every line, but look at them. Hash x. Hash y. Hash z. They tell us nothing at all.
+@ line 7
+And then it prints z.
+@ run | 12... but 12 what?
+Run. Twelve. But twelve what? The comments didn't help, and the names didn't help either.
+@ edit 1 => # Garden planner: area of a rectangular flower bed
+Let's fix it. The first comment now explains what the whole program is for.
+@ edit 2 => width_m = 3
+x becomes width in metres.
+@ edit 3 => 
+We delete the useless comment.
+@ edit 4 => length_m = 4
+y becomes length in metres.
+@ edit 5 => # area = width x length (square metres)
+This comment explains the formula and the units, which the code alone doesn't tell you.
+@ edit 6 => area = width_m * length_m
+z becomes area.
+@ edit 7 => print(f"Flower bed area: {area} square metres")
+And we print it with a label.
+@ run | Same answer, now it explains itself
+Run. Flower bed area: twelve square metres. Same answer, but now the program explains itself. One good title comment, one comment explaining the formula, and clear names. That's much better than a comment on every line.
+
+## STUDY | Clean code habits
+@ point Blank lines separate the steps
+Comments are one part of clean code. Here are a few more habits. Use blank lines to separate the different steps of your program, like paragraphs in a story.
+@ point Spaces around = and operators: total = a + b
+Put a space on each side of equals signs and maths operators. Total equals a plus b, with spaces, is much easier to read than everything squashed together.
+@ point Keep lines short
+Keep your lines fairly short, so nobody has to scroll sideways to read them.
+@ point Level up: """triple quotes""" for longer notes
+And a level up: for a longer note, such as a description at the top of a program, you can use three quote marks at the start and three at the end. Everything between them can go over several lines. Programmers call these docstrings when they describe what a program or function does.
 
 ## REVISE | Quick revise
 @ point # starts a comment; Python skips it

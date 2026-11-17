@@ -2,5 +2,4 @@
 # My first program
 print("Hello, World!")
 print("I am learning Python.")
-print()
-print("Python reads from top to bottom.")
+print('Single quotes work too!')

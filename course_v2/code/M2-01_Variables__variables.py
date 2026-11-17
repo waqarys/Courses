@@ -1,7 +1,9 @@
 # M2-01_Variables - variables.py
-score = 0
-print(score)
-score = 10
-print(score)
-player = "Asha"
-print(player, "has", score, "points")
+name = "Asha"
+age = 11
+pet = "cat"
+print(name)
+print("Hi,", name)
+print(name, "is", age, "and has a", pet)
+age = 12
+print(name, "is now", age)

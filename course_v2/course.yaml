@@ -2,8 +2,8 @@
 series: "Introduction to Python"
 channel: "Fun Skill Builders"
 audience: "Beginners aged 7 to 20"
-host: "Pip the Python"              # name to be confirmed by Waqar
-mascot: pip                          # built-in: drawn in code by eduvid (blue + yellow Python-logo colours), mouth moves while speaking
+host: "Ziggy the Python"
+mascot: ziggy                        # built-in: drawn in code by eduvid (blue + yellow Python-logo colours), mouth moves while speaking
 voice: af_heart                      # Kokoro voice, same as the earlier Python for Kids drafts
 speed: 0.92                          # a little faster than the Class 2 series (0.84): the audience goes up to 20
 theme: dark                          # editor look: dark | light   (try: --theme light)

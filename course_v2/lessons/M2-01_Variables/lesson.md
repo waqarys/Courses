@@ -4,125 +4,195 @@ title: "Variables: Labelled Boxes"
 module: 2
 module_title: "Variables, Input and Output"
 next: "Good Names and Constants"
-minutes: 5.5   # rendered video length
-thumb_code: 'score = 10'
-goals: ["What a variable is", "Storing a value with =", "Changing a value", "Printing variables and text together"]
+minutes: 8.85
+thumb_code: 'score = 0'
+goals: ["What a variable is", "= means store, not equals", "Changing a variable's value", "Printing variables with text"]
 youtube:
-  title: "Python Lesson 2.1: Variables Explained - Labelled Boxes | Introduction to Python"
+  title: "Python Lesson 2.1: Variables - Labelled Boxes for Your Data | Introduction to Python"
   description: |
-    Variables let your programs remember things. Pip the Python explains variables as labelled boxes, shows what the
-    equals sign really means in Python, and how a value can change while the name stays the same.
-    Code along line by line, then try the pet profile exercise.
+    Variables let a program remember things. Ziggy the Python explains variables as labelled boxes, why = means
+    "store" and not "equals", how values change while a program runs, and how to print variables with text.
+    We build a pet profile and a game score tracker line by line, predict outputs, and fix common mistakes.
     For beginners aged 7 to 20.
-  tags: [python variables, variables for kids, learn python, python for beginners, assignment python, fun skill builders]
+  tags: [python variables, variables for beginners, python assignment, python for kids, learn python, fun skill builders]
 ---
 
-<!-- Booklet 2.1.1 Variables. Analogy: labelled storage box. -->
+<!-- Booklet chapter 2: variables. -->
 
 ## INTRO
-Hello, Happy Learners! It's Pip the Python here. Welcome to Module Two. So far our programs have only shown words. Today, they learn to remember things, using one of the most important ideas in all of programming: variables.
+Hello, Happy Learners! It's Ziggy the Python here. Welcome to Module Two. So far, our programs forget everything the moment they print it. Today, we'll give them a memory, using variables. Variables are in almost every program ever written, so this is a really important lesson.
 
 ## STUDY | What is a variable?
-@ point A variable is a labelled box that stores a value
-Imagine a cardboard box with a label stuck on the front. The label says score, and inside the box is the number zero. That's a variable! The label is the variable's name, and the thing inside is its value.
-@ boxes score = 0 | player = "Asha"
-We can have lots of boxes, each with its own label. One box called score holds zero. Another called player holds the text Asha. Whenever we use the name, Python looks inside the box and uses whatever value it finds.
-@ point Why bother? So programs can remember and reuse things
-Why is this useful? Think of a game. It has to remember your score, your lives and your name, and it keeps changing them as you play. Variables are how programs remember things while they run.
+@ boxes name = "Asha" | age = 11 | pet = "cat"
+A variable is like a box with a label on it. The label is the variable's name, and inside the box is a value. Here we have three boxes: one labelled name with Asha inside, one labelled age with eleven inside, and one labelled pet with the word cat inside.
+@ point A variable = a name + a value
+So a variable has two parts: a name and a value. The name lets us find the box later. The value is the thing we're storing.
+@ point The value is stored in the computer's memory
+Behind the scenes, the value is stored in the computer's memory, and Python keeps track of which label goes with which box. We never have to know where in the memory it is. We just use the name.
+@ point Why bother? Store once, use many times
+Why bother? Because you can store something once and use it many times. If your name appears in ten places in a program, you only need to change it in one place.
 
-## STUDY | The equals sign means store
-@ snippet score = 0
-Here's how we make a variable in Python. The name, an equals sign, then the value.
-@ point = means "store this value in this box"
-In maths, the equals sign means both sides are the same. In Python it means something different. It means: put the value on the right into the box on the left. A good way to read it aloud is: score gets zero.
-@ point Right side first, then it goes into the left
-Python always works out the right side first, and then stores the answer in the box on the left. So you could even write score gets five plus five, and the box would hold ten.
-@ boxes score = 10
-And here's the best part. A box can be emptied and refilled. If we later write score gets ten, the old zero is thrown away and ten goes in. The label stays the same, but the value changes. That's why it's called a variable: its value can vary.
-@ point Level up: this is called assignment
-Programmers call this assignment: we assign a value to a variable. Behind the scenes, Python stores the value in the computer's memory, and the name points to it, like a label pointing to a box on a shelf.
+## STUDY | = means "store"
+@ snippet age = 11
+Here's how you make a variable in Python. The name, an equals sign, and the value.
+@ point Read it as: "age stores 11"
+In maths, the equals sign means two things are the same. In Python, it means store. So read this line as: age stores eleven. Or: put eleven into the box called age.
+@ point The name always goes on the LEFT
+The name always goes on the left, and the value on the right. Python works out the right hand side first, then puts the result into the box on the left.
+@ point Making a variable is called assignment
+Programmers call this assignment. We assign the value eleven to the variable age. The first time you assign a variable, Python creates the box.
+@ point Change it later: age = 12
+And you can put a new value into the box at any time. The old value is thrown away and replaced. That's why they're called variables: their values can vary, which means change.
 
 ## CODE | variables.py
 ```python
-score = 0
-print(score)
-score = 10
-print(score)
-player = "Asha"
-print(player, "has", score, "points")
+name = "Asha"
+age = 11
+pet = "cat"
+print(name)
+print("Hi,", name)
+print(name, "is", age, "and has a", pet)
+age = 12
+print(name, "is now", age)
 ```
 @ say
-Let's try it. Type along with me, line by line.
-@ line 1 | score gets 0
-Line one creates a box called score and puts zero inside.
-@ line 2 | No quotes: show what's IN the box
-Line two prints score. Notice there are no quote marks. That means: don't show the word score, show what's inside the score box.
-@ line 3 | Same box, new value
-Line three puts ten in the same box. The zero is replaced.
-@ line 4
-And line four prints it again.
-@ line 5 | Text values need quotes
-Line five makes a new box called player, holding the text Asha. Text values still need quote marks.
-@ line 6 | Commas join things in one print, with spaces
-Line six shows something new. We can give print several things, separated by commas. Python shows them all on one line, with a space between each. Some are variables, and some are text in quotes.
-@ run | Same name, different values over time
-Let's run it. First zero, then ten: the same variable, showing different values at different moments. And the last line mixes variables and text: Asha has ten points.
+Let's build a little profile program, line by line.
+@ line 1 | Store text: quotes, like before
+Line one stores the string Asha in a variable called name. Text still needs quote marks.
+@ line 2 | Store a number: no quotes
+Line two stores the number eleven in age. Numbers don't need quotes.
+@ line 3
+And line three stores the word cat in pet.
+@ predict 3 | Three lines of code. What will be printed?
+Here's a question. We've written three lines. What will appear in the output if we run it now?
+@ run | Nothing! Storing doesn't print
+Run. Nothing at all! Storing a value doesn't show anything. The values are safely in their boxes, but we haven't asked Python to print them.
+@ line 4 | No quotes: print what's IN the box
+Line four prints name. Notice there are no quote marks. Without quotes, Python looks inside the box called name and prints what it finds.
+@ line 5 | Text and a variable, with a comma
+Line five prints the text Hi, then a comma, then the variable.
+@ line 6 | Mix text and variables in one print
+Line six mixes text and all three variables in one print, separated by commas.
+@ run | Python swaps each name for its value
+Run. Asha. Hi, Asha. Asha is eleven and has a cat. Every time Python sees a variable name, it swaps in the value from the box.
+@ line 7 | Put a new value in the box
+Now it's Asha's birthday. Line seven puts twelve into age. The eleven is replaced.
+@ line 8
+And line eight prints the new age.
+@ run | The last value stored is the one used
+Run. The last line says Asha is now twelve. The lines above still printed eleven, because when they ran, the box still held eleven. Python always uses the value that's in the box at that moment.
 
 ## CODE | game_score.py
 ```python
-coins = 0
-print("Start:", coins)
-coins = coins + 5
-print("Found a treasure chest:", coins)
-coins = coins - 2
-print("Bought a snack:", coins)
+score = 0
+print("Start:", score)
+score = score + 10
+print("Found a coin:", score)
+score = score + 25
+print("Beat a boss:", score)
+lives = 3
+lives = lives - 1
+print("Lives left:", lives)
 ```
 @ say
-Here's one more example, and it shows a pattern you'll use all the time: changing a variable using its own value.
-@ line 1-2 | Start with 0 coins
-We start a game with zero coins, and print it.
-@ line 3 | Right side first: 0 + 5, then store
-Line three looks strange at first: coins gets coins plus five. Remember, Python works out the right side first. It looks in the box, finds zero, adds five, and then puts the five back into the same box.
+Here's a second example. Games use variables all the time, for scores, lives and levels.
+@ line 1-2 | Start the score at 0
+We start the score at zero and print it.
+@ line 3 | Take the old value, add 10, store it back
+Line three is very important, and it looks strange in maths. Score equals score plus ten. Remember, Python works out the right side first. It takes the old score, zero, adds ten, and stores the result back in the score box.
 @ line 4
-Then we print the new amount.
-@ line 5-6 | Same idea, take away 2
-Lines five and six spend two coins the same way: coins gets coins minus two.
-@ run | 0 -> 5 -> 3
-Run it. Zero, then five, then three. The box kept the same label the whole time, but its value went up and down, just like a real game score.
+Then we print it.
+@ line 5-6 | Add 25 to whatever is in the box
+Line five adds twenty five to whatever is in the box now, and line six prints it.
+@ predict 5 | What will the score be after the boss?
+What will the score be after beating the boss? Work it out before the run.
+@ run | 0, then 10, then 35
+Run. Start, zero. Found a coin, ten. Beat a boss, thirty five. Ten plus twenty five.
+@ line 7-8 | Subtract works the same way
+Lives works the same way. We start with three lives, then lose one: lives equals lives minus one.
+@ line 9
+And print the lives left.
+@ run | Two lives left
+Run. Lives left: two. This pattern, take the old value, change it, store it back, is used in almost every game ever made.
+
+## CODE | copy_boxes.py
+```python
+apples = 5
+pears = apples
+print(apples, pears)
+apples = 10
+print(apples, pears)
+total = apples + pears
+print("Total fruit:", total)
+```
+@ say
+Here's a puzzle that even older students often get wrong. What happens when one variable is made from another?
+@ line 1 | apples stores 5
+Line one: apples stores five.
+@ line 2 | pears gets a COPY of what's in apples
+Line two: pears equals apples. Python looks in the apples box, finds five, and puts five into the pears box as well.
+@ line 3
+Line three prints both.
+@ line 4 | Change apples only
+Now line four changes apples to ten.
+@ line 5 | Print both again
+And line five prints both again.
+@ predict 6 | Will pears change to 10 as well?
+Here's the puzzle. Pears was made from apples. So when apples changes to ten, does pears change too? Pause and decide.
+@ run | pears keeps its own 5
+Run. First line, five and five. Second line, ten and five! Pears did not change. Line two copied the value five into pears at that moment. After that, the two boxes are completely separate. Changing one box doesn't touch the other.
+@ line 6 | Make a new variable from a calculation
+Line six makes a new variable, total, from a calculation: apples plus pears.
+@ line 7
+And line seven prints it.
+@ run | 10 + 5 = 15
+Run. Total fruit, fifteen. Ten apples plus five pears. You can store the result of any calculation in a variable, and use it again later.
+
+## STUDY | Variables are everywhere
+@ table App | Some of its variables ; a game | score, lives, level, player_name ; a music app | song_title, volume, is_playing ; a weather app | city, temperature, chance_of_rain ; a school app | student_name, homework_due
+Variables are in every app you use. A game remembers your score, lives, level and name. A music app remembers the song title and the volume. A weather app stores the city and the temperature. When you look at any app now, try to imagine the labelled boxes hiding inside it, and how their values change as you use it.
+@ point Values change while the program runs
+Notice that most of these change while the app runs. The volume goes up and down. The score goes up. That's exactly what variables are for.
+
+## STUDY | Common mistakes
+@ table Code | What goes wrong ; print("name") | prints the word name, not the value ; print(nme) | NameError: a typo in the name ; print(score) before score = 0 | NameError: the box doesn't exist yet ; 10 = score | SyntaxError: the name must be on the left
+Let's look at four common mistakes. Putting quotes around a variable name prints the word itself, not the value inside. A spelling mistake in the name gives a NameError, because there's no box with that label. Using a variable before you've created it also gives a NameError, because Python runs from top to bottom. And writing the value on the left, like ten equals score, is a SyntaxError. The name always goes on the left.
 
 ## REVISE | Quick revise
-@ point A variable is a name for a stored value
-A variable is a name that stores a value, like a labelled box.
-@ point name = value  means "name gets value"
-The equals sign means store: the name on the left gets the value on the right.
-@ point A variable's value can change
-You can change the value at any time, and the name stays the same.
-@ point print(score) shows the value, print("score") shows the word
-And print with the name shows the value, while print with quote marks shows the word itself.
+@ point A variable is a labelled box: name + value
+A variable is a labelled box with a name and a value.
+@ point = means store: the name goes on the left
+The equals sign means store, and the name goes on the left.
+@ point No quotes around a name: Python uses the value
+Without quotes, Python uses the value inside the box.
+@ point score = score + 10 updates a value
+And score equals score plus ten updates the value in the box.
 
 ## PRACTICE | Pet profile
-@ task Make three variables: pet_name, pet_type and pet_age. Then print one sentence using all three, like: Bruno is a dog who is 3 years old
-Your turn. Make three variables: pet name, pet type and pet age. Use a real pet, or invent one. Then print one sentence that uses all three, separated by commas.
-@ hint pet_name = "Bruno"  ...  print(pet_name, "is a", ...)
-Hint: text values need quote marks, but numbers don't. And when you print, put commas between each part.
-@ pause 12
-Pause the video now and try it.
+@ task Make a pet profile:\n1. Variables for a pet's name, type and age\n2. Print one sentence using all three\n3. Add 1 to the age (a birthday!) and print the new age
+Your turn. Make a pet profile for a real or imaginary pet. Store its name, what kind of animal it is, and its age, in three variables. Print one sentence that uses all three. Then the pet has a birthday: add one to the age, and print the new age.
+@ hint pet_age = pet_age + 1 updates the age. Use commas in print.
+Hint: to add one to the age, use the age equals age plus one pattern. And use commas to mix text and variables in print.
+@ pause 15
+Pause the video and try it.
 
 ## ANSWER | pet_profile.py
 ```python
-pet_name = "Bruno"
+pet_name = "Biscuit"
 pet_type = "dog"
-pet_age = 3
-print(pet_name, "is a", pet_type, "who is", pet_age, "years old")
+pet_age = 4
+print(pet_name, "is a", pet_type, "aged", pet_age)
+pet_age = pet_age + 1
+print("Happy birthday!", pet_name, "is now", pet_age)
 ```
-@ line 1-2
-Here's my answer. Two text variables, with quote marks.
-@ line 3
-One number variable, without quote marks.
+@ line 1-3
+Here's my answer. Three variables: Biscuit, dog, and four.
 @ line 4
-Then one print that mixes variables and text, with commas in between.
+One sentence using all three.
+@ line 5-6
+Then the birthday. Age equals age plus one, and print the new age.
 @ run
-And it says: Bruno is a dog who is three years old. Now try changing pet age to four and running it again. One small change, and the sentence updates by itself. That's the power of variables!
+Run. Biscuit is a dog aged four. Happy birthday! Biscuit is now five. If yours works, fantastic. You've just built a program with a memory.
 
 ## OUTRO
-Brilliant work! You can now make programs that remember things. Next time, we'll learn how to choose great names for variables, the rules Python insists on, and a special kind of variable called a constant. Like, share and subscribe, and keep coding. Happy Learning!
+Brilliant work! You now know what variables are and how to change them. Next time, we'll learn the rules for naming variables, and how to choose names that make your code easy to read. Like, share and subscribe, and keep coding. Happy Learning!

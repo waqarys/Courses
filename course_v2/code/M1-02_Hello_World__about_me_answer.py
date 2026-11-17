@@ -1,5 +1,7 @@
 # M1-02_Hello_World - about_me.py
-# All about me
+# About me, by Asha
 print("My name is Asha.")
-print("I love mango.")
-print("My favourite animal is the dolphin.")
+print("I am 11 years old.")
+print("I love mango ice cream.")
+print()
+print("**********")

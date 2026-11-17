@@ -1,5 +1,5 @@
 # M2-03_Strings - strings.py
-first = "Pip"
+first = "Ziggy"
 last = "Python"
 full = first + " " + last
 print(full)
