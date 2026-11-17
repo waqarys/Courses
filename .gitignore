@@ -13,3 +13,6 @@ lessons/*/voice/*.mp4
 lessons/*/images/*.mp4
 .tts_cache/
 tools/kokoro/
+
+# Python course v2 renders (eduvid pycourse)
+course_v2/lessons/*/render/

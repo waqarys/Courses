@@ -1,0 +1,22 @@
+# Introduction to Python - course settings read by `eduvid pycourse` (eduvid-pipeline, branch python-course)
+series: "Introduction to Python"
+channel: "Fun Skill Builders"
+audience: "Beginners aged 7 to 20"
+host: "Pip the Python"              # name to be confirmed by Waqar
+mascot: pip                          # built-in: drawn in code by eduvid (blue + yellow Python-logo colours), mouth moves while speaking
+voice: af_heart                      # Kokoro voice, same as the earlier Python for Kids drafts
+speed: 0.92                          # a little faster than the Class 2 series (0.84): the audience goes up to 20
+theme: dark                          # editor look: dark | light   (try: --theme light)
+music: ../music/happy_lullaby.mp3    # CC0 bed, see ../music/CREDITS.md; ducked under the voice; --no-music turns it off
+music_db: -27
+type_cps: 15                         # typing speed (characters per second) for the line-by-line code
+run_timeout: 8
+# How the narrator should SAY a word (captions keep the written form)
+pronounce:
+  Thonny: Tonny
+  snake_case: snake case
+  camelCase: camel case
+  f-string: F string
+  f-strings: F strings
+  elif: el if
+  "#": hash
