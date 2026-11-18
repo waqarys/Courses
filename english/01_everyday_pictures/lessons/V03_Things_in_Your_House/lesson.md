@@ -47,7 +47,7 @@ Six or more? Excellent! Subscribe to learn new everyday words every week.
 @ word fridge | 🧊 🥛 | a cold cupboard that keeps food fresh | Is there any milk? | Check the fridge, top shelf.
 @ word sink | 🚰 | a large bowl with taps, for washing dishes | Where do I put the dirty plates? | Just leave them in the sink.
 @ word tap | 🚰 💧 | the thing you turn to get water | The tap is dripping. | I'll call a plumber.
-@ word kettle | 🫖 | a pot with a spout for boiling water | Shall I put the kettle on? | Yes, let's have some tea.
+@ word kettle | draw:kettle | a pot with a spout for boiling water | Shall I put the kettle on? | Yes, let's have some tea.
 @ word microwave | ♨️ 📦 | a small oven that heats food very quickly | How do I warm up the soup? | Two minutes in the microwave.
 @ word cupboard | 🗄️ | a piece of furniture with doors, for keeping things | Where are the glasses? | In the cupboard above the sink.
 @ word drawer | 🗃️ | a box that slides in and out of furniture | Where do you keep the spoons? | In the top drawer.
@@ -66,7 +66,7 @@ Name these eight kitchen things.
 @ word chest of drawers | 🗃️ 🗄️ | a piece of furniture with several drawers for clothes | Where are your socks? | In the chest of drawers, bottom drawer.
 @ word alarm clock | ⏰ | a clock that makes a noise to wake you up | What time does your alarm clock ring? | Six thirty, every day.
 @ word bedside table | 🛏️ 🕯️ | a small table next to a bed | Where are my glasses? | On your bedside table.
-@ word hanger | 👔 🪝 | a shaped piece of plastic, wood or wire for hanging clothes | Can I borrow a hanger? | Sure, take as many as you need.
+@ word hanger | draw:hanger | a shaped piece of plastic, wood or wire for hanging clothes | Can I borrow a hanger? | Sure, take as many as you need.
 
 ## REVIEW | Review 3: name the pictures
 @ review bed, pillow, blanket, wardrobe, chest of drawers, alarm clock, bedside table, hanger

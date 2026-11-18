@@ -64,7 +64,7 @@ Eight more pictures. Say each word out loud.
 ## WORDS | Cooking with heat
 Time to switch on the stove. These verbs are all about heat.
 @ word heat | 🔥 🍳 | to make something hot | Is the oil ready? | Not yet, I'm still heating it.
-@ word boil | 🫖 💧 | to heat water until it bubbles | Can you boil some water for tea? | Sure, I'll put the kettle on.
+@ word boil | draw:kettle 💧 | to heat water until it bubbles | Can you boil some water for tea? | Sure, I'll put the kettle on.
 @ word simmer | 🍲 | to cook gently, with small bubbles, just below boiling | Is the soup done? | Let it simmer for ten more minutes.
 Boil means big, fast bubbles. Simmer means small, slow bubbles.
 @ word fry | 🍳 | to cook food in hot oil | How do you like your eggs? | Fried, please, with toast.

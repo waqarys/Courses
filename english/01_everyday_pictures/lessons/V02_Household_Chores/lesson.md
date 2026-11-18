@@ -28,7 +28,7 @@ There are five quick reviews and a final test. Keep your score!
 We start with the floor and the furniture.
 @ word sweep the floor | 🧹 | to clean the floor with a broom | Who swept the kitchen floor? | I did, there were crumbs everywhere.
 @ word mop the floor | 🪣 🧹 | to wash the floor with a wet mop | Can I walk in the hall? | Wait, I've just mopped the floor. It's still wet.
-@ word vacuum the carpet | 🧹 om:E144 | to clean a carpet with a vacuum cleaner, a machine that sucks up dirt | When do you vacuum? | Every Saturday morning.
+@ word vacuum the carpet | draw:vacuum | to clean a carpet with a vacuum cleaner, a machine that sucks up dirt | When do you vacuum? | Every Saturday morning.
 @ word dust the shelves | 🪶 📚 | to remove dust with a soft cloth or a duster | Why are you sneezing? | I was dusting the shelves.
 @ word polish | ✨ 🪑 | to rub something until it shines | The table looks great! | Thanks, I polished it this morning.
 @ word wipe the counter | 🧽 om:E0AE | to clean the kitchen worktop with a cloth | Can you wipe the counter after you cook? | Of course, I always do.
@@ -50,7 +50,7 @@ Now, the laundry. Laundry means clothes that need washing, or clothes that are j
 @ word hang up the washing | 👚 ☀️ | to put wet clothes on a line or rack to dry | It's sunny today! | Great, let's hang up the washing outside.
 @ word take in the washing | 🧺 👚 | to bring dry clothes back inside | It's starting to rain! | Quick, take in the washing!
 @ word fold the clothes | 👕 | to bend clothes neatly into a smaller shape | Can you help me fold the clothes? | Sure, I'll do the towels.
-@ word iron a shirt | 👔 ♨️ | to make clothes smooth with a hot iron | Your shirt looks very smart. | Thanks, I ironed it last night.
+@ word iron a shirt | draw:iron 👔 | to make clothes smooth with a hot iron | Your shirt looks very smart. | Thanks, I ironed it last night.
 @ word hang up | 🧥 | to put clothes on a hanger or a hook | Where's my jacket? | I hung it up in the wardrobe.
 @ word put away the clothes | 🗄️ 👕 | to put clean clothes back in drawers and cupboards | Are these clean? | Yes, please put them away.
 @ word sew on a button | 🪡 🧵 | to fix a button onto clothes with a needle and thread | My button came off. | Give it to me, I'll sew it on.
