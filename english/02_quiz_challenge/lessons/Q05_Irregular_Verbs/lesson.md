@@ -3,7 +3,7 @@ id: "Q05"
 title: "Irregular Verbs Quiz: Past Tense | 20 Questions"
 next: "Phrasal Verbs Quiz: Pick the Right One"
 banner: "Past Tense Quiz"
-thumb: ["go → went=🚶", "eat → ate=🍽️", "buy → bought=🛍️", "think → thought=💭"]
+thumb: ["go – went=🚶", "eat – ate=🍽️", "buy – bought=🛍️", "think – thought=💭"]
 thumb_tag: "20/20?"
 youtube:
   title: "Irregular Verbs Quiz: Past Tense | 20 Questions | Can You Score 20/20?"

@@ -1,7 +1,7 @@
 ---
 id: "Q09"
 title: "A, An or The? Articles Quiz | 20 Questions"
-next: "Plurals Quiz: Mouse → Mice and 19 More"
+next: "Plurals Quiz: Mouse – Mice and 19 More"
 banner: "A, An or The?"
 thumb: ["a banana=🍌", "an apple=🍎", "the sun=☀️"]
 thumb_tag: "20/20?"

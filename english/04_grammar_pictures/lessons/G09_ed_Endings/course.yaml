@@ -1,0 +1,5 @@
+# How the narrator says the three sounds (the screen keeps the symbols)
+pronounce:
+  "/t/": "t sound"
+  "/d/": "d sound"
+  "/id/": "extra syllable, id"

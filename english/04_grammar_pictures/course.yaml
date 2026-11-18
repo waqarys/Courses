@@ -3,3 +3,5 @@ colour: "#7E57C2"
 guess: 0
 repeat: 2.5
 think: 6
+pronounce:
+  "/": "or"        # "was / were" is said "was or were" (standalone slashes only; /t/ is set per lesson)

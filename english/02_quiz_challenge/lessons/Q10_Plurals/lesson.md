@@ -1,9 +1,9 @@
 ---
 id: "Q10"
-title: "Plurals Quiz: Mouse → Mice and 19 More"
+title: "Plurals Quiz: Mouse – Mice and 19 More"
 next: "Idioms Quiz: What Does It Really Mean?"
 banner: "Plurals Quiz"
-thumb: ["mouse → mice=🐭", "tooth → teeth=🦷", "knife → knives=🔪", "sheep → sheep=🐑"]
+thumb: ["mouse – mice=🐭", "tooth – teeth=🦷", "knife – knives=🔪", "sheep – sheep=🐑"]
 thumb_tag: "20/20?"
 youtube:
   title: "Plurals Quiz: Mouse → Mice and 19 More | Irregular Plurals in English"
