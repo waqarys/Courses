@@ -1,0 +1,20 @@
+# Everyday English (Fun Skill Builders) - settings shared by all four series, read by `eduvid english`
+# (eduvid-pipeline, branch english-course). A series folder's own course.yaml adds to / overrides these.
+channel: "Fun Skill Builders"
+audience: "Teen and adult English learners, beginner to intermediate (A2-B1)"
+made_for_kids: false                 # every video in these series is NOT made for kids
+voice: af_heart                      # Kokoro narrator voice
+voice2: am_michael                   # second voice: example questions, phrases to repeat
+speed: 0.9                           # a little slower than normal speech: the viewers are learners
+music: ../music/ukulele_forest.mp3   # CC0 bed (see ../music/CREDITS.md), ducked under the voice
+music_db: -29
+music_credit: "Music: \"Ukulele Forest\" by StarNinjas (OpenGameArt.org, CC0)."
+subscribe: "https://www.youtube.com/@FunSkillBuilders?sub_confirmation=1"
+hashtags: ["#LearnEnglish", "#EnglishVocabulary", "#SpokenEnglish"]
+guess: 3        # seconds the picture shows before the word (0 = off)
+repeat: 2.2     # listen-and-repeat pause after each word / phrase
+think: 5        # quiz / fill-the-gap / spot-the-mistake countdown
+review: 8       # review-round countdown (a review can set its own: @ review a, b, c | 10)
+pronounce:      # how the narrator should SAY a word (captions keep the written form)
+  "e.g.": "for example"
+  café: cafe

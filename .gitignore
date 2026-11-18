@@ -16,3 +16,6 @@ tools/kokoro/
 
 # Python course v2 renders (eduvid pycourse)
 course_v2/lessons/*/render/
+
+# Everyday English renders (eduvid english)
+english/**/render/
